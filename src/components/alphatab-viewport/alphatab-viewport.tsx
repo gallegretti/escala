@@ -35,7 +35,7 @@ export default function AlphaTabViewport(props: AlphaTabViewportProps) {
                 enablePlayer: true,
                 enableCursor: true,
                 enableUserInteraction: true,
-                soundfont: "/alphaTab/soundfont/sonivox.sf2"
+                soundfont: "./alphaTab/soundfont/sonivox.sf2"
             },
             core: {
                 includeNoteBounds: true
