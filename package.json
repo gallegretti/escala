@@ -1,0 +1,34 @@
+{
+  "name": "editor",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "jest",
+    "cypress": "cypress run",
+    "postinstall": "cp -r ./node_modules/@coderline/alphatab ./public && cp -r ./node_modules/@coderline/alphatab/dist/soundfont/ ./public/alphatab/soundfont/"
+  },
+  "dependencies": {
+    "@coderline/alphatab": "^1.3.0-alpha.264",
+    "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.8.1",
+    "@mui/material": "^5.8.1",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.5.1",
+    "@types/jquery": "^3.5.14",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@vitejs/plugin-react": "^1.3.0",
+    "cypress": "^9.7.0",
+    "jest": "^28.1.0",
+    "jest-mock-extended": "^2.0.6",
+    "ts-jest": "^28.0.3",
+    "typescript": "^4.6.3",
+    "vite": "^2.9.9"
+  }
+}
