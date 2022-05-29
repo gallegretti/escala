@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.1 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
+<score-partwise version="3.1">
+  <work>
+    <work-title>bends</work-title>
+  </work>
+  <identification>
+    <encoding>
+      <software>Flat</software>
+      <encoding-date>2022-04-17</encoding-date>
+    </encoding>
+    <source>https://flat.io/score/62575409d39fdf0012240698-bends</source>
+  </identification>
+  <defaults>
+    <scaling>
+      <millimeters>7</millimeters>
+      <tenths>40</tenths>
+    </scaling>
+    <page-layout>
+      <page-height>1697.142857142857</page-height>
+      <page-width>1200</page-width>
+      <page-margins type="both">
+        <left-margin>98.28571428571429</left-margin>
+        <right-margin>98.28571428571429</right-margin>
+        <top-margin>98.28571428571429</top-margin>
+        <bottom-margin>98.28571428571429</bottom-margin>
+      </page-margins>
+    </page-layout>
+    <system-layout>
+      <system-distance>115.2</system-distance>
+    </system-layout>
+    <staff-layout>
+      <staff-distance>72.57142857142857</staff-distance>
+    </staff-layout>
+    <word-font font-family="Century Schoolbook L"/>
+  </defaults>
+  <credit>
+    <credit-type>title</credit-type>
+    <credit-words>bends</credit-words>
+  </credit>
+  <part-list>
+    <score-part id="P1">
+      <part-name>Classical Guitar</part-name>
+      <part-abbreviation>Guit.</part-abbreviation>
+      <score-instrument id="P1-I1">
+        <instrument-name>Classical Guitar</instrument-name>
+      </score-instrument>
+      <midi-instrument id="P1-I1">
+        <midi-channel>1</midi-channel>
+        <midi-program>25</midi-program>
+        <volume>100</volume>
+      </midi-instrument>
+    </score-part>
+  </part-list>
+  <part id="P1">
+    <measure number="1">
+      <attributes>
+        <divisions>1</divisions>
+        <key>
+          <fifths>0</fifths>
+        </key>
+        <time>
+          <beats>4</beats>
+          <beat-type>4</beat-type>
+        </time>
+        <clef>
+          <sign>G</sign>
+          <line>2</line>
+          <clef-octave-change>-1</clef-octave-change>
+        </clef>
+        <staff-details>
+          <staff-lines>6</staff-lines>
+          <staff-tuning line="1">
+            <tuning-step>E</tuning-step>
+            <tuning-alter>0</tuning-alter>
+            <tuning-octave>2</tuning-octave>
+          </staff-tuning>
+          <staff-tuning line="2">
+            <tuning-step>A</tuning-step>
+            <tuning-alter>0</tuning-alter>
+            <tuning-octave>2</tuning-octave>
+          </staff-tuning>
+          <staff-tuning line="3">
+            <tuning-step>D</tuning-step>
+            <tuning-alter>0</tuning-alter>
+            <tuning-octave>3</tuning-octave>
+          </staff-tuning>
+          <staff-tuning line="4">
+            <tuning-step>G</tuning-step>
+            <tuning-alter>0</tuning-alter>
+            <tuning-octave>3</tuning-octave>
+          </staff-tuning>
+          <staff-tuning line="5">
+            <tuning-step>B</tuning-step>
+            <tuning-alter>0</tuning-alter>
+            <tuning-octave>3</tuning-octave>
+          </staff-tuning>
+          <staff-tuning line="6">
+            <tuning-step>E</tuning-step>
+            <tuning-alter>0</tuning-alter>
+            <tuning-octave>4</tuning-octave>
+          </staff-tuning>
+        </staff-details>
+      </attributes>
+      <sound/>
+      <sound tempo="80"/>
+      <direction placement="above">
+        <direction-type>
+          <metronome>
+            <beat-unit>quarter</beat-unit>
+            <per-minute>80</per-minute>
+          </metronome>
+        </direction-type>
+        <staff>1</staff>
+      </direction>
+      <note>
+        <pitch>
+          <step>C</step>
+          <octave>4</octave>
+        </pitch>
+        <duration>4</duration>
+        <voice>1</voice>
+        <type>whole</type>
+        <staff>1</staff>
+        <notations>
+          <technical>
+            <fret>1</fret>
+            <string>2</string>
+            <bend>
+              <bend-alter>2</bend-alter>
+            </bend>
+          </technical>
+        </notations>
+      </note>
+    </measure>
+    <measure number="2">
+      <attributes/>
+      <note>
+        <pitch>
+          <step>C</step>
+          <alter>1</alter>
+          <octave>4</octave>
+        </pitch>
+        <duration>4</duration>
+        <voice>1</voice>
+        <type>whole</type>
+        <accidental>sharp</accidental>
+        <staff>1</staff>
+        <notations>
+          <technical>
+            <fret>2</fret>
+            <string>2</string>
+            <bend>
+              <bend-alter>1</bend-alter>
+              <release/>
+            </bend>
+          </technical>
+        </notations>
+      </note>
+    </measure>
+    <measure number="3">
+      <attributes/>
+      <note>
+        <pitch>
+          <step>D</step>
+          <octave>4</octave>
+        </pitch>
+        <duration>4</duration>
+        <voice>1</voice>
+        <type>whole</type>
+        <staff>1</staff>
+        <notations>
+          <technical>
+            <fret>3</fret>
+            <string>2</string>
+            <bend>
+              <bend-alter>1</bend-alter>
+              <pre-bend/>
+            </bend>
+            <bend>
+              <bend-alter>1</bend-alter>
+            </bend>
+          </technical>
+        </notations>
+      </note>
+    </measure>
+    <measure number="4">
+      <attributes/>
+      <note>
+        <pitch>
+          <step>D</step>
+          <alter>1</alter>
+          <octave>4</octave>
+        </pitch>
+        <duration>4</duration>
+        <voice>1</voice>
+        <type>whole</type>
+        <accidental>sharp</accidental>
+        <staff>1</staff>
+        <notations>
+          <technical>
+            <fret>4</fret>
+            <string>2</string>
+            <bend>
+              <bend-alter>2</bend-alter>
+              <pre-bend/>
+            </bend>
+            <bend>
+              <bend-alter>2</bend-alter>
+            </bend>
+          </technical>
+        </notations>
+      </note>
+    </measure>
+    <measure number="5">
+      <attributes/>
+      <note>
+        <pitch>
+          <step>E</step>
+          <octave>4</octave>
+        </pitch>
+        <duration>4</duration>
+        <voice>1</voice>
+        <type>whole</type>
+        <staff>1</staff>
+        <notations>
+          <technical>
+            <fret>5</fret>
+            <string>2</string>
+            <bend>
+              <bend-alter>0</bend-alter>
+              <release/>
+            </bend>
+          </technical>
+        </notations>
+      </note>
+      <barline location="right">
+        <bar-style>light-heavy</bar-style>
+      </barline>
+    </measure>
+  </part>
+</score-partwise>
