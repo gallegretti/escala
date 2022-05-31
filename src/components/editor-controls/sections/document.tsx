@@ -12,14 +12,11 @@ import { GuitarProGlyph } from "../icons/document/download/guitar-pro";
 import { MidGlyph } from "../icons/document/download/mid";
 import { NewGlyph } from "../icons/document/new";
 import { TempoGlyph } from "../icons/document/tempo";
-import DialogSetTempo from "../dialog-set-tempo/dialog-set-tempo";
-import { useDialog } from "../use-dialog";
 
 interface DocumentSectionProps {
     canUndo: boolean;
     canRedo: boolean;
     tempo: number | null;
-    setTempo: (newTempo: number) => void;
     undo: () => void;
     redo: () => void;
     openFile: (file: File) => void;
@@ -28,21 +25,11 @@ interface DocumentSectionProps {
     exportGuitarPro: () => void;
     exportMidi: () => void;
     openScoreInfo: () => void;
+    openTempoDialog: () => void;
 }
 
 export function DocumentSection(props: DocumentSectionProps) {
-    const {
-        closeDialog,
-        isDialogOpen,
-        openDialog
-    } = useDialog()
-    const [anchorElem, setAnchorElement] = useAnchorElem();
-
-    const saveTempo = (tempo: number) => {
-        closeDialog();
-        props.setTempo(tempo)
-    }
-
+   const [anchorElem, setAnchorElement] = useAnchorElem();
 
     const onClick = (e: any) => {
         if (anchorElem !== null) {
@@ -54,11 +41,6 @@ export function DocumentSection(props: DocumentSectionProps) {
 
     return (
         <>
-            <DialogSetTempo
-                currentTempo={props.tempo ?? 0}
-                isOpen={isDialogOpen}
-                onClose={closeDialog}
-                onSet={saveTempo}></DialogSetTempo>
             <NewGlyph id="new" disabled={false} selected={false} onClick={props.newFile} />
             <input
                 id="open-input"
@@ -83,7 +65,7 @@ export function DocumentSection(props: DocumentSectionProps) {
                 <MidGlyph id="midi" disabled={false} selected={false} onClick={props.exportMidi} />
             </StyledPopper>
             <Divider variant="middle" orientation="vertical" flexItem />
-            <TempoGlyph id="new" disabled={false} selected={false} onClick={openDialog} />
+            <TempoGlyph id="new" disabled={false} selected={false} onClick={props.openTempoDialog} />
         </>
     );
 }

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import DialogSetText from './dialog-set-text/dialog-set-text';
 import { Tabs, Tab, useTheme } from '@mui/material';
 import ScoreInfoComponent from './score-info/score-info';
@@ -14,6 +14,7 @@ import { DocumentSection } from './sections/document';
 import { styled } from '@mui/material';
 import { Duration, DynamicValue, HarmonicType, PickStroke, Score } from '../../alphatab-types/alphatab-types';
 import { useDialog } from './use-dialog';
+import DialogSetTempo from './dialog-set-tempo/dialog-set-tempo';
 
 export interface BendState {
     preBend: BendType;
@@ -81,7 +82,13 @@ export default function EditorControls(props: EditorControlsProps) {
         openDialog: openScoreInfoDialog,
         closeDialog: closeScoreInfoDialog,
         isDialogOpen: isScoreInfoDialogOpen,
-    } = useDialog()
+    } = useDialog();
+
+    const {
+        openDialog: openTempoDialog,
+        closeDialog: closeTempoDialog,
+        isDialogOpen: isTempoDialogOpen
+    } = useDialog();
 
     const saveNewText = (newText: string) => {
         props.setText(newText);
@@ -91,6 +98,11 @@ export default function EditorControls(props: EditorControlsProps) {
     const saveNewScoreInfo = (scoreInfo: ScoreInfo) => {
         closeScoreInfoDialog();
         props.setScoreInfo(scoreInfo);
+    }
+
+    const saveTempo = (tempo: number) => {
+        closeTempoDialog();
+        props.setTempo(tempo);
     }
 
     const colorMode = React.useContext(ColorModeContext);
@@ -119,6 +131,11 @@ export default function EditorControls(props: EditorControlsProps) {
                 onClose={closeTextDialog}
                 onSave={saveNewText}
             />
+            {props.score && <DialogSetTempo
+                currentTempo={props.score?.tempo ?? 0}
+                isOpen={isTempoDialogOpen}
+                onClose={closeTempoDialog}
+                onSet={saveTempo}></DialogSetTempo>}
             {props.score && <ScoreInfoComponent
                 isOpen={isScoreInfoDialogOpen}
                 score={props.score}
@@ -145,12 +162,12 @@ export default function EditorControls(props: EditorControlsProps) {
                         canRedo={props.canRedo}
                         canUndo={props.canUndo}
                         tempo={props.score?.tempo ?? null}
-                        setTempo={props.setTempo}
                         exportGuitarPro={props.exportGuitarPro}
                         exportMidi={props.exportMidi}
                         print={props.print}
                         redo={props.redo}
                         undo={props.undo}
+                        openTempoDialog={() => openTempoDialog()}
                         openScoreInfo={() => openScoreInfoDialog()} />
                 </TabContainer>
                 <TabContainer style={{ display: currentTab !== 1 ? "none" : "flex" }}>
