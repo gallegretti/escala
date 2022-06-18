@@ -4,12 +4,15 @@ import PlayPauseGlyph from '../editor-controls/icons/player-controls/play';
 import VolumeControlComponent from './volume-control';
 import EditorPlayerSpeedComponent from './editor-player-speed';
 import CountInGlyph from '../editor-controls/icons/player-controls/count-in';
+import MetronomeGlyph from '../editor-controls/icons/player-controls/metronome';
 
 interface EditorPlayerControlsProps {
     playPause: () => void,
     isPlaying: boolean,
     isCountIn: boolean,
+    isMetronome: boolean,
     onCountInChange: (countIn: boolean) => void,
+    onMetronomeChange: (metronome: boolean) => void,
     onVolumeChange: (volume: number) => void,
     onSpeedChange: (speed: number) => void,
 }
@@ -64,6 +67,11 @@ export default function EditorPlayerControls(props: EditorPlayerControlsProps) {
         <CountInGlyph
           selected={props.isCountIn}
           onClick={() => props.onCountInChange(!props.isCountIn)}
+          disabled={false}
+        />
+        <MetronomeGlyph
+          selected={props.isMetronome}
+          onClick={() => props.onMetronomeChange(!props.isMetronome)}
           disabled={false}
         />
         <VolumeControlComponent volume={currentVolume} setVolume={setVolume} />

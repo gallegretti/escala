@@ -5,7 +5,7 @@ import baseSvgStyle from '../glyphBaseSvgStyle';
 import { useGlyphColor } from '../glyphColor';
 
 function VolumeOn(props: DynamicGlyphProps) {
-  const color = useGlyphColor(props);
+  const color = useGlyphColor({ disabled: false, selected: false });
   return (
     <svg xmlns="http://www.w3.org/2000/svg" height="34px" viewBox="0 0 24 24" width="34px" onClick={props.onClick} fill={color} style={baseSvgStyle(props)}>
       <path d="M0 0h24v24H0z" fill="none" />
@@ -15,7 +15,7 @@ function VolumeOn(props: DynamicGlyphProps) {
 }
 
 function VolumeOff(props: DynamicGlyphProps) {
-  const color = useGlyphColor(props);
+  const color = useGlyphColor({ disabled: false, selected: false });
   return (
     <svg xmlns="http://www.w3.org/2000/svg" height="34px" viewBox="0 0 24 24" width="34px" onClick={props.onClick} fill={color} style={baseSvgStyle(props)}>
       <path d="M0 0h24v24H0z" fill="none" />

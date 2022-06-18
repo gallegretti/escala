@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import { Tooltip } from '@mui/material';
 import { DynamicGlyphProps } from '../dynamics/dynamic';
@@ -5,7 +6,7 @@ import baseSvgStyle from '../glyphBaseSvgStyle';
 import { useGlyphColor } from '../glyphColor';
 
 function CountInEnabledGlyph(props: DynamicGlyphProps) {
-  const color = useGlyphColor({ ...props, selected: false });
+  const color = useGlyphColor(props);
   return (
     <svg xmlns="http://www.w3.org/2000/svg" enableBackground="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill={color} onClick={props.onClick} style={baseSvgStyle(props)}>
       <g>
@@ -19,7 +20,7 @@ function CountInEnabledGlyph(props: DynamicGlyphProps) {
 }
 
 function CountInDisabledGlyph(props: DynamicGlyphProps) {
-  const color = useGlyphColor({ ...props, selected: false });
+  const color = useGlyphColor(props);
   return (
     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill={color} onClick={props.onClick} style={baseSvgStyle(props)}>
       <path d="M0 0h24v24H0V0z" fill="none" />

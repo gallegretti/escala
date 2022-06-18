@@ -167,6 +167,13 @@ export default function App() {
     }
   };
 
+  const setMetronome = (metronome: boolean) => {
+    if (api) {
+      api.metronomeVolume = metronome ? 1 : 0;
+      forceUpdate();
+    }
+  };
+
   const setText = (text: string) => {
     const beat = selectedNoteController.getSelectedSlot()?.beat;
     if (!beat) {
@@ -471,7 +478,9 @@ export default function App() {
                 onVolumeChange={setVolume}
                 playPause={playPause}
                 onCountInChange={setCountIn}
+                onMetronomeChange={setMetronome}
                 isCountIn={api?.countInVolume !== 0}
+                isMetronome={api?.metronomeVolume !== 0}
                 isPlaying={api?.playerState === 1}
               />
             </div>
