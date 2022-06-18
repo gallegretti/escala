@@ -144,6 +144,13 @@ export default function App() {
     forceUpdate();
   }
 
+  const setCountIn = (countIn: boolean) => {
+    if (api) {
+      api.countInVolume = countIn ? 1 : 0;
+      forceUpdate();
+    }
+  }
+
   const setText = (text: string) => {
     const beat = selectedNoteController.getSelectedSlot()?.beat;
     if (!beat) {
@@ -474,7 +481,9 @@ export default function App() {
               <EditorPlayerControls
                 onSpeedChange={setSpeed}
                 onVolumeChange={setVolume}
-                playPause={() => playPause()}
+                playPause={playPause}
+                onCountInChange={setCountIn}
+                isCountIn={api?.countInVolume !== 0}
                 isPlaying={api?.playerState === 1}/>
             </div>
           </Body>

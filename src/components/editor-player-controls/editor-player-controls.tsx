@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import { PlayPauseGlyph } from '../editor-controls/icons/player-controls/play';
 import { VolumeControlComponent } from './volume-control';
 import { EditorPlayerSpeedComponent } from './editor-player-speed';
-import { styled } from '@mui/material';
+import { styled, Tooltip } from '@mui/material';
+import { CountInGlyph } from '../editor-controls/icons/player-controls/count-in';
 
 interface EditorPlayerControlsProps {
     playPause: () => void,
     isPlaying: boolean,
+    isCountIn: boolean,
+    onCountInChange: (countIn: boolean) => void,
     onVolumeChange: (volume: number) => void,
     onSpeedChange: (speed: number) => void,
 }
@@ -58,6 +61,7 @@ export function EditorPlayerControls(props: EditorPlayerControlsProps) {
                 <PlayPauseGlyph selected={props.isPlaying} onClick={props.playPause} disabled={false} />
             </EditorPlayerControlsMid>
             <EditorPlayerControlsRight>
+                <CountInGlyph selected={props.isCountIn} onClick={() => props.onCountInChange(!props.isCountIn)} disabled={false} />
                 <VolumeControlComponent volume={currentVolume} setVolume={setVolume} />
                 <EditorPlayerSpeedComponent speed={currentSpeed} onChangeSpeed={setSpeed} />
             </EditorPlayerControlsRight>
