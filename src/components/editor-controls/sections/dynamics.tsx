@@ -15,7 +15,7 @@ interface DynamicsSectionProps {
     setDynamics: (v: DynamicValue) => void;
 }
 
-export function DynamicsSection(props: DynamicsSectionProps) {
+export default function DynamicsSection(props: DynamicsSectionProps) {
   return (
     <>
       <PianoPianissimoGlyph

@@ -2,7 +2,7 @@ import React from 'react';
 import { Tooltip } from '@mui/material';
 import { DurationGlyphProps } from './duration';
 import { useGlyphColor } from '../glyphColor';
-import { baseSvgStyle } from '../glyphBaseSvgStyle';
+import baseSvgStyle from '../glyphBaseSvgStyle';
 import { genericDurationFontSize } from './generic-duration';
 
 export function SixtyFourGlyph(props: DurationGlyphProps) {

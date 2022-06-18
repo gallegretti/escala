@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { styled, Tooltip } from '@mui/material';
-import { PlayPauseGlyph } from '../editor-controls/icons/player-controls/play';
-import { VolumeControlComponent } from './volume-control';
-import { EditorPlayerSpeedComponent } from './editor-player-speed';
-import { CountInGlyph } from '../editor-controls/icons/player-controls/count-in';
+import { styled } from '@mui/material';
+import PlayPauseGlyph from '../editor-controls/icons/player-controls/play';
+import VolumeControlComponent from './volume-control';
+import EditorPlayerSpeedComponent from './editor-player-speed';
+import CountInGlyph from '../editor-controls/icons/player-controls/count-in';
 
 interface EditorPlayerControlsProps {
     playPause: () => void,
@@ -40,7 +40,7 @@ const EditorPlayerControlsRight = styled('div')({
   alignItems: 'center',
 });
 
-export function EditorPlayerControls(props: EditorPlayerControlsProps) {
+export default function EditorPlayerControls(props: EditorPlayerControlsProps) {
   const [currentVolume, setCurrentVolume] = useState(0.5);
   const [currentSpeed, setCurrentSpeed] = useState(1);
 
@@ -61,7 +61,11 @@ export function EditorPlayerControls(props: EditorPlayerControlsProps) {
         <PlayPauseGlyph selected={props.isPlaying} onClick={props.playPause} disabled={false} />
       </EditorPlayerControlsMid>
       <EditorPlayerControlsRight>
-        <CountInGlyph selected={props.isCountIn} onClick={() => props.onCountInChange(!props.isCountIn)} disabled={false} />
+        <CountInGlyph
+          selected={props.isCountIn}
+          onClick={() => props.onCountInChange(!props.isCountIn)}
+          disabled={false}
+        />
         <VolumeControlComponent volume={currentVolume} setVolume={setVolume} />
         <EditorPlayerSpeedComponent speed={currentSpeed} onChangeSpeed={setSpeed} />
       </EditorPlayerControlsRight>

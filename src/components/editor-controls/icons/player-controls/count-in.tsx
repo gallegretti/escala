@@ -1,6 +1,7 @@
+import React from 'react';
 import { Tooltip } from '@mui/material';
 import { DynamicGlyphProps } from '../dynamics/dynamic';
-import { baseSvgStyle } from '../glyphBaseSvgStyle';
+import baseSvgStyle from '../glyphBaseSvgStyle';
 import { useGlyphColor } from '../glyphColor';
 
 function CountInEnabledGlyph(props: DynamicGlyphProps) {
@@ -27,7 +28,7 @@ function CountInDisabledGlyph(props: DynamicGlyphProps) {
   );
 }
 
-export function CountInGlyph(props: DynamicGlyphProps) {
+export default function CountInGlyph(props: DynamicGlyphProps) {
   const Glyph = props.selected ? CountInEnabledGlyph : CountInDisabledGlyph;
   return (
     <Tooltip title="Count-in">

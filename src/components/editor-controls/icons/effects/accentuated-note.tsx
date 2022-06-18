@@ -2,9 +2,9 @@ import React from 'react';
 import { Tooltip } from '@mui/material';
 import { DynamicGlyphProps } from '../dynamics/dynamic';
 import { useGlyphColor } from '../glyphColor';
-import { baseSvgStyle } from '../glyphBaseSvgStyle';
+import baseSvgStyle from '../glyphBaseSvgStyle';
 
-export function AccentuatedNoteGlyph(props: DynamicGlyphProps) {
+export default function AccentuatedNoteGlyph(props: DynamicGlyphProps) {
   const color = useGlyphColor(props);
   return (
     <Tooltip title="Accentuated Note">

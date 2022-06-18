@@ -1,7 +1,7 @@
 import React from 'react';
 import { DynamicGlyphProps } from '../dynamics/dynamic';
 import { useGlyphColor } from '../glyphColor';
-import { baseSvgStyle } from '../glyphBaseSvgStyle';
+import baseSvgStyle from '../glyphBaseSvgStyle';
 
 function Stop(props: DynamicGlyphProps) {
   const color = useGlyphColor({ ...props, selected: false });
@@ -29,10 +29,9 @@ function Play(props: DynamicGlyphProps) {
   );
 }
 
-export function PlayPauseGlyph(props: DynamicGlyphProps) {
-  return (
-    <>
-      { !props.selected ? Play(props) : Stop(props) }
-    </>
-  );
+export default function PlayPauseGlyph(props: DynamicGlyphProps) {
+  if (!props.selected) {
+    return Play(props);
+  }
+  return Stop(props);
 }

@@ -7,7 +7,7 @@ interface EditorPlayerSpeedProps {
     speed: number
 }
 
-export function EditorPlayerSpeedComponent(props: EditorPlayerSpeedProps) {
+export default function EditorPlayerSpeedComponent(props: EditorPlayerSpeedProps) {
   return (
     <Select
       label="Speed"

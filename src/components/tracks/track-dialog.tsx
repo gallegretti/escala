@@ -9,7 +9,7 @@ interface TrackDialogProps {
   onSave: (params: { name: string }) => void;
 }
 
-export function TrackDialog(props: TrackDialogProps) {
+export default function TrackDialog(props: TrackDialogProps) {
   const [trackName, setTrackName] = useState('');
 
   const onTrackNameChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

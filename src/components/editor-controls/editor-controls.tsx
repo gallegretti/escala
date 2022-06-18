@@ -6,71 +6,71 @@ import DialogSetText from './dialog-set-text/dialog-set-text';
 import ScoreInfoComponent from './score-info/score-info';
 import { ScoreInfo } from '../../editor/editor-actions/actions/set-score-info/score-info';
 import { BendType } from '../../editor/bend-type';
-import { DarkModeGlyph } from './icons/settings/dark-mode';
+import DarkModeGlyph from './icons/settings/dark-mode';
 import { ColorModeContext } from '../../editor/color-mode-context';
-import { DynamicsSection } from './sections/dynamics';
-import { DurationSetion } from './sections/duration';
-import { BeatSection } from './sections/beat';
-import { EffectsSection } from './sections/effects';
-import { DocumentSection } from './sections/document';
+import DynamicsSection from './sections/dynamics';
+import DurationSetion from './sections/duration';
+import BeatSection from './sections/beat';
+import EffectsSection from './sections/effects';
+import DocumentSection from './sections/document';
 
 import {
   Duration, DynamicValue, HarmonicType, PickStroke, Score,
 } from '../../alphatab-types/alphatab-types';
-import { useDialog } from './use-dialog';
+import useDialog from './use-dialog';
 import DialogSetTempo from './dialog-set-tempo/dialog-set-tempo';
 
 export interface BendState {
-    preBend: BendType;
-    bend: BendType;
-    release: BendType
+  preBend: BendType;
+  bend: BendType;
+  release: BendType
 }
 
 interface EditorControlsProps {
-    // Undo/Redo
-    canUndo: boolean,
-    canRedo: boolean,
-    undo: () => void,
-    redo: () => void,
-    // Setters
-    setDuration: (duration: Duration) => void,
-    setDynamics: (dynamics: DynamicValue) => void,
-    setText: (newText: string) => void,
-    setScoreInfo: (scoreInfo: ScoreInfo) => void,
-    // Cursor state
-    hasSelectedNote: boolean,
-    hasSelectedBeat: boolean,
-    // Selection state
-    currentDuration: Duration | null,
-    currentDynamics: DynamicValue | null,
-    currentText: string | null,
-    isPalmMute: boolean | null,
-    isGhost: boolean | null,
-    isDeadNote: boolean | null,
-    isLeftHandTapNote: boolean | null,
-    isVibrato: boolean | null,
-    currentAccentuation: number | null,
-    currentPickStroke: PickStroke | null,
-    currentHarmonicType: HarmonicType | null,
-    currentBend: BendState | null,
-    score: Score | null,
-    // Set note modifiers
-    togglePalmMute: () => void,
-    setGhostNote: (value: boolean) => void,
-    setAccentuationNote: (value: number) => void,
-    setDeadNote: (value: boolean) => void,
-    setPickStroke: (value: number) => void,
-    setHarmonicType: (value: number) => void,
-    setBend: (bend: BendState) => void,
-    setTap: (value: boolean) => void,
-    setVibrato: (value: boolean) => void,
-    setTempo: (value: number) => void,
-    // Others
-    print: () => void,
-    exportGuitarPro: () => void,
-    exportMidi: () => void,
-    open: (file: File) => void,
-    newFile: () => void,
+  // Undo/Redo
+  canUndo: boolean,
+  canRedo: boolean,
+  undo: () => void,
+  redo: () => void,
+  // Setters
+  setDuration: (duration: Duration) => void,
+  setDynamics: (dynamics: DynamicValue) => void,
+  setText: (newText: string) => void,
+  setScoreInfo: (scoreInfo: ScoreInfo) => void,
+  // Cursor state
+  hasSelectedNote: boolean,
+  hasSelectedBeat: boolean,
+  // Selection state
+  currentDuration: Duration | null,
+  currentDynamics: DynamicValue | null,
+  currentText: string | null,
+  isPalmMute: boolean | null,
+  isGhost: boolean | null,
+  isDeadNote: boolean | null,
+  isLeftHandTapNote: boolean | null,
+  isVibrato: boolean | null,
+  currentAccentuation: number | null,
+  currentPickStroke: PickStroke | null,
+  currentHarmonicType: HarmonicType | null,
+  currentBend: BendState | null,
+  score: Score | null,
+  // Set note modifiers
+  togglePalmMute: () => void,
+  setGhostNote: (value: boolean) => void,
+  setAccentuationNote: (value: number) => void,
+  setDeadNote: (value: boolean) => void,
+  setPickStroke: (value: number) => void,
+  setHarmonicType: (value: number) => void,
+  setBend: (bend: BendState) => void,
+  setTap: (value: boolean) => void,
+  setVibrato: (value: boolean) => void,
+  setTempo: (value: number) => void,
+  // Others
+  print: () => void,
+  exportGuitarPro: () => void,
+  exportMidi: () => void,
+  open: (file: File) => void,
+  newFile: () => void,
 }
 
 export default function EditorControls(props: EditorControlsProps) {

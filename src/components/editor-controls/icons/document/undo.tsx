@@ -2,7 +2,7 @@ import React from 'react';
 import { Tooltip } from '@mui/material';
 import { useGlyphColor } from '../glyphColor';
 import { BaseGlyphProps } from '../glyphBaseProps';
-import { baseSvgStyle } from '../glyphBaseSvgStyle';
+import baseSvgStyle from '../glyphBaseSvgStyle';
 
 export function UndoGlyph(props: BaseGlyphProps) {
   const color = useGlyphColor(props);

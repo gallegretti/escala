@@ -33,7 +33,7 @@ const VolumeControlsDiv = styled('div')(() => ({
   gap: '20px',
 }));
 
-export function VolumeControlComponent(props: VolumeControlProps) {
+export default function VolumeControlComponent(props: VolumeControlProps) {
   const [previousVolume, setPreviousVolume] = useState(0.5);
   // const theme = useTheme();
 

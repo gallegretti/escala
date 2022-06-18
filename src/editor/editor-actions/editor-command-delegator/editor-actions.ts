@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 import { EditorActionEvent, EditorActionResult } from '../editor-action-event';
 import actionsMapping from './editor-actions-mapping';
 

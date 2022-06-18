@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip, useTheme } from '@mui/material';
 import { DynamicGlyphProps } from '../dynamics/dynamic';
-import { baseSvgStyle } from '../glyphBaseSvgStyle';
+import baseSvgStyle from '../glyphBaseSvgStyle';
 
 function Light(props: DynamicGlyphProps) {
   // https://fonts.google.com/icons?selected=Material%20Icons%20Outlined%3Alight_mode%3A
@@ -23,7 +23,7 @@ function Dark(props: DynamicGlyphProps) {
   );
 }
 
-export function DarkModeGlyph(props: DynamicGlyphProps) {
+export default function DarkModeGlyph(props: DynamicGlyphProps) {
   const theme = useTheme();
   return (
     <Tooltip title="Toggle dark mode">

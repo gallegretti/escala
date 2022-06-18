@@ -3,7 +3,7 @@ import { Tooltip } from '@mui/material';
 import { DurationGlyphProps } from './duration';
 import { useGlyphColor } from '../glyphColor';
 import { genericDurationFontSize } from './generic-duration';
-import { baseSvgStyle } from '../glyphBaseSvgStyle';
+import baseSvgStyle from '../glyphBaseSvgStyle';
 
 export function EighthGlyph(props: DurationGlyphProps) {
   const color = useGlyphColor(props);

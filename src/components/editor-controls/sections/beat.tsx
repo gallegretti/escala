@@ -10,7 +10,7 @@ interface BeatSectionProps {
     hasSelectedBeat: boolean, setText: () => void
 }
 
-export function BeatSection(props: BeatSectionProps) {
+export default function BeatSection(props: BeatSectionProps) {
   return (
     <>
       <TextGlyph

@@ -2,6 +2,7 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
+    jest: true,
   },
   extends: [
     'plugin:react/recommended',
@@ -24,5 +25,6 @@ module.exports = {
     'import/extensions': 'off',
     'react/jsx-filename-extension': [1, { extensions: ['.tsx'] }],
     'react/destructuring-assignment': 'off',
+    'import/no-extraneous-dependencies': ['error', { devDependencies: ['**/*.test.ts'] }],
   },
 };

@@ -3,7 +3,7 @@ import {
   List, ListItem, ListItemButton, ListItemText, styled,
 } from '@mui/material';
 import { Track } from '../../alphatab-types/alphatab-types';
-import { baseSvgStyle } from '../editor-controls/icons/glyphBaseSvgStyle';
+import baseSvgStyle from '../editor-controls/icons/glyphBaseSvgStyle';
 import { useGlyphColor } from '../editor-controls/icons/glyphColor';
 
 interface EditorTrackSelectorProps {
@@ -17,7 +17,7 @@ const ListItemStyled = styled(ListItemText)(({ theme }) => ({
   color: theme.palette.mode === 'dark' ? 'white' : 'black',
 }));
 
-export function EditorTrackSelector(props: EditorTrackSelectorProps) {
+export default function EditorTrackSelector(props: EditorTrackSelectorProps) {
   return (
     <List style={{ width: '100%' }} disablePadding>
       {props.tracks.map((track, i) => (

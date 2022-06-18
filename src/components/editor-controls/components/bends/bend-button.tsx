@@ -1,7 +1,7 @@
 import React from 'react';
-import { BendGlyph } from '../../icons/effects/bend/bend';
-import { FullBendGlyph } from '../../icons/effects/bend/full-bend';
-import { HalfBendGlyph } from '../../icons/effects/bend/half-bend';
+import BendGlyph from '../../icons/effects/bend/bend';
+import FullBendGlyph from '../../icons/effects/bend/full-bend';
+import HalfBendGlyph from '../../icons/effects/bend/half-bend';
 import { BendType } from '../../../../editor/bend-type';
 import GenericBendButton from './generic-bend-button';
 

@@ -1,11 +1,11 @@
 import React from 'react';
-import { NaturalHarmonicGlyph } from '../icons/effects/harmonic/natural-harmonic';
-import { ArtificialHarmonicGlyph } from '../icons/effects/harmonic/artificial-harmonic';
-import { PinchHarmonicGlyph } from '../icons/effects/harmonic/pinch-harmonic';
-import { TapHarmonicGlyph } from '../icons/effects/harmonic/tap-harmonic';
-import { SemiHarmonicGlyph } from '../icons/effects/harmonic/semi-harmonic';
-import { FeedbackHarmonicGlyph } from '../icons/effects/harmonic/feedback-harmonic';
-import { GenericHarmonicGlyph } from '../icons/effects/harmonic/generic-harmonic';
+import NaturalHarmonicGlyph from '../icons/effects/harmonic/natural-harmonic';
+import ArtificialHarmonicGlyph from '../icons/effects/harmonic/artificial-harmonic';
+import PinchHarmonicGlyph from '../icons/effects/harmonic/pinch-harmonic';
+import TapHarmonicGlyph from '../icons/effects/harmonic/tap-harmonic';
+import SemiHarmonicGlyph from '../icons/effects/harmonic/semi-harmonic';
+import FeedbackHarmonicGlyph from '../icons/effects/harmonic/feedback-harmonic';
+import GenericHarmonicGlyph from '../icons/effects/harmonic/generic-harmonic';
 import { StyledPopper } from './styled-popper';
 import { useAnchorElem } from './use-anchor-element';
 

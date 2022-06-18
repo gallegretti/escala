@@ -28,7 +28,7 @@ interface DocumentSectionProps {
     openTempoDialog: () => void;
 }
 
-export function DocumentSection(props: DocumentSectionProps) {
+export default function DocumentSection(props: DocumentSectionProps) {
   const [anchorElem, setAnchorElement] = useAnchorElem();
 
   const onClick = (e: any) => {

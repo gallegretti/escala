@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { Divider } from '@mui/material';
-import { PalmMuteGlyph } from '../icons/effects/palm-mute';
-import { GhostNoteGlyph } from '../icons/effects/ghost-note';
-import { AccentuatedNoteGlyph } from '../icons/effects/accentuated-note';
-import { HeavyAccentuatedNoteGlyph } from '../icons/effects/heavy-accentuated-note';
-import { DeadNoteGlyph } from '../icons/effects/dead-note';
+import PalmMuteGlyph from '../icons/effects/palm-mute';
+import GhostNoteGlyph from '../icons/effects/ghost-note';
+import AccentuatedNoteGlyph from '../icons/effects/accentuated-note';
+import HeavyAccentuatedNoteGlyph from '../icons/effects/heavy-accentuated-note';
+import DeadNoteGlyph from '../icons/effects/dead-note';
 import HarmonicButton from '../components/harmonic-button';
 import PreBendButton from '../components/bends/pre-bend-button';
 import BendButton from '../components/bends/bend-button';
 import ReleaseBendButton from '../components/bends/release-button';
 import { BendState } from '../editor-controls';
 import { BendType } from '../../../editor/bend-type';
-import { TapNoteGlyph } from '../icons/effects/tap-note';
-import { VibratoNoteGlyph } from '../icons/effects/vibratro';
+import TapNoteGlyph from '../icons/effects/tap-note';
+import VibratoNoteGlyph from '../icons/effects/vibratro';
 
 interface EffectsSectionProps {
     hasSelectedNote: boolean;
@@ -34,7 +34,7 @@ interface EffectsSectionProps {
     setBend: (bend: BendState) => void;
 }
 
-export function EffectsSection(props: EffectsSectionProps) {
+export default function EffectsSection(props: EffectsSectionProps) {
   const [openPopper, setOpenPopper] = useState<string | null>(null);
   const setBend = (newBend: keyof BendState, bendType: BendType) => {
     if (props.currentBend === null) {

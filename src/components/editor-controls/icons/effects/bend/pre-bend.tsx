@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip } from '@mui/material';
 import { useGlyphColor } from '../../glyphColor';
-import { baseSvgStyle } from '../../glyphBaseSvgStyle';
+import baseSvgStyle from '../../glyphBaseSvgStyle';
 import { BaseGlyphProps } from '../../glyphBaseProps';
 
 export default function PreBendGlyph(props: BaseGlyphProps) {

@@ -2,7 +2,7 @@ import React from 'react';
 import { Tooltip } from '@mui/material';
 import { DynamicGlyphProps, baseTextStyle } from './dynamic';
 import { useGlyphColor } from '../glyphColor';
-import { baseSvgStyle } from '../glyphBaseSvgStyle';
+import baseSvgStyle from '../glyphBaseSvgStyle';
 
 export function GenericDynamicGlyph(props: DynamicGlyphProps) {
   const color = useGlyphColor(props);

@@ -1,11 +1,11 @@
 import React from 'react';
 import { Tooltip } from '@mui/material';
 import { useGlyphColor } from '../../glyphColor';
-import { baseSvgStyle } from '../../glyphBaseSvgStyle';
+import baseSvgStyle from '../../glyphBaseSvgStyle';
 import { BaseGlyphProps } from '../../glyphBaseProps';
-import { bendTextStyle } from './bend-common';
+import bendTextStyle from './bend-common';
 
-export function FullBendGlyph(props: BaseGlyphProps) {
+export default function FullBendGlyph(props: BaseGlyphProps) {
   const color = useGlyphColor(props);
   return (
     <Tooltip title={props.hideTooltip ? '' : 'Full Bend'}>

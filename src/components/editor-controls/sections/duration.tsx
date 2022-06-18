@@ -14,7 +14,7 @@ interface DurationSectionProps {
     setDuration: (duration: Duration) => void;
 }
 
-export function DurationSetion(props: DurationSectionProps) {
+export default function DurationSetion(props: DurationSectionProps) {
   return (
     <>
       <WholeGlyph

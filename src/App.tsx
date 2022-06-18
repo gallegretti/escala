@@ -10,7 +10,7 @@ import EditorActions from './editor/editor-actions/editor-command-delegator/edit
 import { EditorActionEvent, EditorActionResult } from './editor/editor-actions/editor-action-event';
 import { EditorControls, BendState } from './components/editor-controls/editor-controls';
 import { EditorCursor } from './components/editor-cursor/editor-cursor';
-import { EditorPlayerControls } from './components/editor-player-controls/editor-player-controls';
+import EditorPlayerControls from './components/editor-player-controls/editor-player-controls';
 import AlphaTabViewport from './components/alphatab-viewport/alphatab-viewport';
 import { ScoreInfo } from './editor/editor-actions/actions/set-score-info/score-info';
 import { getBendState } from './editor/editor-actions/actions/set-bend/set-bend-lookup-table';
@@ -74,7 +74,10 @@ export default function App() {
   const onEditorUIEvent = (UIeventData: EditorUIEvent) => {
     console.log(UIeventData);
     if (UIeventData.type === 'string-mouse-down') {
-      selectedNoteController.setSelectedSlot({ string: UIeventData.data.stringNumber, beat: UIeventData.data.beat });
+      selectedNoteController.setSelectedSlot({
+        string: UIeventData.data.stringNumber,
+        beat: UIeventData.data.beat,
+      });
     }
     if (UIeventData.type === 'note-mouse-down') {
       selectedNoteController.toggleNoteSelection(UIeventData.data.note);
