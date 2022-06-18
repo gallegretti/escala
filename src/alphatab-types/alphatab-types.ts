@@ -1,8 +1,11 @@
+/* eslint-disable max-len */
+/* eslint-disable max-classes-per-file */
 import { BendState } from '../components/editor-controls/editor-controls';
 
 class Note extends alphaTab.model.Note {
   /**
-   * Alphatab stores individual bendpoints. To make things easier we'll also store the overall bend state.
+   * Alphatab stores individual bendpoints.
+   * To make things easier we'll also store the overall bend state.
    */
   bendState?: BendState;
 }

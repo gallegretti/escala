@@ -1,6 +1,8 @@
+/* eslint-disable max-len */
 import React, { useState } from 'react';
 import { Slider, styled } from '@mui/material';
 import { useGlyphColor } from '../editor-controls/icons/glyphColor';
+import VolumeGlyph from '../editor-controls/icons/player-controls/volume';
 
 interface VolumeControlProps {
     volume: number,
@@ -31,11 +33,11 @@ const VolumeControlsDiv = styled('div')(() => ({
   display: 'flex',
   width: '140px',
   gap: '20px',
+  alignItems: 'center',
 }));
 
 export default function VolumeControlComponent(props: VolumeControlProps) {
   const [previousVolume, setPreviousVolume] = useState(0.5);
-  // const theme = useTheme();
 
   const volumeOff = () => {
     props.setVolume(0);
@@ -51,11 +53,21 @@ export default function VolumeControlComponent(props: VolumeControlProps) {
     props.setVolume(volume);
   };
 
+  const toggleVolume = () => {
+    if (props.volume !== 0) {
+      volumeOff();
+    } else {
+      volumeOn();
+    }
+  };
+
   return (
     <VolumeControlsDiv>
-      {props.volume !== 0
-        ? <div onClick={volumeOff}><VolumeOn /></div>
-        : <div onClick={volumeOn}><VolumeOff /></div>}
+      <VolumeGlyph
+        selected={props.volume !== 0}
+        disabled={false}
+        onClick={toggleVolume}
+      />
       <Slider
         size="small"
         value={props.volume}

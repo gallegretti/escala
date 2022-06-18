@@ -8,6 +8,10 @@ module.exports = {
     'plugin:react/recommended',
     'airbnb',
   ],
+  globals: {
+    alphaTab: 'writable',
+    $: 'readonly',
+  },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
@@ -24,7 +28,10 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/extensions': 'off',
     'react/jsx-filename-extension': [1, { extensions: ['.tsx'] }],
+    'max-len': ['error', { code: 120 }],
     'react/destructuring-assignment': 'off',
+    'class-methods-use-this': 'off',
+    'no-param-reassign': 'off',
     'import/no-extraneous-dependencies': ['error', { devDependencies: ['**/*.test.ts'] }],
   },
 };
