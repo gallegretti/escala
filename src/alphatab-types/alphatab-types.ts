@@ -11,15 +11,15 @@ class AlphaTabApi extends alphaTab.AlphaTabApi {
 }
 
 class Beat extends alphaTab.model.Beat {}
-class Voice extends alphaTab.model.Voice {};
-class BendPoint extends alphaTab.model.BendPoint {};
-class Score extends alphaTab.model.Score {};
-class Track extends alphaTab.model.Track {};
-class Bounds extends alphaTab.rendering.Bounds {};
-class RenderFinishedEventArgs extends alphaTab.rendering.RenderFinishedEventArgs {};
-class PlayerStateChangedEventArgs extends alphaTab.synth.PlayerStateChangedEventArgs {};
-class NoteBounds extends alphaTab.rendering.NoteBounds {};
-class ScoreRenderer extends alphaTab.rendering.ScoreRenderer {};
+class Voice extends alphaTab.model.Voice {}
+class BendPoint extends alphaTab.model.BendPoint {}
+class Score extends alphaTab.model.Score {}
+class Track extends alphaTab.model.Track {}
+class Bounds extends alphaTab.rendering.Bounds {}
+class RenderFinishedEventArgs extends alphaTab.rendering.RenderFinishedEventArgs {}
+class PlayerStateChangedEventArgs extends alphaTab.synth.PlayerStateChangedEventArgs {}
+class NoteBounds extends alphaTab.rendering.NoteBounds {}
+class ScoreRenderer extends alphaTab.rendering.ScoreRenderer {}
 
 // Horrible hack so the enum type is corrent
 type Duration = (typeof alphaTab.model.Duration.Whole | typeof alphaTab.model.Duration.Half | typeof alphaTab.model.Duration.Quarter | typeof alphaTab.model.Duration.Eighth | typeof alphaTab.model.Duration.Sixteenth | typeof alphaTab.model.Duration.ThirtySecond | typeof alphaTab.model.Duration.SixtyFourth | typeof alphaTab.model.Duration.OneHundredTwentyEighth | typeof alphaTab.model.Duration.TwoHundredFiftySixth | typeof alphaTab.model.Duration.DoubleWhole | typeof alphaTab.model.Duration.QuadrupleWhole);
@@ -29,7 +29,6 @@ type HarmonicType = (typeof alphaTab.model.HarmonicType.None | typeof alphaTab.m
 type DynamicValue = (typeof alphaTab.model.DynamicValue.PPP | typeof alphaTab.model.DynamicValue.PP | typeof alphaTab.model.DynamicValue.P | typeof alphaTab.model.DynamicValue.MP | typeof alphaTab.model.DynamicValue.MF | typeof alphaTab.model.DynamicValue.F | typeof alphaTab.model.DynamicValue.FF | typeof alphaTab.model.DynamicValue.FFF);
 
 type BendType = typeof alphaTab.model.BendType;
-
 
 type Staff = typeof alphaTab.model.Staff;
 
@@ -53,4 +52,4 @@ export type {
   ScoreRenderer,
   RenderFinishedEventArgs,
   PlayerStateChangedEventArgs,
-}
+};

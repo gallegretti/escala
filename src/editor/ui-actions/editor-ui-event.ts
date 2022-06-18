@@ -63,7 +63,7 @@ interface EditorUIEventRedoAction {
     data: {}
 }
 
-export type EditorUIEvent = 
+export type EditorUIEvent =
     EditorUIEventNoteMouseDown |
     EditorUIEventStringDown |
     EditorUIEventDeleteSelectedNote |

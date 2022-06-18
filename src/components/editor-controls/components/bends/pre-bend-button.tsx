@@ -14,16 +14,16 @@ interface PreBendButtonProps {
 }
 
 export default function PreBendButton(props: PreBendButtonProps) {
-    return (
-        <GenericBendButton
-            currentBendType={props.preBend}
-            setPopperOpen={props.setPopperOpen}
-            default={PreBendGlyph}
-            half={HalfPreBendGlyph}
-            full={FullPreBendGlyph}
-            disabled={props.disabled}
-            isPopperOpen={props.isPopperOpen}
-            setCurrentBendType={props.setPreBend}
-        />
-    );
+  return (
+    <GenericBendButton
+      currentBendType={props.preBend}
+      setPopperOpen={props.setPopperOpen}
+      default={PreBendGlyph}
+      half={HalfPreBendGlyph}
+      full={FullPreBendGlyph}
+      disabled={props.disabled}
+      isPopperOpen={props.isPopperOpen}
+      setCurrentBendType={props.setPreBend}
+    />
+  );
 }

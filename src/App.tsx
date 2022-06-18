@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import './App.css';
+import {
+  createTheme, ThemeProvider, PaletteMode, styled,
+} from '@mui/material';
 import SelectedNoteController from './editor/selected-note-controller';
 import EventEmitter from './editor/ui-actions/event-emitter';
 import { EditorUIEvent } from './editor/ui-actions/editor-ui-event';
@@ -11,37 +14,47 @@ import { EditorPlayerControls } from './components/editor-player-controls/editor
 import AlphaTabViewport from './components/alphatab-viewport/alphatab-viewport';
 import { ScoreInfo } from './editor/editor-actions/actions/set-score-info/score-info';
 import { getBendState } from './editor/editor-actions/actions/set-bend/set-bend-lookup-table';
-import { createTheme, ThemeProvider, PaletteMode, styled } from '@mui/material';
 import { ColorModeContext } from './editor/color-mode-context';
 import { EditorLeftMenu } from './components/editor-left-menu';
-import { AccentuationType, AlphaTabApi, Duration, DynamicValue, HarmonicType, PickStroke, Score, ScoreRenderer, Track } from './alphatab-types/alphatab-types';
+import {
+  AccentuationType,
+  AlphaTabApi,
+  Duration,
+  DynamicValue,
+  HarmonicType,
+  PickStroke,
+  Score,
+  ScoreRenderer,
+  Track,
+} from './alphatab-types/alphatab-types';
 import { DialogContext } from './editor/dialog-context';
 
-function useForceUpdate(){
+function useForceUpdate() {
   const [_, setValue] = useState(0); // integer state
-  return () => setValue(value => value + 1); // update the state to force render
+  return () => setValue((value) => value + 1); // update the state to force render
 }
 
-let editorActions: EditorActions = new EditorActions();
+const editorActions: EditorActions = new EditorActions();
 let selectedNoteController!: SelectedNoteController;
 let api!: AlphaTabApi;
 
 const Body = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[900] : 'inherit',
-  height: '100vh'
+  height: '100vh',
 }));
 
 export default function App() {
-
   const forceUpdate = useForceUpdate();
 
   const [selectedTrackIndex, setSelectedTrackIndex] = useState(0);
 
   const setupWithApi = (newApi: AlphaTabApi) => {
+    // newApi.metronomeVolume = 1;
+    // newApi.countInVolume = 1;
     api = newApi;
     new EventEmitter(api.renderer as ScoreRenderer, onEditorUIEvent);
     selectedNoteController = new SelectedNoteController(api.renderer as ScoreRenderer);
-  }
+  };
 
   const handlerActionResult = (result: EditorActionResult) => {
     if (result.requiresRerender) {
@@ -51,12 +64,12 @@ export default function App() {
       // loadMidiForScore is a private function.
       (api as any).loadMidiForScore();
     }
-  }
+  };
 
   const dispatchAction = (action: EditorActionEvent) => {
     const result = editorActions.doAction(action);
     handlerActionResult(result);
-  }
+  };
 
   const onEditorUIEvent = (UIeventData: EditorUIEvent) => {
     console.log(UIeventData);
@@ -106,9 +119,9 @@ export default function App() {
     if (UIeventData.type === 'redo-action') {
       redo();
     }
-    
+
     forceUpdate();
-  }
+  };
 
   const onAlphatabRenderFinished = () => {
     // TODO: It looks like alphaTab will emit the render finished event before it finishes updating the boundsLookup.
@@ -116,19 +129,19 @@ export default function App() {
     setTimeout(() => {
       forceUpdate();
     }, 50);
-  }
+  };
 
   const undo = () => {
     const result = editorActions.undoAction();
     handlerActionResult(result);
     forceUpdate();
-  }
+  };
 
   const redo = () => {
     const result = editorActions.redoAction();
     handlerActionResult(result);
     forceUpdate();
-  }
+  };
 
   const togglePalmMute = () => {
     const selectedNote = selectedNoteController.getSelectedNote();
@@ -137,19 +150,19 @@ export default function App() {
     }
     dispatchAction({ type: 'set-palm-mute', data: { note: selectedNote, isPalmMute: !selectedNote.isPalmMute } });
     forceUpdate();
-  }
+  };
 
   const playPause = () => {
     api.playPause();
     forceUpdate();
-  }
+  };
 
   const setCountIn = (countIn: boolean) => {
     if (api) {
       api.countInVolume = countIn ? 1 : 0;
       forceUpdate();
     }
-  }
+  };
 
   const setText = (text: string) => {
     const beat = selectedNoteController.getSelectedSlot()?.beat;
@@ -157,7 +170,7 @@ export default function App() {
       return;
     }
     dispatchAction({ type: 'set-text', data: { text, beat } });
-  }
+  };
 
   const setBend = (bend: BendState) => {
     const selectedNote = selectedNoteController.getSelectedNote();
@@ -165,13 +178,13 @@ export default function App() {
       return;
     }
     dispatchAction({ type: 'set-bend', data: { ...bend, note: selectedNote } });
-  }
+  };
 
   const newTrack = (params: { name: string }) => {
     if (!api.score) {
       return;
     }
-    dispatchAction({ type: 'add-track', data: { score: api.score, track: { name: params.name } }});
+    dispatchAction({ type: 'add-track', data: { score: api.score, track: { name: params.name } } });
   };
 
   const currentSelectedBend = (): BendState | null => {
@@ -180,11 +193,9 @@ export default function App() {
       return null;
     }
     return getBendState(selectedNote);
-  }
+  };
 
-  const currentFret = (): number | null => {
-    return selectedNoteController?.getSelectedNote()?.fret ?? null;
-  }
+  const currentFret = (): number | null => selectedNoteController?.getSelectedNote()?.fret ?? null;
 
   const setFret = (fret: number) => {
     const selectedSlot = selectedNoteController.getSelectedSlot();
@@ -200,74 +211,48 @@ export default function App() {
       dispatchAction({ type: 'add-note', data: { beat: selectedSlot.beat, note } });
       selectedNoteController.updateCurrentSelection();
     }
-  }
+  };
 
-  const currentSelectedBeatText = (): string | null => {
-    return selectedNoteController?.getSelectedSlot()?.beat?.text ?? null;
-  }
+  const currentSelectedBeatText = (): string | null => selectedNoteController?.getSelectedSlot()?.beat?.text ?? null;
 
-  const isCurrentSelectedNotePalmMute = (): boolean => {
-    return selectedNoteController?.getSelectedSlot()?.note?.isPalmMute ?? false;
-  }
+  const isCurrentSelectedNotePalmMute = (): boolean => selectedNoteController?.getSelectedSlot()?.note?.isPalmMute ?? false;
 
-  const isLeftHandTapNote = (): boolean => {
-    return selectedNoteController?.getSelectedNote()?.isLeftHandTapped ?? false;
-  }
+  const isLeftHandTapNote = (): boolean => selectedNoteController?.getSelectedNote()?.isLeftHandTapped ?? false;
 
-  const isVibrato = (): boolean => {
-    return selectedNoteController?.getSelectedNote()?.vibrato !== 0 ?? false;
-  }
+  const isVibrato = (): boolean => selectedNoteController?.getSelectedNote()?.vibrato !== 0 ?? false;
 
-  const hasSelectedNote = (): boolean => {
-    return !!selectedNoteController?.getSelectedSlot()?.note;
-  }
+  const hasSelectedNote = (): boolean => !!selectedNoteController?.getSelectedSlot()?.note;
 
-  const hasSelectedBeat = (): boolean => {
-    return !!selectedNoteController?.getSelectedSlot()?.beat;
-  }
+  const hasSelectedBeat = (): boolean => !!selectedNoteController?.getSelectedSlot()?.beat;
 
-  const currentSelectedBeatDuration = (): Duration | null => {
-    return selectedNoteController?.getSelectedSlot()?.beat?.duration ?? null;
-  }
+  const currentSelectedBeatDuration = (): Duration | null => selectedNoteController?.getSelectedSlot()?.beat?.duration ?? null;
 
-  const currentSelectedBeatDynamics = (): DynamicValue | null => {
-    return selectedNoteController?.getSelectedSlot()?.beat?.dynamics ?? null;
-  }
+  const currentSelectedBeatDynamics = (): DynamicValue | null => selectedNoteController?.getSelectedSlot()?.beat?.dynamics ?? null;
 
-  const currentSelectedBeatPickStroke = (): PickStroke | null => {
-    return selectedNoteController?.getSelectedSlot()?.beat?.pickStroke ?? null;
-  }
+  const currentSelectedBeatPickStroke = (): PickStroke | null => selectedNoteController?.getSelectedSlot()?.beat?.pickStroke ?? null;
 
-  const currentSelectedNoteIsGhost = (): boolean | null => {
-    return selectedNoteController?.getSelectedNote()?.isGhost ?? null;
-  }
+  const currentSelectedNoteIsGhost = (): boolean | null => selectedNoteController?.getSelectedNote()?.isGhost ?? null;
 
-  const currentSelectedNoteAccentuation = (): AccentuationType | null => {
-    return selectedNoteController?.getSelectedNote()?.accentuated ?? null;
-  }
+  const currentSelectedNoteAccentuation = (): AccentuationType | null => selectedNoteController?.getSelectedNote()?.accentuated ?? null;
 
-  const currentSelectedNoteHarmonicType = (): HarmonicType | null => {
-    return selectedNoteController?.getSelectedNote()?.harmonicType ?? null;
-  }
+  const currentSelectedNoteHarmonicType = (): HarmonicType | null => selectedNoteController?.getSelectedNote()?.harmonicType ?? null;
 
-  const currentSelectedNoteDead = (): boolean | null => {
-    return selectedNoteController?.getSelectedNote()?.isDead ?? null;
-  }
+  const currentSelectedNoteDead = (): boolean | null => selectedNoteController?.getSelectedNote()?.isDead ?? null;
 
   const setDynamics = (dynamics: DynamicValue): void => {
     const beat = selectedNoteController?.getSelectedSlot()?.beat;
     if (!beat) {
       return;
     }
-    dispatchAction({ type: 'set-dynamics', data: { beat, dynamics }});
-  }
+    dispatchAction({ type: 'set-dynamics', data: { beat, dynamics } });
+  };
 
   const setTempo = (tempo: number): void => {
     if (!api.score) {
       return;
     }
-    dispatchAction({ type: 'set-tempo', data: { tempo, score: api.score }})
-  }
+    dispatchAction({ type: 'set-tempo', data: { tempo, score: api.score } });
+  };
 
   const setGhostNote = (isGhost: boolean): void => {
     const note = selectedNoteController?.getSelectedNote();
@@ -275,7 +260,7 @@ export default function App() {
       return;
     }
     dispatchAction({ type: 'set-ghost-note', data: { note, isGhost } });
-  }
+  };
 
   const setAccentuationNote = (accentuation: AccentuationType): void => {
     const note = selectedNoteController?.getSelectedNote();
@@ -283,15 +268,15 @@ export default function App() {
       return;
     }
     dispatchAction({ type: 'set-accentuation', data: { note, accentuation } });
-  }
+  };
 
   const setPickStroke = (pickStroke: number): void => {
     const beat = selectedNoteController?.getSelectedSlot()?.beat;
     if (!beat) {
       return;
     }
-    dispatchAction({ type: 'set-pick-stroke', data: { beat, pickStroke }});
-  }
+    dispatchAction({ type: 'set-pick-stroke', data: { beat, pickStroke } });
+  };
 
   const setHarmonicType = (harmonicType: HarmonicType): void => {
     const note = selectedNoteController?.getSelectedNote();
@@ -299,23 +284,21 @@ export default function App() {
       return;
     }
     dispatchAction({ type: 'set-harmonic', data: { note, harmonic: harmonicType } });
-  }
+  };
 
   const print = () => {
-    api.print("", null);
-  }
+    api.print('', null);
+  };
 
   const setScoreInfo = (scoreInfo: ScoreInfo) => {
-    const score = api.score;
+    const { score } = api;
     if (!score) {
       return;
     }
-    dispatchAction({ type: 'set-score-info', data: { score, scoreInfo } })
-  }
+    dispatchAction({ type: 'set-score-info', data: { score, scoreInfo } });
+  };
 
-  const score = (): Score | null => {
-    return api?.score;
-  }
+  const score = (): Score | null => api?.score;
 
   const setDuration = (duration: Duration) => {
     const beat = selectedNoteController.getSelectedSlot()?.beat;
@@ -323,15 +306,15 @@ export default function App() {
       return;
     }
     dispatchAction({ type: 'set-duration', data: { beat, duration } });
-  }
+  };
 
   const setVolume = (volume: number) => {
     api.masterVolume = volume;
-  }
+  };
 
   const setSpeed = (speed: number) => {
     api.playbackSpeed = speed;
-  }
+  };
 
   const setDeadNote = (value: boolean) => {
     const note = selectedNoteController.getSelectedNote();
@@ -339,7 +322,7 @@ export default function App() {
       return;
     }
     dispatchAction({ type: 'set-dead-note', data: { note, isDeadNote: value } });
-  }
+  };
 
   const setTapNote = (value: boolean) => {
     const note = selectedNoteController.getSelectedNote();
@@ -347,7 +330,7 @@ export default function App() {
       return;
     }
     dispatchAction({ type: 'set-tap', data: { note, isLeftHandTap: value } });
-  }
+  };
 
   const setVibratoNote = (value: boolean) => {
     const note = selectedNoteController.getSelectedNote();
@@ -355,7 +338,7 @@ export default function App() {
       return;
     }
     dispatchAction({ type: 'set-vibrato', data: { note, isVibrato: value } });
-  }
+  };
 
   const selectTrack = (track: Track) => {
     api.renderTracks([track]);
@@ -364,34 +347,34 @@ export default function App() {
     if (lineCount) {
       selectedNoteController.setNumberOfStrings(lineCount);
     }
-  }
+  };
 
   const openFile = (file: File) => {
     const fileReader = new FileReader();
     fileReader.onload = (event) => {
       api.load(event.target?.result, [0]);
-    }
+    };
     fileReader.readAsArrayBuffer(file);
-  }
+  };
 
   const exportGuitarPro = () => {
     const exporter = new alphaTab.exporter.Gp7Exporter();
     const data = exporter.export(api.score!, api.settings);
     const a = document.createElement('a');
-    a.download = (api?.score?.title || 'File') + '.gp';
+    a.download = `${api?.score?.title || 'File'}.gp`;
     a.href = URL.createObjectURL(new Blob([data]));
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-  }
+  };
 
   const newFile = () => {
-    api.tex(`\\title 'New score' . 3.3.4`);
-  }
+    api.tex('\\title \'New score\' . 3.3.4');
+  };
 
   const exportMidi = () => {
     api.downloadMidi();
-  }
+  };
 
   const [paletteMode, setPaletteMode] = useState<PaletteMode>('dark');
 
@@ -405,12 +388,11 @@ export default function App() {
   );
 
   const theme = React.useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: paletteMode,
-        },
-      }),
+    () => createTheme({
+      palette: {
+        mode: paletteMode,
+      },
+    }),
     [paletteMode],
   );
 
@@ -427,7 +409,8 @@ export default function App() {
                   score={api?.score}
                   onNewTrack={newTrack}
                   selectedTrackIndex={selectedTrackIndex}
-                  selectTrack={selectTrack} />
+                  selectTrack={selectTrack}
+                />
                 <div className="app-editor-controls">
                   <EditorControls
                     setScoreInfo={setScoreInfo}
@@ -467,15 +450,17 @@ export default function App() {
                     canRedo={editorActions.canRedo()}
                     canUndo={editorActions.canUndo()}
                     undo={() => undo()}
-                    redo={() => redo()}></EditorControls>
+                    redo={() => redo()}
+                  />
                 </div>
                 <AlphaTabViewport apiReady={setupWithApi} renderFinished={onAlphatabRenderFinished} playerStateChanged={() => forceUpdate()}>
-                    <EditorCursor
-                      hasDialogOpen={hasDialog}
-                      fret={currentFret()}
-                      setFret={(fret) => { setFret(fret) }}
-                      onFocusOut={() => { selectedNoteController.setSelectedSlot(null); forceUpdate(); }}
-                      bounds={selectedNoteController?.getNoteBounds()}></EditorCursor>
+                  <EditorCursor
+                    hasDialogOpen={hasDialog}
+                    fret={currentFret()}
+                    setFret={(fret) => { setFret(fret); }}
+                    onFocusOut={() => { selectedNoteController.setSelectedSlot(null); forceUpdate(); }}
+                    bounds={selectedNoteController?.getNoteBounds()}
+                  />
                 </AlphaTabViewport>
               </div>
               <EditorPlayerControls
@@ -484,7 +469,8 @@ export default function App() {
                 playPause={playPause}
                 onCountInChange={setCountIn}
                 isCountIn={api?.countInVolume !== 0}
-                isPlaying={api?.playerState === 1}/>
+                isPlaying={api?.playerState === 1}
+              />
             </div>
           </Body>
         </ThemeProvider>

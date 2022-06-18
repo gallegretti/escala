@@ -1,4 +1,4 @@
-import { BaseGlyphProps } from "../glyphBaseProps";
+import { BaseGlyphProps } from '../glyphBaseProps';
 
 export interface DynamicGlyphProps extends BaseGlyphProps {
     height?: string;
@@ -7,7 +7,7 @@ export interface DynamicGlyphProps extends BaseGlyphProps {
 }
 
 export function baseTextStyle() {
-    return {
-        fontSize: '26px'
-    }
+  return {
+    fontSize: '26px',
+  };
 }

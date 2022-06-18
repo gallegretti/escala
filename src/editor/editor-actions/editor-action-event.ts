@@ -1,6 +1,8 @@
-import { ScoreInfo } from "./actions/set-score-info/score-info";
-import { BendType } from "../bend-type";
-import { AccentuationType, Beat, Duration, DynamicValue, HarmonicType, Note, PickStroke, Score } from "../../alphatab-types/alphatab-types";
+import { ScoreInfo } from './actions/set-score-info/score-info';
+import { BendType } from '../bend-type';
+import {
+  AccentuationType, Beat, Duration, DynamicValue, HarmonicType, Note, PickStroke, Score,
+} from '../../alphatab-types/alphatab-types';
 
 export interface EditorActionEventAddNote {
     type: 'add-note',
@@ -114,7 +116,6 @@ export interface EditorActionSetAccentuation {
     }
 }
 
-
 export interface EditorActionSetBend {
     type: 'set-bend',
     data: {
@@ -195,4 +196,3 @@ export type EditorActionEvent = EditorActionEventAddNote
 | EditorActionSetVibrato
 | EditorActionAddTrack
 | EditorActionSetTempo;
-   

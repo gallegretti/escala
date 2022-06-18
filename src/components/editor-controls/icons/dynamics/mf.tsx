@@ -3,7 +3,7 @@ import { DynamicGlyphProps } from './dynamic';
 import { GenericDynamicGlyph } from './generic-dynamic';
 
 export function MezzoForteGlyph(props: DynamicGlyphProps) {
-    return (
-        <GenericDynamicGlyph width="30px" title="Mezzo Forte" {...props}></GenericDynamicGlyph>
-    );
+  return (
+    <GenericDynamicGlyph width="30px" title="Mezzo Forte" {...props}></GenericDynamicGlyph>
+  );
 }

@@ -3,5 +3,5 @@ const glyphSymbolFontfamily = 'alphaTab';
 
 export {
   glyphAsciFontfamily,
-  glyphSymbolFontfamily
-}
+  glyphSymbolFontfamily,
+};

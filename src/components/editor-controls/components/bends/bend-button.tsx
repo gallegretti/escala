@@ -15,16 +15,16 @@ interface BendButtonProps {
 }
 
 export default function BendButton(props: BendButtonProps) {
-    return (
-        <GenericBendButton
-            currentBendType={props.bend}
-            setPopperOpen={props.setPopperOpen}
-            default={BendGlyph}
-            half={HalfBendGlyph}
-            full={FullBendGlyph}
-            disabled={props.disabled}
-            isPopperOpen={props.isPopperOpen}
-            setCurrentBendType={props.setBend}
-        />
-    );
+  return (
+    <GenericBendButton
+      currentBendType={props.bend}
+      setPopperOpen={props.setPopperOpen}
+      default={BendGlyph}
+      half={HalfBendGlyph}
+      full={FullBendGlyph}
+      disabled={props.disabled}
+      isPopperOpen={props.isPopperOpen}
+      setCurrentBendType={props.setBend}
+    />
+  );
 }

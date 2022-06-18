@@ -14,16 +14,16 @@ interface ReleaseButtonProps {
 }
 
 export default function ReleaseBendButton(props: ReleaseButtonProps) {
-    return (
-        <GenericBendButton
-            currentBendType={props.release}
-            setPopperOpen={props.setPopperOpen}
-            default={ReleaseBendGlyph}
-            half={HalfReleaseBendGlyph}
-            full={FullReleaseBendGlyph}
-            disabled={props.disabled}
-            isPopperOpen={props.isPopperOpen}
-            setCurrentBendType={props.setRelease}
-        />
-    );
+  return (
+    <GenericBendButton
+      currentBendType={props.release}
+      setPopperOpen={props.setPopperOpen}
+      default={ReleaseBendGlyph}
+      half={HalfReleaseBendGlyph}
+      full={FullReleaseBendGlyph}
+      disabled={props.disabled}
+      isPopperOpen={props.isPopperOpen}
+      setCurrentBendType={props.setRelease}
+    />
+  );
 }
