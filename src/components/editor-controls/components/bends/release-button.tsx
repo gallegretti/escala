@@ -6,11 +6,11 @@ import { BendType } from '../../../../editor/bend-type';
 import GenericBendButton from './generic-bend-button';
 
 interface ReleaseButtonProps {
-    release: BendType;
-    setRelease: (bendType: BendType) => void;
-    disabled: boolean;
-    isPopperOpen: boolean;
-    setPopperOpen: () => void;
+  release: BendType;
+  setRelease: (bendType: BendType) => void;
+  disabled: boolean;
+  isPopperOpen: boolean;
+  setPopperOpen: () => void;
 }
 
 export default function ReleaseBendButton(props: ReleaseButtonProps) {

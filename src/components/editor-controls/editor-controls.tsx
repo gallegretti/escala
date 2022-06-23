@@ -152,7 +152,11 @@ export default function EditorControls(props: EditorControlsProps) {
         />
       )}
       <div style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor, borderBottom: `1px solid ${borderColor}`,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor,
+        borderBottom: `1px solid ${borderColor}`,
       }}
       >
         <Tabs style={{ backgroundColor }} value={currentTab} onChange={(e, v) => setCurrentTab(v)}>

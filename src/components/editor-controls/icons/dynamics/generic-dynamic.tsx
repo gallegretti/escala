@@ -4,7 +4,7 @@ import { DynamicGlyphProps, baseTextStyle } from './dynamic';
 import { useGlyphColor } from '../glyphColor';
 import baseSvgStyle from '../glyphBaseSvgStyle';
 
-export function GenericDynamicGlyph(props: DynamicGlyphProps) {
+export default function GenericDynamicGlyph(props: DynamicGlyphProps) {
   const color = useGlyphColor(props);
   return (
     <Tooltip title={props.title ?? ''}>

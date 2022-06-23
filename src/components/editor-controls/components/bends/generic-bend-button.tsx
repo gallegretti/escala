@@ -1,18 +1,18 @@
 import React from 'react';
-import { useAnchorElem } from '../use-anchor-element';
+import useAnchorElem from '../use-anchor-element';
 import { BendType } from '../../../../editor/bend-type';
 import { StyledPopper } from '../styled-popper';
 import { BaseGlyphProps } from '../../icons/glyphBaseProps';
 
 interface GenericBendButtonProps {
-    currentBendType: BendType;
-    setCurrentBendType: (bendType: BendType) => void;
-    half: React.ComponentType<BaseGlyphProps>;
-    full: React.ComponentType<BaseGlyphProps>;
-    default: React.ComponentType<BaseGlyphProps>;
-    disabled: boolean;
-    isPopperOpen: boolean;
-    setPopperOpen: () => void;
+  currentBendType: BendType;
+  setCurrentBendType: (bendType: BendType) => void;
+  half: React.ComponentType<BaseGlyphProps>;
+  full: React.ComponentType<BaseGlyphProps>;
+  default: React.ComponentType<BaseGlyphProps>;
+  disabled: boolean;
+  isPopperOpen: boolean;
+  setPopperOpen: () => void;
 }
 
 export default function GenericBendButton(props: GenericBendButtonProps) {

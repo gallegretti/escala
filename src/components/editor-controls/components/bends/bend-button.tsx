@@ -6,12 +6,11 @@ import { BendType } from '../../../../editor/bend-type';
 import GenericBendButton from './generic-bend-button';
 
 interface BendButtonProps {
-    hasSelectedNote: boolean;
-    bend: BendType;
-    setBend: (bendType: BendType) => void;
-    disabled: boolean;
-    isPopperOpen: boolean;
-    setPopperOpen: () => void;
+  bend: BendType;
+  setBend: (bendType: BendType) => void;
+  disabled: boolean;
+  isPopperOpen: boolean;
+  setPopperOpen: () => void;
 }
 
 export default function BendButton(props: BendButtonProps) {

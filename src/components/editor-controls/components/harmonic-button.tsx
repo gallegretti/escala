@@ -7,14 +7,14 @@ import SemiHarmonicGlyph from '../icons/effects/harmonic/semi-harmonic';
 import FeedbackHarmonicGlyph from '../icons/effects/harmonic/feedback-harmonic';
 import GenericHarmonicGlyph from '../icons/effects/harmonic/generic-harmonic';
 import { StyledPopper } from './styled-popper';
-import { useAnchorElem } from './use-anchor-element';
+import useAnchorElem from './use-anchor-element';
 
 interface HarmonicButtonProps {
-    disabled: boolean;
-    currentHarmonicType: number;
-    setHarmonicType: (harmonicType: number) => void;
-    isPopperOpen: boolean;
-    setPopperOpen: () => void;
+  disabled: boolean;
+  currentHarmonicType: number;
+  setHarmonicType: (harmonicType: number) => void;
+  isPopperOpen: boolean;
+  setPopperOpen: () => void;
 }
 
 function harmonicTypeToString(type: number) {
@@ -33,8 +33,9 @@ function harmonicTypeToString(type: number) {
       return 'S.H';
     case 6:
       return 'F.H';
+    default:
+      return '';
   }
-  return '';
 }
 
 export default function HarmonicButton(props: HarmonicButtonProps) {
@@ -64,44 +65,50 @@ export default function HarmonicButton(props: HarmonicButtonProps) {
 
   return (
     <div>
-      <GenericHarmonicGlyph title="Harmonics" hideTooltip={!props.isPopperOpen} selected={props.currentHarmonicType !== 0} disabled={props.disabled} onClick={onClick}>
+      <GenericHarmonicGlyph
+        title="Harmonics"
+        hideTooltip={!props.isPopperOpen}
+        selected={props.currentHarmonicType !== 0}
+        disabled={props.disabled}
+        onClick={onClick}
+      >
         {harmonicTypeToString(props.currentHarmonicType)}
       </GenericHarmonicGlyph>
       {props.isPopperOpen && anchorElem
-                && (
-                <StyledPopper modifiers={popperModifiers} open={props.isPopperOpen} anchorEl={anchorElem} disablePortal>
-                  <NaturalHarmonicGlyph
-                    disabled={props.disabled}
-                    selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Natural}
-                    onClick={() => setHarmonic(alphaTab.model.HarmonicType.Natural)}
-                  />
-                  <ArtificialHarmonicGlyph
-                    disabled={props.disabled}
-                    selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Artificial}
-                    onClick={() => setHarmonic(alphaTab.model.HarmonicType.Artificial)}
-                  />
-                  <PinchHarmonicGlyph
-                    disabled={props.disabled}
-                    selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Pinch}
-                    onClick={() => setHarmonic(alphaTab.model.HarmonicType.Pinch)}
-                  />
-                  <TapHarmonicGlyph
-                    disabled={props.disabled}
-                    selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Tap}
-                    onClick={() => setHarmonic(alphaTab.model.HarmonicType.Tap)}
-                  />
-                  <SemiHarmonicGlyph
-                    disabled={props.disabled}
-                    selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Semi}
-                    onClick={() => setHarmonic(alphaTab.model.HarmonicType.Semi)}
-                  />
-                  <FeedbackHarmonicGlyph
-                    disabled={props.disabled}
-                    selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Feedback}
-                    onClick={() => setHarmonic(alphaTab.model.HarmonicType.Feedback)}
-                  />
-                </StyledPopper>
-                )}
+        && (
+          <StyledPopper modifiers={popperModifiers} open={props.isPopperOpen} anchorEl={anchorElem} disablePortal>
+            <NaturalHarmonicGlyph
+              disabled={props.disabled}
+              selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Natural}
+              onClick={() => setHarmonic(alphaTab.model.HarmonicType.Natural)}
+            />
+            <ArtificialHarmonicGlyph
+              disabled={props.disabled}
+              selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Artificial}
+              onClick={() => setHarmonic(alphaTab.model.HarmonicType.Artificial)}
+            />
+            <PinchHarmonicGlyph
+              disabled={props.disabled}
+              selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Pinch}
+              onClick={() => setHarmonic(alphaTab.model.HarmonicType.Pinch)}
+            />
+            <TapHarmonicGlyph
+              disabled={props.disabled}
+              selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Tap}
+              onClick={() => setHarmonic(alphaTab.model.HarmonicType.Tap)}
+            />
+            <SemiHarmonicGlyph
+              disabled={props.disabled}
+              selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Semi}
+              onClick={() => setHarmonic(alphaTab.model.HarmonicType.Semi)}
+            />
+            <FeedbackHarmonicGlyph
+              disabled={props.disabled}
+              selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Feedback}
+              onClick={() => setHarmonic(alphaTab.model.HarmonicType.Feedback)}
+            />
+          </StyledPopper>
+        )}
     </div>
   );
 }

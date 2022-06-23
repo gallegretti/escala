@@ -1,11 +1,11 @@
 import React from 'react';
-import { WholeGlyph } from '../icons/duration/whole';
-import { HalfGlyph } from '../icons/duration/half';
-import { QuarterGlyph } from '../icons/duration/quarter';
-import { EighthGlyph } from '../icons/duration/eighth';
-import { SixTeenthGlyph } from '../icons/duration/sixteenth';
-import { ThirtySecondGlyph } from '../icons/duration/thirty-second';
-import { SixtyFourGlyph } from '../icons/duration/sixty-four';
+import WholeGlyph from '../icons/duration/whole';
+import HalfGlyph from '../icons/duration/half';
+import QuarterGlyph from '../icons/duration/quarter';
+import EighthGlyph from '../icons/duration/eighth';
+import SixTeenthGlyph from '../icons/duration/sixteenth';
+import ThirtySecondGlyph from '../icons/duration/thirty-second';
+import SixtyFourGlyph from '../icons/duration/sixty-four';
 import { Duration } from '../../../alphatab-types/alphatab-types';
 
 interface DurationSectionProps {

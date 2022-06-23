@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { BendState } from '../../../../components/editor-controls/editor-controls';
 import { BendType } from '../../../bend-type';
 import { BendPoint, Note } from '../../../../alphatab-types/alphatab-types';

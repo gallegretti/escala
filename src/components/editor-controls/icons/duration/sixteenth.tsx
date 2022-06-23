@@ -5,7 +5,7 @@ import { useGlyphColor } from '../glyphColor';
 import baseSvgStyle from '../glyphBaseSvgStyle';
 import { genericDurationFontSize } from './generic-duration';
 
-export function SixTeenthGlyph(props: DurationGlyphProps) {
+export default function SixTeenthGlyph(props: DurationGlyphProps) {
   const color = useGlyphColor(props);
   return (
     <Tooltip title="Sixteenth">

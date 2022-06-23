@@ -4,10 +4,10 @@ import {
 } from '@mui/material';
 
 interface DialogSetTextProps {
-    isOpen: boolean,
-    currentText: string | null,
-    onClose: () => void,
-    onSave: (arg: string) => void,
+  isOpen: boolean,
+  currentText: string | null,
+  onClose: () => void,
+  onSave: (arg: string) => void,
 }
 
 export default function DialogSetText(props: DialogSetTextProps) {

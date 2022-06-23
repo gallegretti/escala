@@ -5,7 +5,7 @@ import { useGlyphColor } from '../glyphColor';
 import baseSvgStyle from '../glyphBaseSvgStyle';
 import { genericDurationFontSize } from './generic-duration';
 
-export function QuarterGlyph(props: DurationGlyphProps) {
+export default function QuarterGlyph(props: DurationGlyphProps) {
   const color = useGlyphColor(props);
   return (
     <Tooltip title="Quarter">

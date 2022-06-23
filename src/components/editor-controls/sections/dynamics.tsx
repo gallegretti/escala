@@ -1,18 +1,18 @@
 import React from 'react';
-import { PianoPianissimoGlyph } from '../icons/dynamics/ppp';
-import { PianissimoGlyph } from '../icons/dynamics/pp';
-import { PianoGlyph } from '../icons/dynamics/p';
-import { MezzoPianoGlyph } from '../icons/dynamics/mp';
-import { ForteGlyph } from '../icons/dynamics/f';
-import { FortissimoGlyph } from '../icons/dynamics/ff';
-import { MezzoForteGlyph } from '../icons/dynamics/mf';
-import { ForteFortissimoGlyph } from '../icons/dynamics/fff';
+import PianoPianissimoGlyph from '../icons/dynamics/ppp';
+import PianissimoGlyph from '../icons/dynamics/pp';
+import PianoGlyph from '../icons/dynamics/p';
+import MezzoPianoGlyph from '../icons/dynamics/mp';
+import ForteGlyph from '../icons/dynamics/f';
+import FortissimoGlyph from '../icons/dynamics/ff';
+import MezzoForteGlyph from '../icons/dynamics/mf';
+import ForteFortissimoGlyph from '../icons/dynamics/fff';
 import { DynamicValue } from '../../../alphatab-types/alphatab-types';
 
 interface DynamicsSectionProps {
-    hasSelectedNote: boolean;
-    currentDynamics: DynamicValue | null;
-    setDynamics: (v: DynamicValue) => void;
+  hasSelectedNote: boolean;
+  currentDynamics: DynamicValue | null;
+  setDynamics: (v: DynamicValue) => void;
 }
 
 export default function DynamicsSection(props: DynamicsSectionProps) {

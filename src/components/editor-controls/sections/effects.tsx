@@ -72,7 +72,7 @@ export default function EffectsSection(props: EffectsSectionProps) {
       <AccentuatedNoteGlyph
         disabled={!props.hasSelectedNote}
         selected={props.currentAccentuation === alphaTab.model.AccentuationType.Normal}
-        onClick={() => props.setAccentuationNote(props.currentAccentuation === alphaTab.model.AccentuationType.Normal ? alphaTab.model.AccentuationType.None : alphaTab.model.AccentuationType.Normal)}
+        onClick={() =>props.setAccentuationNote(props.currentAccentuation === alphaTab.model.AccentuationType.Normal ? alphaTab.model.AccentuationType.None : alphaTab.model.AccentuationType.Normal)}
       />
       <HeavyAccentuatedNoteGlyph
         disabled={!props.hasSelectedNote}
@@ -113,7 +113,6 @@ export default function EffectsSection(props: EffectsSectionProps) {
       <BendButton
         disabled={!props.hasSelectedNote}
         bend={props.currentBend?.bend ?? null}
-        hasSelectedNote={props.hasSelectedNote}
         setBend={(bendType) => { setBend('bend', bendType); }}
         isPopperOpen={openPopper === 'bend'}
         setPopperOpen={() => updateOpenPopper('bend')}

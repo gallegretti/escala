@@ -15,7 +15,7 @@ import AlphaTabViewport from './components/alphatab-viewport/alphatab-viewport';
 import { ScoreInfo } from './editor/editor-actions/actions/set-score-info/score-info';
 import { getBendState } from './editor/editor-actions/actions/set-bend/set-bend-lookup-table';
 import { ColorModeContext } from './editor/color-mode-context';
-import { EditorLeftMenu } from './components/editor-left-menu';
+import EditorLeftMenu from './components/editor-left-menu';
 import {
   AccentuationType,
   AlphaTabApi,
@@ -463,7 +463,11 @@ export default function App() {
                     redo={() => redo()}
                   />
                 </div>
-                <AlphaTabViewport apiReady={setupWithApi} renderFinished={onAlphatabRenderFinished} playerStateChanged={() => forceUpdate()}>
+                <AlphaTabViewport
+                  apiReady={setupWithApi}
+                  renderFinished={onAlphatabRenderFinished}
+                  playerStateChanged={() => forceUpdate()}
+                >
                   <EditorCursor
                     hasDialogOpen={hasDialog}
                     fret={currentFret()}

@@ -5,7 +5,7 @@ import { useGlyphColor } from '../glyphColor';
 import { genericDurationFontSize } from './generic-duration';
 import baseSvgStyle from '../glyphBaseSvgStyle';
 
-export function EighthGlyph(props: DurationGlyphProps) {
+export default function EighthGlyph(props: DurationGlyphProps) {
   const color = useGlyphColor(props);
   return (
     <Tooltip title="Eighth">

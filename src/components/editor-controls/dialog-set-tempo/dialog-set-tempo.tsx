@@ -4,10 +4,10 @@ import {
 } from '@mui/material';
 
 interface DialogSetTepoProps {
-    isOpen: boolean;
-    currentTempo: number;
-    onClose: () => void;
-    onSet: (arg: number) => void;
+  isOpen: boolean;
+  currentTempo: number;
+  onClose: () => void;
+  onSet: (arg: number) => void;
 }
 
 export default function DialogSetTempo(props: DialogSetTepoProps) {

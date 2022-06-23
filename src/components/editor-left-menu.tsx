@@ -20,13 +20,13 @@ const SideMenuDiv = styled('div')(({ theme }) => ({
 }));
 
 interface EditorLeftMenuProps {
-    onNewTrack: (params: { name: string }) => void;
-    score: Score | null;
-    selectedTrackIndex: number;
-    selectTrack: (track: Track) => void;
+  onNewTrack: (params: { name: string }) => void;
+  score: Score | null;
+  selectedTrackIndex: number;
+  selectTrack: (track: Track) => void;
 }
 
-export function EditorLeftMenu({
+export default function EditorLeftMenu({
   score, selectedTrackIndex, selectTrack, onNewTrack,
 }: EditorLeftMenuProps) {
   const {
@@ -44,14 +44,14 @@ export function EditorLeftMenu({
       />
       <SideMenuDiv>
         {score?.tracks
-                    && (
-                    <EditorTrackSelector
-                      onNewTrack={openDialog}
-                      selectedTrackIndex={selectedTrackIndex}
-                      onTrackSelected={selectTrack}
-                      tracks={score?.tracks}
-                    />
-                    )}
+          && (
+            <EditorTrackSelector
+              onNewTrack={openDialog}
+              selectedTrackIndex={selectedTrackIndex}
+              onTrackSelected={selectTrack}
+              tracks={score?.tracks}
+            />
+          )}
       </SideMenuDiv>
     </>
   );

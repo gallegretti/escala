@@ -1,10 +1,11 @@
+/* eslint-disable max-len */
 import React from 'react';
 import { Tooltip } from '@mui/material';
 import { useGlyphColor } from '../glyphColor';
 import { BaseGlyphProps } from '../glyphBaseProps';
 import baseSvgStyle from '../glyphBaseSvgStyle';
 
-export function InfoGlyph(props: BaseGlyphProps) {
+export default function InfoGlyph(props: BaseGlyphProps) {
   const color = useGlyphColor(props);
   // https://fonts.google.com/icons?selected=Material%20Icons%3Adescription%3A
   return (

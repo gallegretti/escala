@@ -1,17 +1,17 @@
 import React from 'react';
 import { Divider } from '@mui/material';
-import { OpenGlyph } from '../icons/document/open';
-import { InfoGlyph } from '../icons/document/info';
-import { UndoGlyph } from '../icons/document/undo';
-import { RedoGlyph } from '../icons/document/redo';
-import { PrintGlyph } from '../icons/document/print';
-import { ExportGlyph } from '../icons/document/export';
-import { useAnchorElem } from '../components/use-anchor-element';
+import OpenGlyph from '../icons/document/open';
+import InfoGlyph from '../icons/document/info';
+import UndoGlyph from '../icons/document/undo';
+import RedoGlyph from '../icons/document/redo';
+import PrintGlyph from '../icons/document/print';
+import ExportGlyph from '../icons/document/export';
+import useAnchorElem from '../components/use-anchor-element';
 import { StyledPopper } from '../components/styled-popper';
-import { GuitarProGlyph } from '../icons/document/download/guitar-pro';
-import { MidGlyph } from '../icons/document/download/mid';
-import { NewGlyph } from '../icons/document/new';
-import { TempoGlyph } from '../icons/document/tempo';
+import GuitarProGlyph from '../icons/document/download/guitar-pro';
+import MidGlyph from '../icons/document/download/mid';
+import NewGlyph from '../icons/document/new';
+import TempoGlyph from '../icons/document/tempo';
 
 interface DocumentSectionProps {
     canUndo: boolean;

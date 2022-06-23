@@ -4,7 +4,7 @@ import { useGlyphColor } from '../glyphColor';
 import { BaseGlyphProps } from '../glyphBaseProps';
 import baseSvgStyle from '../glyphBaseSvgStyle';
 
-export function OpenGlyph(props: BaseGlyphProps) {
+export default function OpenGlyph(props: BaseGlyphProps) {
   const color = useGlyphColor(props);
   // https://fonts.google.com/icons?selected=Material%20Icons%3Afile_open%3A
   return (

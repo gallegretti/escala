@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint \"src/**\" --ext .tsx --fix",
+    "lint": "eslint \"src/**\" --ext .tsx",
     "test": "jest",
     "cypress": "cypress run",
     "postinstall": "cp -r ./node_modules/@coderline/alphatab ./public && cp -r ./node_modules/@coderline/alphatab/dist/soundfont/ ./public/alphatab/soundfont/"

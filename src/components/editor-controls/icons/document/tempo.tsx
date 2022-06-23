@@ -4,7 +4,7 @@ import { useGlyphColor } from '../glyphColor';
 import { BaseGlyphProps } from '../glyphBaseProps';
 import baseSvgStyle from '../glyphBaseSvgStyle';
 
-export function TempoGlyph(props: BaseGlyphProps) {
+export default function TempoGlyph(props: BaseGlyphProps) {
   const color = useGlyphColor(props);
   // https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Atimer%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
   return (

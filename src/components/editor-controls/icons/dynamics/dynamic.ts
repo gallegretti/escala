@@ -1,9 +1,9 @@
 import { BaseGlyphProps } from '../glyphBaseProps';
 
 export interface DynamicGlyphProps extends BaseGlyphProps {
-    height?: string;
-    width?: string;
-    title?: string;
+  height?: string;
+  width?: string;
+  title?: string;
 }
 
 export function baseTextStyle() {
