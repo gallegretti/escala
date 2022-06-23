@@ -9,7 +9,7 @@ import { EditorUIEvent } from './editor/ui-actions/editor-ui-event';
 import EditorActions from './editor/editor-actions/editor-command-delegator/editor-actions';
 import { EditorActionEvent, EditorActionResult } from './editor/editor-actions/editor-action-event';
 import { EditorControls, BendState } from './components/editor-controls/editor-controls';
-import { EditorCursor } from './components/editor-cursor/editor-cursor';
+import EditorCursor from './components/editor-cursor/editor-cursor';
 import EditorPlayerControls from './components/editor-player-controls/editor-player-controls';
 import AlphaTabViewport from './components/alphatab-viewport/alphatab-viewport';
 import { ScoreInfo } from './editor/editor-actions/actions/set-score-info/score-info';
@@ -472,7 +472,6 @@ export default function App() {
                     hasDialogOpen={hasDialog}
                     fret={currentFret()}
                     setFret={(fret) => { setFret(fret); }}
-                    onFocusOut={() => { selectedNoteController.setSelectedSlot(null); forceUpdate(); }}
                     bounds={selectedNoteController?.getNoteBounds()}
                   />
                 </AlphaTabViewport>

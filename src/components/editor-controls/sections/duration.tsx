@@ -9,9 +9,9 @@ import SixtyFourGlyph from '../icons/duration/sixty-four';
 import { Duration } from '../../../alphatab-types/alphatab-types';
 
 interface DurationSectionProps {
-    hasSelectedNote: boolean;
-    currentDuration: Duration | null;
-    setDuration: (duration: Duration) => void;
+  hasSelectedNote: boolean;
+  currentDuration: Duration | null;
+  setDuration: (duration: Duration) => void;
 }
 
 export default function DurationSetion(props: DurationSectionProps) {

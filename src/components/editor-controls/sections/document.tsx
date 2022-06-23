@@ -14,18 +14,17 @@ import NewGlyph from '../icons/document/new';
 import TempoGlyph from '../icons/document/tempo';
 
 interface DocumentSectionProps {
-    canUndo: boolean;
-    canRedo: boolean;
-    tempo: number | null;
-    undo: () => void;
-    redo: () => void;
-    openFile: (file: File) => void;
-    newFile: () => void;
-    print: () => void;
-    exportGuitarPro: () => void;
-    exportMidi: () => void;
-    openScoreInfo: () => void;
-    openTempoDialog: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+  undo: () => void;
+  redo: () => void;
+  openFile: (file: File) => void;
+  newFile: () => void;
+  print: () => void;
+  exportGuitarPro: () => void;
+  exportMidi: () => void;
+  openScoreInfo: () => void;
+  openTempoDialog: () => void;
 }
 
 export default function DocumentSection(props: DocumentSectionProps) {
@@ -42,15 +41,20 @@ export default function DocumentSection(props: DocumentSectionProps) {
   return (
     <>
       <NewGlyph id="new" disabled={false} selected={false} onClick={props.newFile} />
-      <input
-        id="open-input"
-        style={{ display: 'none' }}
-        type="file"
-        accept=".gp,.gp3,.gp4,.gp5,.gpx,.musicxml,.mxml,.xml,.capx"
-        onChange={(f) => { props.openFile(f.target?.files?.[0]!); }}
-      />
-      <label htmlFor="open-input">
-        <OpenGlyph id="open" disabled={false} selected={false} onClick={() => {}} />
+      <label style={{ height: '24px' }} htmlFor="open-input">
+        <input
+          id="open-input"
+          style={{ display: 'none' }}
+          type="file"
+          accept=".gp,.gp3,.gp4,.gp5,.gpx,.musicxml,.mxml,.xml,.capx"
+          onChange={(f) => {
+            const firstFile = f.target?.files?.[0];
+            if (firstFile) {
+              props.openFile(firstFile);
+            }
+          }}
+        />
+        <OpenGlyph id="open" disabled={false} selected={false} onClick={() => { }} />
       </label>
       <Divider variant="middle" orientation="vertical" flexItem />
       <InfoGlyph id="info" disabled={false} selected={false} onClick={props.openScoreInfo} />

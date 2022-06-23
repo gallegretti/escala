@@ -177,7 +177,6 @@ export default function EditorControls(props: EditorControlsProps) {
             openFile={props.open}
             canRedo={props.canRedo}
             canUndo={props.canUndo}
-            tempo={props.score?.tempo ?? null}
             exportGuitarPro={props.exportGuitarPro}
             exportMidi={props.exportMidi}
             print={props.print}

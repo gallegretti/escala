@@ -13,25 +13,26 @@ import { BendState } from '../editor-controls';
 import { BendType } from '../../../editor/bend-type';
 import TapNoteGlyph from '../icons/effects/tap-note';
 import VibratoNoteGlyph from '../icons/effects/vibratro';
+import { AccentuationType, HarmonicType } from '../../../alphatab-types/alphatab-types';
 
 interface EffectsSectionProps {
-    hasSelectedNote: boolean;
-    isPalmMute: boolean | null;
-    isGhost: boolean | null;
-    isDeadNote: boolean | null;
-    isLeftHandTapNote: boolean | null;
-    isVibrato: boolean | null;
-    currentHarmonicType: any | null;
-    currentAccentuation: any | null;
-    currentBend: BendState | null;
-    togglePalmMute: () => void;
-    setVibrato: (value: boolean) => void;
-    setGhostNote: (value: boolean) => void;
-    setAccentuationNote: (value: any) => void;
-    setDeadNote: (value: boolean) => void;
-    setTapNote: (value: boolean) => void;
-    setHarmonicType: (value: any) => void;
-    setBend: (bend: BendState) => void;
+  hasSelectedNote: boolean;
+  isPalmMute: boolean | null;
+  isGhost: boolean | null;
+  isDeadNote: boolean | null;
+  isLeftHandTapNote: boolean | null;
+  isVibrato: boolean | null;
+  currentHarmonicType: HarmonicType | null;
+  currentAccentuation: AccentuationType | null;
+  currentBend: BendState | null;
+  togglePalmMute: () => void;
+  setVibrato: (value: boolean) => void;
+  setGhostNote: (value: boolean) => void;
+  setAccentuationNote: (value: AccentuationType) => void;
+  setDeadNote: (value: boolean) => void;
+  setTapNote: (value: boolean) => void;
+  setHarmonicType: (value: HarmonicType) => void;
+  setBend: (bend: BendState) => void;
 }
 
 export default function EffectsSection(props: EffectsSectionProps) {
@@ -57,6 +58,14 @@ export default function EffectsSection(props: EffectsSectionProps) {
     setOpenPopper((popper) => (popper === popperId ? null : popperId));
   };
 
+  const setAccentuation = (accentuation: AccentuationType) => {
+    if (props.currentAccentuation === accentuation) {
+      props.setAccentuationNote(alphaTab.model.AccentuationType.None);
+    } else {
+      props.setAccentuationNote(accentuation);
+    }
+  };
+
   return (
     <>
       <PalmMuteGlyph
@@ -72,12 +81,12 @@ export default function EffectsSection(props: EffectsSectionProps) {
       <AccentuatedNoteGlyph
         disabled={!props.hasSelectedNote}
         selected={props.currentAccentuation === alphaTab.model.AccentuationType.Normal}
-        onClick={() =>props.setAccentuationNote(props.currentAccentuation === alphaTab.model.AccentuationType.Normal ? alphaTab.model.AccentuationType.None : alphaTab.model.AccentuationType.Normal)}
+        onClick={() => setAccentuation(alphaTab.model.AccentuationType.Normal)}
       />
       <HeavyAccentuatedNoteGlyph
         disabled={!props.hasSelectedNote}
         selected={props.currentAccentuation === alphaTab.model.AccentuationType.Heavy}
-        onClick={() => props.setAccentuationNote(props.currentAccentuation === alphaTab.model.AccentuationType.Heavy ? alphaTab.model.AccentuationType.None : alphaTab.model.AccentuationType.Heavy)}
+        onClick={() => setAccentuation(alphaTab.model.AccentuationType.Heavy)}
       />
       <DeadNoteGlyph
         disabled={!props.hasSelectedNote}

@@ -3,11 +3,10 @@ import { useTheme } from '@mui/material';
 import { Bounds } from '../../alphatab-types/alphatab-types';
 
 interface EditorCursorProps {
-    bounds?: Bounds
-    fret: number | null;
-    setFret: (fret: number) => void;
-    onFocusOut: () => void;
-    hasDialogOpen: boolean;
+  bounds?: Bounds;
+  fret: number | null;
+  setFret: (fret: number) => void;
+  hasDialogOpen: boolean;
 }
 
 const padding = 2;
@@ -28,7 +27,7 @@ const newFretFromInput = (currentFret: number | null, newInput: number) => {
   return newFret;
 };
 
-export function EditorCursor(props: EditorCursorProps) {
+export default function EditorCursor(props: EditorCursorProps) {
   const theme = useTheme();
 
   const refocusCallback = useCallback((e: any) => {
@@ -69,10 +68,11 @@ export function EditorCursor(props: EditorCursorProps) {
       <input
         ref={inputRef}
         style={{ width: '10px', appearance: 'textfield', opacity: '0' }}
+        // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus
         type="number"
         onChange={(e) => {
-          const newInput = Number.parseInt(e.target.value[e.target.value.length - 1]);
+          const newInput = Number.parseInt(e.target.value[e.target.value.length - 1], 10);
           props.setFret(newFretFromInput(props.fret, newInput));
         }}
       />

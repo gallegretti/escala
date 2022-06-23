@@ -62,7 +62,7 @@ function setupListeners(renderer: ScoreRenderer) {
     }
   });
 
-  document.addEventListener('keydown', (event: any) => {
+  document.addEventListener('keydown', (event: KeyboardEvent) => {
     console.log(event);
     if (event.type === 'keydown' && event.key === 'Delete') {
       emitEvent({
