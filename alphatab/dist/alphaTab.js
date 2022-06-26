@@ -1,5 +1,5 @@
 /**
- * alphaTab v1.3.0-alpha.264 (develop, build 264)
+ * alphaTab v1.3.0-alpha.306 (develop, build 306)
  * 
  * Copyright © 2022, Daniel Kuschny and Contributors, All rights reserved.
  * 
@@ -4389,9 +4389,7 @@
                 let duration = 0;
                 for (let track of this.score.tracks) {
                     for (let staff of track.staves) {
-                        let barDuration = this.index < staff.bars.length
-                            ? staff.bars[this.index].calculateDuration()
-                            : 0;
+                        let barDuration = this.index < staff.bars.length ? staff.bars[this.index].calculateDuration() : 0;
                         if (barDuration > duration) {
                             duration = barDuration;
                         }
@@ -4457,39 +4455,39 @@
              */
             this.masterBars = [];
             /**
-             * a list of masterbars which open the group.
+             * the masterbars which opens the group.
              */
-            this.openings = [];
+            this.opening = null;
             /**
              * a list of masterbars which close the group.
              */
             this.closings = [];
             /**
-             * true if the repeat group was opened well
-             */
-            this.isOpened = false;
-            /**
              * true if the repeat group was closed well
              */
             this.isClosed = false;
         }
+        /**
+         * a list of masterbars which open the group.
+         * @deprecated There can only be one opening, use the opening property instead
+         */
+        get openings() {
+            const opening = this.opening;
+            return opening ? [opening] : [];
+        }
+        /**
+         * Gets whether this repeat group is really opened as a repeat.
+         */
+        get isOpened() { var _a; return ((_a = this.opening) === null || _a === void 0 ? void 0 : _a.isRepeatStart) === true; }
         addMasterBar(masterBar) {
-            if (this.openings.length === 0) {
-                this.openings.push(masterBar);
+            if (this.opening === null) {
+                this.opening = masterBar;
             }
             this.masterBars.push(masterBar);
             masterBar.repeatGroup = this;
             if (masterBar.isRepeatEnd) {
                 this.closings.push(masterBar);
                 this.isClosed = true;
-                if (!this.isOpened) {
-                    this.masterBars[0].isRepeatStart = true;
-                    this.isOpened = true;
-                }
-            }
-            else if (this.isClosed) {
-                this.isClosed = false;
-                this.openings.push(masterBar);
             }
         }
     }
@@ -4503,7 +4501,9 @@
      */
     class Score {
         constructor() {
-            this._currentRepeatGroup = new RepeatGroup();
+            this._currentRepeatGroup = null;
+            this._openedRepeatGroups = [];
+            this._properlyOpenedRepeatGroups = 0;
             /**
              * The album of this song.
              */
@@ -4568,15 +4568,11 @@
             this.stylesheet = new RenderStylesheet();
         }
         rebuildRepeatGroups() {
-            let currentGroup = new RepeatGroup();
-            for (let bar of this.masterBars) {
-                // if the group is closed only the next upcoming header can
-                // reopen the group in case of a repeat alternative, so we
-                // remove the current group
-                if (bar.isRepeatStart || (this._currentRepeatGroup.isClosed && bar.alternateEndings <= 0)) {
-                    currentGroup = new RepeatGroup();
-                }
-                currentGroup.addMasterBar(bar);
+            this._currentRepeatGroup = null;
+            this._openedRepeatGroups = [];
+            this._properlyOpenedRepeatGroups = 0;
+            for (const bar of this.masterBars) {
+                this.addMasterBarToRepeatGroups(bar);
             }
         }
         addMasterBar(bar) {
@@ -4592,14 +4588,54 @@
                     bar.previousMasterBar.start +
                         (bar.previousMasterBar.isAnacrusis ? 0 : bar.previousMasterBar.calculateDuration());
             }
-            // if the group is closed only the next upcoming header can
-            // reopen the group in case of a repeat alternative, so we
-            // remove the current group
-            if (bar.isRepeatStart || (this._currentRepeatGroup.isClosed && bar.alternateEndings <= 0)) {
-                this._currentRepeatGroup = new RepeatGroup();
-            }
-            this._currentRepeatGroup.addMasterBar(bar);
+            this.addMasterBarToRepeatGroups(bar);
             this.masterBars.push(bar);
+        }
+        /**
+         * Adds the given bar correctly into the current repeat group setup.
+         * @param bar
+         */
+        addMasterBarToRepeatGroups(bar) {
+            // handling the repeats is quite tricky due to many invalid combinations a user might define
+            // there are also some complexities due to nested repeats and repeats with multiple endings but only one opening.
+            // all scenarios are handled below.
+            var _a;
+            // NOTE: In all paths we need to ensure that the bar is added to some repeat group
+            // start a new repeat group if really a repeat is started
+            // or we don't have a group.
+            if (bar.isRepeatStart) {
+                // if the current group was already closed (this opening doesn't cause nesting)
+                // we consider the group as completed
+                if ((_a = this._currentRepeatGroup) === null || _a === void 0 ? void 0 : _a.isClosed) {
+                    this._openedRepeatGroups.pop();
+                    this._properlyOpenedRepeatGroups--;
+                }
+                this._currentRepeatGroup = new RepeatGroup();
+                this._openedRepeatGroups.push(this._currentRepeatGroup);
+                this._properlyOpenedRepeatGroups++;
+            }
+            else if (!this._currentRepeatGroup) {
+                this._currentRepeatGroup = new RepeatGroup();
+                this._openedRepeatGroups.push(this._currentRepeatGroup);
+            }
+            // close current group if there was one started
+            this._currentRepeatGroup.addMasterBar(bar);
+            // handle repeat ends
+            if (bar.isRepeatEnd) {
+                // if we have nested repeat groups a repeat end
+                // will treat the group as completed
+                if (this._properlyOpenedRepeatGroups > 1) {
+                    this._openedRepeatGroups.pop();
+                    this._properlyOpenedRepeatGroups--;
+                    // restore outer group in cases like "open open close close"
+                    this._currentRepeatGroup =
+                        this._openedRepeatGroups.length > 0
+                            ? this._openedRepeatGroups[this._openedRepeatGroups.length - 1]
+                            : null;
+                }
+                // else: if only one group is opened, this group stays active for 
+                // scenarios like open close bar close
+            }
         }
         addTrack(track) {
             track.score = this;
@@ -12894,7 +12930,6 @@
                 this.mergePartGroups();
             }
             this._score.finish(this.settings);
-            // the structure of MusicXML does not allow live creation of the groups,
             this._score.rebuildRepeatGroups();
             return this._score;
         }
@@ -13622,6 +13657,11 @@
                             if (!slurNumber) {
                                 slurNumber = '1';
                             }
+                            // slur numbers are unique in the way that they have the same ID across 
+                            // staffs/tracks etc. as long they represent the logically same slur. 
+                            // but in our case it must be globally unique to link the correct notes. 
+                            // adding the staff ID should be enough to achieve this
+                            slurNumber = beat.voice.bar.staff.index + '_' + slurNumber;
                             switch (c.getAttribute('type')) {
                                 case 'start':
                                     this._slurStarts.set(slurNumber, note);
@@ -13631,7 +13671,7 @@
                                         note.isSlurDestination = true;
                                         let slurStart = this._slurStarts.get(slurNumber);
                                         slurStart.slurDestination = note;
-                                        note.slurOrigin = note;
+                                        note.slurOrigin = slurStart;
                                     }
                                     break;
                             }
@@ -22383,11 +22423,24 @@
         //PolyMode = 0x7F
     })(ControllerType || (ControllerType = {}));
 
+    /**
+     * Helper container to handle repeats correctly
+     */
+    class Repeat {
+        constructor(group, opening) {
+            this.closingIndex = 0;
+            this.group = group;
+            this.opening = opening;
+            // sort ascending according to index
+            group.closings = group.closings.sort((a, b) => a.index - b.index);
+            this.iterations = group.closings.map(_ => 0);
+        }
+    }
     class MidiPlaybackController {
         constructor(score) {
-            this._repeatStartIndex = 0;
-            this._repeatNumber = 0;
-            this._repeatOpen = false;
+            this._repeatStack = [];
+            this._groupsOnStack = new Set();
+            this._previousAlternateEndings = 0;
             this.shouldPlay = true;
             this.index = 0;
             this.currentTick = 0;
@@ -22398,25 +22451,32 @@
         }
         processCurrent() {
             const masterBar = this._score.masterBars[this.index];
-            const masterBarAlternateEndings = masterBar.alternateEndings;
-            // if the repeat group wasn't closed we reset the repeating
-            // on the last group opening
-            if (!masterBar.repeatGroup.isClosed &&
-                masterBar.repeatGroup.openings[masterBar.repeatGroup.openings.length - 1] === masterBar) {
-                this._repeatNumber = 0;
-                this._repeatOpen = false;
+            let masterBarAlternateEndings = masterBar.alternateEndings;
+            // if there are no alternate endings set on this bar. take the ones 
+            // from the previously played bar which had alternate endings
+            if (masterBarAlternateEndings === 0) {
+                masterBarAlternateEndings = this._previousAlternateEndings;
             }
-            if ((masterBar.isRepeatStart || masterBar.index === 0) && this._repeatNumber === 0) {
-                this._repeatStartIndex = this.index;
-                this._repeatOpen = true;
+            // Repeat start (only properly closed ones)
+            if (masterBar === masterBar.repeatGroup.opening && masterBar.repeatGroup.isClosed) {
+                // first encounter of the repeat group? -> initialize repeats accordingly
+                if (!this._groupsOnStack.has(masterBar.repeatGroup)) {
+                    const repeat = new Repeat(masterBar.repeatGroup, masterBar);
+                    this._repeatStack.push(repeat);
+                    this._groupsOnStack.add(masterBar.repeatGroup);
+                    this._previousAlternateEndings = 0;
+                }
             }
-            else if (masterBar.isRepeatStart) {
+            // if we're not within repeats or not alternative endings set -> simply play
+            if (this._repeatStack.length === 0 || masterBarAlternateEndings === 0) {
                 this.shouldPlay = true;
             }
-            // if we encounter an alternate ending
-            if (this._repeatOpen && masterBarAlternateEndings > 0) {
+            else {
+                const repeat = this._repeatStack[this._repeatStack.length - 1];
+                const iteration = repeat.iterations[repeat.closingIndex];
+                this._previousAlternateEndings = masterBarAlternateEndings;
                 // do we need to skip this section?
-                if ((masterBarAlternateEndings & (1 << this._repeatNumber)) === 0) {
+                if ((masterBarAlternateEndings & (1 << iteration)) === 0) {
                     this.shouldPlay = false;
                 }
                 else {
@@ -22430,23 +22490,42 @@
         moveNext() {
             const masterBar = this._score.masterBars[this.index];
             const masterBarRepeatCount = masterBar.repeatCount - 1;
-            // if we encounter a repeat end
-            if (this._repeatOpen && masterBarRepeatCount > 0) {
-                // more repeats required?
-                if (this._repeatNumber < masterBarRepeatCount) {
+            // if we encounter a repeat end...
+            if (this._repeatStack.length > 0 && masterBarRepeatCount > 0) {
+                // ...more repeats required?
+                const repeat = this._repeatStack[this._repeatStack.length - 1];
+                const iteration = repeat.iterations[repeat.closingIndex];
+                // -> if yes, increase the iteration and jump back to start
+                if (iteration < masterBarRepeatCount) {
                     // jump to start
-                    this.index = this._repeatStartIndex;
-                    this._repeatNumber++;
+                    this.index = repeat.opening.index;
+                    repeat.iterations[repeat.closingIndex]++;
+                    // clear iterations for previous closings and start over all repeats
+                    // this ensures on scenarios like "open, bar, close, bar, close"
+                    // that the second close will repeat again the first repeat.
+                    for (let i = 0; i < repeat.closingIndex; i++) {
+                        repeat.iterations[i] = 0;
+                    }
+                    repeat.closingIndex = 0;
+                    this._previousAlternateEndings = 0;
                 }
                 else {
-                    // no repeats anymore, jump after repeat end
-                    this._repeatNumber = 0;
-                    this._repeatOpen = false;
-                    this.shouldPlay = true;
-                    this.index++;
+                    // if we don't have further iterations left but we have additional closings in this group
+                    // proceed heading to the next close but keep the repeat group active
+                    if (repeat.closingIndex < repeat.group.closings.length - 1) {
+                        repeat.closingIndex++;
+                        this.index++; // go to next bar after current close
+                    }
+                    else {
+                        // if there are no further closings in the current group, we consider the current repeat done and handled
+                        this._repeatStack.pop();
+                        this._groupsOnStack.delete(repeat.group);
+                        this.index++; // go to next bar after current close
+                    }
                 }
             }
             else {
+                // we have no started repeat, just proceed to next bar
                 this.index++;
             }
         }
@@ -24124,6 +24203,15 @@
         }
     }
 
+    /**
+     * Represents the information related to the beats actively being played now.
+     */
+    class ActiveBeatsChangedEventArgs {
+        constructor(activeBeats) {
+            this.activeBeats = activeBeats;
+        }
+    }
+
     class SelectionInfo {
         constructor(beat) {
             this.bounds = null;
@@ -24171,6 +24259,7 @@
             this._previousCursorCache = null;
             this._lastScroll = 0;
             this.playedBeatChanged = new EventEmitterOfT();
+            this.activeBeatsChanged = new EventEmitterOfT();
             this._beatMouseDown = false;
             this._noteMouseDown = false;
             this._selectionStart = null;
@@ -24196,6 +24285,10 @@
             this.playerPositionChanged = new EventEmitterOfT();
             this.midiEventsPlayed = new EventEmitterOfT();
             this.playbackRangeChanged = new EventEmitterOfT();
+            /**
+             * @internal
+             */
+            this.settingsUpdated = new EventEmitter();
             this.uiFacade = uiFacade;
             this.container = uiFacade.rootContainer;
             uiFacade.initialize(this, settings);
@@ -24274,6 +24367,7 @@
             else {
                 this.destroyPlayer();
             }
+            this.onSettingsUpdated();
         }
         /**
          * Attempts a load of the score represented by the given data object.
@@ -24585,9 +24679,12 @@
             }
             this.player.destroy();
             this.player = null;
+            this._previousTick = 0;
+            this._playerState = PlayerState.Paused;
             this.destroyCursors();
         }
         setupPlayer() {
+            this.updateCursors();
             if (this.player) {
                 return;
             }
@@ -24621,12 +24718,7 @@
             this.player.midiEventsPlayed.on(this.onMidiEventsPlayed.bind(this));
             this.player.playbackRangeChanged.on(this.onPlaybackRangeChanged.bind(this));
             this.player.finished.on(this.onPlayerFinished.bind(this));
-            if (this.settings.player.enableCursor) {
-                this.setupCursors();
-            }
-            else {
-                this.destroyCursors();
-            }
+            this.setupPlayerEvents();
         }
         loadMidiForScore() {
             if (!this.player || !this.score || !this.player.isReady) {
@@ -24760,21 +24852,28 @@
             this._barCursor = null;
             this._beatCursor = null;
             this._selectionWrapper = null;
-            this._previousTick = 0;
-            this._playerState = PlayerState.Paused;
         }
-        setupCursors() {
-            //
-            // Create cursors
-            let cursors = this.uiFacade.createCursors();
-            if (!cursors) {
-                return;
+        updateCursors() {
+            if (this.settings.player.enableCursor && !this._cursorWrapper) {
+                //
+                // Create cursors
+                let cursors = this.uiFacade.createCursors();
+                if (cursors) {
+                    // store options and created elements for fast access
+                    this._cursorWrapper = cursors.cursorWrapper;
+                    this._barCursor = cursors.barCursor;
+                    this._beatCursor = cursors.beatCursor;
+                    this._selectionWrapper = cursors.selectionWrapper;
+                }
+                if (this._currentBeat !== null) {
+                    this.cursorUpdateBeat(this._currentBeat, false, this._previousTick > 10, true);
+                }
             }
-            // store options and created elements for fast access
-            this._cursorWrapper = cursors.cursorWrapper;
-            this._barCursor = cursors.barCursor;
-            this._beatCursor = cursors.beatCursor;
-            this._selectionWrapper = cursors.selectionWrapper;
+            else if (!this.settings.player.enableCursor && this._cursorWrapper) {
+                this.destroyCursors();
+            }
+        }
+        setupPlayerEvents() {
             //
             // Hook into events
             this._previousTick = 0;
@@ -24825,7 +24924,7 @@
         /**
          * updates the cursors to highlight the specified beat
          */
-        cursorUpdateBeat(lookupResult, stop, shouldScroll) {
+        cursorUpdateBeat(lookupResult, stop, shouldScroll, forceUpdate = false) {
             const beat = lookupResult.currentBeat;
             const nextBeat = lookupResult.nextBeat;
             const duration = lookupResult.duration;
@@ -24840,7 +24939,10 @@
             let previousBeat = this._currentBeat;
             let previousCache = this._previousCursorCache;
             let previousState = this._previousStateForCursor;
-            if (beat === (previousBeat === null || previousBeat === void 0 ? void 0 : previousBeat.currentBeat) && cache === previousCache && previousState === this._playerState) {
+            if (!forceUpdate &&
+                beat === (previousBeat === null || previousBeat === void 0 ? void 0 : previousBeat.currentBeat) &&
+                cache === previousCache &&
+                previousState === this._playerState) {
                 return;
             }
             let beatBoundings = cache.findBeat(beat);
@@ -24917,17 +25019,21 @@
             }
         }
         internalCursorUpdateBeat(beat, nextBeat, duration, stop, beatsToHighlight, cache, beatBoundings, shouldScroll) {
-            let barCursor = this._barCursor;
-            let beatCursor = this._beatCursor;
+            const barCursor = this._barCursor;
+            const beatCursor = this._beatCursor;
             let barBoundings = beatBoundings.barBounds.masterBarBounds;
             let barBounds = barBoundings.visualBounds;
             this._currentBarBounds = barBoundings;
-            barCursor.setBounds(barBounds.x, barBounds.y, barBounds.w, barBounds.h);
-            // move beat to start position immediately
-            if (this.settings.player.enableAnimatedBeatCursor) {
-                beatCursor.stopAnimation();
+            if (barCursor) {
+                barCursor.setBounds(barBounds.x, barBounds.y, barBounds.w, barBounds.h);
             }
-            beatCursor.setBounds(beatBoundings.visualBounds.x, barBounds.y, 1, barBounds.h);
+            if (beatCursor) {
+                // move beat to start position immediately
+                if (this.settings.player.enableAnimatedBeatCursor) {
+                    beatCursor.stopAnimation();
+                }
+                beatCursor.setBounds(beatBoundings.visualBounds.x, barBounds.y, 1, barBounds.h);
+            }
             // if playing, animate the cursor to the next beat
             if (this.settings.player.enableElementHighlighting) {
                 this.uiFacade.removeHighlights();
@@ -24935,7 +25041,7 @@
             // actively playing? -> animate cursor and highlight items
             let shouldNotifyBeatChange = false;
             if (this._playerState === PlayerState.Playing && !stop) {
-                if (this.settings.player.enableElementHighlighting && beatsToHighlight) {
+                if (this.settings.player.enableElementHighlighting) {
                     for (let highlight of beatsToHighlight) {
                         let className = BeatContainerGlyph.getGroupId(highlight);
                         this.uiFacade.highlightElements(className, beat.voice.bar.index);
@@ -24960,7 +25066,9 @@
                     // we need to put the transition to an own animation frame
                     // otherwise the stop animation above is not applied.
                     this.uiFacade.beginInvoke(() => {
-                        beatCursor.transitionToX(duration / this.playbackSpeed, nextBeatX);
+                        if (beatCursor) {
+                            beatCursor.transitionToX(duration / this.playbackSpeed, nextBeatX);
+                        }
                     });
                 }
                 shouldScroll = !stop;
@@ -24972,6 +25080,7 @@
             // trigger an event for others to indicate which beat/bar is played
             if (shouldNotifyBeatChange) {
                 this.onPlayedBeatChanged(beat);
+                this.onActiveBeatsChanged(new ActiveBeatsChangedEventArgs(beatsToHighlight));
             }
         }
         onPlayedBeatChanged(beat) {
@@ -24980,6 +25089,13 @@
             }
             this.playedBeatChanged.trigger(beat);
             this.uiFacade.triggerEvent(this.container, 'playedBeatChanged', beat);
+        }
+        onActiveBeatsChanged(e) {
+            if (this._isDestroyed) {
+                return;
+            }
+            this.activeBeatsChanged.trigger(e);
+            this.uiFacade.triggerEvent(this.container, 'activeBeatsChanged', e);
         }
         onBeatMouseDown(originalEvent, beat) {
             if (this._isDestroyed) {
@@ -25339,6 +25455,13 @@
             }
             this.playbackRangeChanged.trigger(e);
             this.uiFacade.triggerEvent(this.container, 'playbackRangeChanged', e);
+        }
+        onSettingsUpdated() {
+            if (this._isDestroyed) {
+                return;
+            }
+            this.settingsUpdated.trigger();
+            this.uiFacade.triggerEvent(this.container, 'settingsUpdated', null);
         }
     }
 
@@ -37405,13 +37528,13 @@
                     offsetClef = 1;
                     break;
                 case Clef.F4:
-                    offsetClef = 2;
+                    offsetClef = 3;
                     break;
                 case Clef.C3:
-                    offsetClef = -1;
+                    offsetClef = 2;
                     break;
                 case Clef.C4:
-                    offsetClef = 1;
+                    offsetClef = 0;
                     break;
             }
             let newLines = new Map();
@@ -40861,8 +40984,8 @@
     // </auto-generated>
     class VersionInfo {
     }
-    VersionInfo.version = '1.3.0-alpha.264';
-    VersionInfo.date = '2022-05-10T00:44:31.757Z';
+    VersionInfo.version = '1.3.0-alpha.306';
+    VersionInfo.date = '2022-06-21T00:47:08.161Z';
 
     var index$5 = /*#__PURE__*/Object.freeze({
         __proto__: null,
@@ -43931,6 +44054,7 @@
         PlayerStateChangedEventArgs: PlayerStateChangedEventArgs,
         PlaybackRangeChangedEventArgs: PlaybackRangeChangedEventArgs,
         PositionChangedEventArgs: PositionChangedEventArgs,
+        ActiveBeatsChangedEventArgs: ActiveBeatsChangedEventArgs,
         AlphaSynthWebWorkerApi: AlphaSynthWebWorkerApi
     });
 

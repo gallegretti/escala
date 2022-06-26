@@ -1408,17 +1408,22 @@ declare class RepeatGroup {
      */
     masterBars: MasterBar[];
     /**
-     * a list of masterbars which open the group.
+     * the masterbars which opens the group.
      */
-    openings: MasterBar[];
+    opening: MasterBar | null;
+    /**
+     * a list of masterbars which open the group.
+     * @deprecated There can only be one opening, use the opening property instead
+     */
+    get openings(): MasterBar[];
     /**
      * a list of masterbars which close the group.
      */
     closings: MasterBar[];
     /**
-     * true if the repeat group was opened well
+     * Gets whether this repeat group is really opened as a repeat.
      */
-    isOpened: boolean;
+    get isOpened(): boolean;
     /**
      * true if the repeat group was closed well
      */
@@ -1854,6 +1859,8 @@ declare class Track {
  */
 declare class Score {
     private _currentRepeatGroup;
+    private _openedRepeatGroups;
+    private _properlyOpenedRepeatGroups;
     /**
      * The album of this song.
      */
@@ -1918,6 +1925,11 @@ declare class Score {
     stylesheet: RenderStylesheet;
     rebuildRepeatGroups(): void;
     addMasterBar(bar: MasterBar): void;
+    /**
+     * Adds the given bar correctly into the current repeat group setup.
+     * @param bar
+     */
+    private addMasterBarToRepeatGroups;
     addTrack(track: Track): void;
     finish(settings: Settings): void;
 }
@@ -4743,6 +4755,17 @@ interface IUiFacade<TSettings> {
 }
 
 /**
+ * Represents the information related to the beats actively being played now.
+ */
+declare class ActiveBeatsChangedEventArgs {
+    /**
+     * The currently active beats across all tracks and voices.
+     */
+    activeBeats: Beat[];
+    constructor(activeBeats: Beat[]);
+}
+
+/**
  * This class represents the public API of alphaTab and provides all logic to display
  * a music sheet in any UI using the given {@link IUiFacade}
  * @param <TSettings> The UI object holding the settings.
@@ -4932,7 +4955,8 @@ declare class AlphaTabApiBase<TSettings> {
     private _previousCursorCache;
     private _lastScroll;
     private destroyCursors;
-    private setupCursors;
+    private updateCursors;
+    private setupPlayerEvents;
     /**
      * updates the cursors to highlight the beat at the specified tick position
      * @param tick
@@ -4952,6 +4976,8 @@ declare class AlphaTabApiBase<TSettings> {
     private internalCursorUpdateBeat;
     playedBeatChanged: IEventEmitterOfT<Beat>;
     private onPlayedBeatChanged;
+    activeBeatsChanged: IEventEmitterOfT<ActiveBeatsChangedEventArgs>;
+    private onActiveBeatsChanged;
     private _beatMouseDown;
     private _noteMouseDown;
     private _selectionStart;
@@ -5001,6 +5027,11 @@ declare class AlphaTabApiBase<TSettings> {
     private onMidiEventsPlayed;
     playbackRangeChanged: IEventEmitterOfT<PlaybackRangeChangedEventArgs>;
     private onPlaybackRangeChanged;
+    /**
+     * @internal
+     */
+    settingsUpdated: IEventEmitter;
+    private onSettingsUpdated;
 }
 
 /**
@@ -6816,6 +6847,8 @@ type index_d_PlaybackRangeChangedEventArgs = PlaybackRangeChangedEventArgs;
 declare const index_d_PlaybackRangeChangedEventArgs: typeof PlaybackRangeChangedEventArgs;
 type index_d_PositionChangedEventArgs = PositionChangedEventArgs;
 declare const index_d_PositionChangedEventArgs: typeof PositionChangedEventArgs;
+type index_d_ActiveBeatsChangedEventArgs = ActiveBeatsChangedEventArgs;
+declare const index_d_ActiveBeatsChangedEventArgs: typeof ActiveBeatsChangedEventArgs;
 type index_d_AlphaSynthWebWorkerApi = AlphaSynthWebWorkerApi;
 declare const index_d_AlphaSynthWebWorkerApi: typeof AlphaSynthWebWorkerApi;
 declare namespace index_d {
@@ -6826,6 +6859,7 @@ declare namespace index_d {
     index_d_PlayerStateChangedEventArgs as PlayerStateChangedEventArgs,
     index_d_PlaybackRangeChangedEventArgs as PlaybackRangeChangedEventArgs,
     index_d_PositionChangedEventArgs as PositionChangedEventArgs,
+    index_d_ActiveBeatsChangedEventArgs as ActiveBeatsChangedEventArgs,
     index_d_AlphaSynthWebWorkerApi as AlphaSynthWebWorkerApi,
   };
 }
