@@ -3,6 +3,7 @@ import { BendType } from '../bend-type';
 import {
   AccentuationType, Beat, Duration, DynamicValue, HarmonicType, Note, PickStroke, Score,
 } from '../../alphatab-types/alphatab-types';
+import { BendState } from '../../components/editor-controls/editor-controls';
 
 export interface EditorActionEventAddNote {
     type: 'add-note',
@@ -123,7 +124,7 @@ export interface EditorActionSetBend {
         preBend: BendType,
         bend: BendType,
         release: BendType,
-        previousBend?: any,
+        previousBend?: BendState,
     }
 }
 

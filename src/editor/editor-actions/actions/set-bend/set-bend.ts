@@ -19,7 +19,7 @@ class SetBendAction extends EditorActionInterface<EditorActionSetBend> {
 
   undo(action: EditorActionSetBend): EditorActionResult {
     const { note, previousBend } = action.data;
-    this.applyBendStateToNote(previousBend, note);
+    this.applyBendStateToNote(previousBend!, note);
     return {
       requiresRerender: true,
       requiresMidiUpdate: true,

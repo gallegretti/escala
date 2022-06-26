@@ -44,18 +44,26 @@ export default function GenericBendButton(props: GenericBendButtonProps) {
   return (
     <>
       {props.currentBendType === 'half'
-        ? <props.half {...commonButtonProps} selected /> : <></>}
+        && <props.half {...commonButtonProps} selected />}
       {props.currentBendType === 'full'
-        ? <props.full {...commonButtonProps} selected /> : <></>}
+        && <props.full {...commonButtonProps} selected />}
       {props.currentBendType === null
-        ? <props.default {...commonButtonProps} selected={false} /> : <></>}
+        && <props.default {...commonButtonProps} selected={false} />}
       {props.isPopperOpen && anchorElem
-                && (
-                <StyledPopper modifiers={bendPopperModifiers} open anchorEl={anchorElem} disablePortal>
-                  <props.half selected={props.currentBendType === 'half'} disabled={false} onClick={() => { props.setCurrentBendType('half'); }} />
-                  <props.full selected={props.currentBendType === 'full'} disabled={false} onClick={() => { props.setCurrentBendType('full'); }} />
-                </StyledPopper>
-                )}
+        && (
+          <StyledPopper modifiers={bendPopperModifiers} open anchorEl={anchorElem} disablePortal>
+            <props.half
+              selected={props.currentBendType === 'half'}
+              disabled={false}
+              onClick={() => { props.setCurrentBendType('half'); }}
+            />
+            <props.full
+              selected={props.currentBendType === 'full'}
+              disabled={false}
+              onClick={() => { props.setCurrentBendType('full'); }}
+            />
+          </StyledPopper>
+        )}
     </>
   );
 }

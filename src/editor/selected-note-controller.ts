@@ -11,7 +11,7 @@ interface NoteSlotData {
 class SelectedNoteController {
   private currentSelectedSlot: NoteSlotData | null = null;
 
-  private numberOfStrings: number = 6;
+  private numberOfStrings = 6;
 
   constructor(private renderer: ScoreRenderer) {
   }
@@ -90,7 +90,7 @@ class SelectedNoteController {
     if (this.currentSelectedSlot?.note) {
       const beats = this.renderer?.boundsLookup?.findBeats(this.currentSelectedSlot.note.beat);
       // [0] is the top staff and [1] is at the bottom
-      const noteBounds = beats?.[1]?.notes?.find((noteBounds: NoteBounds) => noteBounds.note.id === this.currentSelectedSlot?.note?.id);
+      const noteBounds = beats?.[1]?.notes?.find((it: NoteBounds) => it.note.id === this.currentSelectedSlot?.note?.id);
       const bounds = noteBounds?.noteHeadBounds;
       return bounds;
     }
@@ -115,7 +115,8 @@ class SelectedNoteController {
       return;
     }
     if (!this.currentSelectedSlot.note) {
-      const noteAtSlot = this.currentSelectedSlot.beat.notes.find((note: Note) => note.string === this.currentSelectedSlot?.string);
+      const noteAtSlot = this.currentSelectedSlot.beat.notes
+        .find((note: Note) => note.string === this.currentSelectedSlot?.string);
       if (noteAtSlot) {
         this.currentSelectedSlot.note = noteAtSlot;
       }

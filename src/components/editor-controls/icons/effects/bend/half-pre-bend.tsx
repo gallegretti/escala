@@ -9,7 +9,13 @@ export default function HalfPreBendGlyph(props: BaseGlyphProps) {
   const color = useGlyphColor(props);
   return (
     <Tooltip title={props.hideTooltip ? '' : 'Full Pre Bend'}>
-      <svg height="30px" width="32px" onClick={props.onClick} xmlns="http://www.w3.org/2000/svg" style={{ ...baseSvgStyle(props) }}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="30px"
+        width="32px"
+        onClick={props.onClick}
+        style={{ ...baseSvgStyle(props) }}
+      >
         <text style={{ ...bendTextStyle(), transform: 'translate(0px, 10px)' }} fill={color}>1/2</text>
         <path d="M 15 24 c 4 0 8 0 8 -19" stroke={color} style={{ fill: 'none' }} />
         <path d="M 23 4 L 20 9 L 26 9 z" fill={color} style={{ stroke: 'none' }} />

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { ChangeEventHandler, useState } from 'react';
 import './score-info';
 import {
-  Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button,
+  Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, OutlinedInputProps,
 } from '@mui/material';
 import { ScoreInfo } from '../../../editor/editor-actions/actions/set-score-info/score-info';
 import { Score } from '../../../alphatab-types/alphatab-types';
@@ -52,13 +52,76 @@ export function ScoreInfoComponent(props: ScoreInfoProps) {
     >
       <DialogTitle>Score Information</DialogTitle>
       <DialogContent className="score-info-content">
-        <TextField id="field-title" fullWidth margin="normal" variant="outlined" name="title" label="Title" onChange={handleChange} value={state.title} />
-        <TextField id="field-subtitle" fullWidth margin="normal" variant="outlined" name="subTitle" label="Subtitle" onChange={handleChange} value={state.subTitle} />
-        <TextField id="field-artist" fullWidth margin="normal" variant="outlined" name="artist" label="Artist" onChange={handleChange} value={state.artist} />
-        <TextField id="field-album" fullWidth margin="normal" variant="outlined" name="album" label="Album" onChange={handleChange} value={state.album} />
-        <TextField id="field-tab-creator" fullWidth margin="normal" variant="outlined" name="tab" label="Tab Creator" onChange={handleChange} value={state.tab} />
-        <TextField id="field-comments" fullWidth margin="normal" variant="outlined" name="notices" label="Comments" onChange={handleChange} value={state.notices} />
-        <TextField id="field-composer" fullWidth margin="normal" variant="outlined" name="words" label="Composer" onChange={handleChange} value={state.words} />
+        <TextField
+          id="field-title"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          name="title"
+          label="Title"
+          onChange={handleChange}
+          value={state.title}
+        />
+        <TextField
+          id="field-subtitle"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          name="subTitle"
+          label="Subtitle"
+          onChange={handleChange}
+          value={state.subTitle}
+        />
+        <TextField
+          id="field-artist"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          name="artist"
+          label="Artist"
+          onChange={handleChange}
+          value={state.artist}
+        />
+        <TextField
+          id="field-album"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          name="album"
+          label="Album"
+          onChange={handleChange}
+          value={state.album}
+        />
+        <TextField
+          id="field-tab-creator"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          name="tab"
+          label="Tab Creator"
+          onChange={handleChange}
+          value={state.tab}
+        />
+        <TextField
+          id="field-comments"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          name="notices"
+          label="Comments"
+          onChange={handleChange}
+          value={state.notices}
+        />
+        <TextField
+          id="field-composer"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          name="words"
+          label="Composer"
+          onChange={handleChange}
+          value={state.words}
+        />
       </DialogContent>
       <DialogActions>
         <Button title="Save" onClick={onSave}>Save</Button>

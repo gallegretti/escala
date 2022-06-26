@@ -9,7 +9,13 @@ export default function PalmMuteGlyph(props: DynamicGlyphProps) {
   const color = useGlyphColor(props);
   return (
     <Tooltip title="Palm Mute">
-      <svg height="20px" width="38px" onClick={props.onClick} xmlns="http://www.w3.org/2000/svg" style={baseSvgStyle(props)}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="20px"
+        width="38px"
+        onClick={props.onClick}
+        style={baseSvgStyle(props)}
+      >
         <text fill={color} style={{ fontFamily: glyphAsciFontfamily, transform: 'translate(4px, 16px)' }}>P.M</text>
       </svg>
     </Tooltip>

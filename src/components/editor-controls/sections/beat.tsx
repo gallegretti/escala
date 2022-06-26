@@ -3,14 +3,23 @@ import { Divider } from '@mui/material';
 import TextGlyph from '../icons/beat/text';
 import UpstrokeGlyph from '../icons/beat/upstroke';
 import DownStrokeGlyph from '../icons/beat/downstroke';
+import { PickStroke } from '../../../alphatab-types/alphatab-types';
 
 interface BeatSectionProps {
-    currentPickStroke: number | null,
-    setPickStroke: (stroke: number) => void,
-    hasSelectedBeat: boolean, setText: () => void
+  currentPickStroke: number | null,
+  setPickStroke: (stroke: number) => void,
+  hasSelectedBeat: boolean, setText: () => void
 }
 
 export default function BeatSection(props: BeatSectionProps) {
+  const setPickStroke = (newPickStroke: PickStroke) => {
+    if (props.currentPickStroke === newPickStroke) {
+      props.setPickStroke(alphaTab.model.PickStroke.None);
+    } else {
+      props.setPickStroke(newPickStroke);
+    }
+  };
+
   return (
     <>
       <TextGlyph
@@ -26,12 +35,12 @@ export default function BeatSection(props: BeatSectionProps) {
       <UpstrokeGlyph
         disabled={!props.hasSelectedBeat}
         selected={props.currentPickStroke === alphaTab.model.PickStroke.Up}
-        onClick={() => props.setPickStroke(props.currentPickStroke === alphaTab.model.PickStroke.Up ? alphaTab.model.PickStroke.None : alphaTab.model.PickStroke.Up)}
+        onClick={() => setPickStroke(alphaTab.model.PickStroke.Up)}
       />
       <DownStrokeGlyph
         disabled={!props.hasSelectedBeat}
         selected={props.currentPickStroke === alphaTab.model.PickStroke.Down}
-        onClick={() => props.setPickStroke(props.currentPickStroke === alphaTab.model.PickStroke.Down ? alphaTab.model.PickStroke.None : alphaTab.model.PickStroke.Down)}
+        onClick={() => setPickStroke(alphaTab.model.PickStroke.Down)}
       />
     </>
   );
