@@ -1,4 +1,4 @@
-function clickNote(fret) {
+function clickNote(fret: number) {
   cy.get('.at-surface').children().eq(3).within(() => {
     // Use regex exact match so we don't select the tempo by mistake.
     // TODO: This still selects the '1' below the tempo. Need to find a better selector
@@ -6,7 +6,7 @@ function clickNote(fret) {
   });
 }
 
-function noteIsVisible(fret) {
+function noteIsVisible(fret: number) {
   cy.get('.at-surface').children().eq(3).within(() => {
     // Use regex exact match so we don't select the tempo by mistake.
     // TODO: This still selects the '1' below the tempo. Need to find a better selector
@@ -16,6 +16,5 @@ function noteIsVisible(fret) {
 
 export {
   clickNote,
-  noteIsVisible
-}
-
+  noteIsVisible,
+};

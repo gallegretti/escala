@@ -1,5 +1,5 @@
-const { openScore } = require('../helpers/open-score');
-const { waitForAlphatab } = require('../helpers/wait-for-alphatab');
+import openScore from '../helpers/open-score';
+import waitForAlphatab from '../helpers/wait-for-alphatab';
 
 it('opens a new file correctly', () => {
   cy.visit('/');
@@ -12,4 +12,4 @@ it('opens a new file correctly', () => {
   cy.contains('1-2-3-4').should('be.visible'); // Subtitle
   cy.contains('Gabriel').should('be.visible'); // Artist
   cy.contains('Test Scores').should('be.visible'); // Album
-})
+});

@@ -1,6 +1,6 @@
-const { openScore } = require('../helpers/open-score');
-const { clickNote, noteIsVisible } = require('../helpers/select-note');
-const { waitForAlphatab } = require('../helpers/wait-for-alphatab');
+import openScore from '../helpers/open-score';
+import { clickNote, noteIsVisible } from '../helpers/select-note';
+import waitForAlphatab from '../helpers/wait-for-alphatab';
 
 it('can redo and undo a simple action', () => {
   cy.visit('/');
@@ -23,4 +23,4 @@ it('can redo and undo a simple action', () => {
   cy.get('#redo').click();
   waitForAlphatab();
   noteIsVisible(5);
-})
+});

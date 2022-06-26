@@ -1,4 +1,4 @@
-const { waitForAlphatab } = require('../helpers/wait-for-alphatab');
+import waitForAlphatab from '../helpers/wait-for-alphatab';
 
 it('updates the score info when the data is changed', () => {
   cy.visit('/');
@@ -24,4 +24,4 @@ it('updates the score info when the data is changed', () => {
   cy.contains('Artist').should('be.visible');
   cy.contains('Album').should('be.visible');
   cy.contains('Words by Composer').should('be.visible');
-})
+});

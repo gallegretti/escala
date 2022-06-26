@@ -1,6 +1,6 @@
-const { openScore } = require('../helpers/open-score');
-const { clickNote } = require('../helpers/select-note');
-const { waitForAlphatab } = require('../helpers/wait-for-alphatab');
+import openScore from '../helpers/open-score';
+import waitForAlphatab from '../helpers/wait-for-alphatab';
+import { clickNote } from '../helpers/select-note';
 
 it('shows the editor cursor when a note is cliked', () => {
   cy.visit('/');
@@ -10,4 +10,4 @@ it('shows the editor cursor when a note is cliked', () => {
 
   clickNote(3);
   cy.get('#editor-cursor').should('be.visible');
-})
+});
