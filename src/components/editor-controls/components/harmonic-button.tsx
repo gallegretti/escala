@@ -67,7 +67,7 @@ export default function HarmonicButton(props: HarmonicButtonProps) {
     <div>
       <GenericHarmonicGlyph
         title="Harmonics"
-        hideTooltip={!props.isPopperOpen}
+        hideTooltip={props.isPopperOpen}
         selected={props.currentHarmonicType !== 0}
         disabled={props.disabled}
         onClick={onClick}
