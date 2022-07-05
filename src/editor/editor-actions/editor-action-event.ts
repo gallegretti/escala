@@ -5,7 +5,7 @@ import {
 } from '../../alphatab-types/alphatab-types';
 import { BendState } from '../../components/editor-controls/editor-controls';
 
-export interface EditorActionEventAddNote {
+export interface EditorActionAddNote {
     type: 'add-note',
     data: {
         beat: Beat,
@@ -146,6 +146,15 @@ export interface EditorActionSetHarmonic {
     }
 }
 
+export interface EditorActionSetHammer {
+    type: 'set-hammer';
+    data: {
+        note: Note;
+        hammerOrPull: boolean;
+        previousHammerOrPull?: boolean;
+    }
+}
+
 export interface EditorActionSetTap {
     type: 'set-tap',
     data: {
@@ -178,22 +187,24 @@ export interface EditorActionResult {
     requiresMidiUpdate: boolean;
 }
 
-export type EditorActionEvent = EditorActionEventAddNote
-| EditorActionEventRemoveNote
-| EditorActionSetFret
-| EditorActionSetPalmMute
-| EditorActionSetText
+export type EditorActionEvent
+= EditorActionAddNote
+| EditorActionAddTrack
 | EditorActionEventAddBeat
+| EditorActionEventRemoveNote
+| EditorActionSetAccentuation
+| EditorActionSetBend
+| EditorActionSetDeadNote
 | EditorActionSetDuration
 | EditorActionSetDynamics
+| EditorActionSetFret
 | EditorActionSetGhostNote
-| EditorActionSetAccentuation
-| EditorActionSetDeadNote
-| EditorActionSetPickStroke
+| EditorActionSetHammer
 | EditorActionSetHarmonic
+| EditorActionSetPalmMute
+| EditorActionSetPickStroke
 | EditorActionSetScoreInfo
-| EditorActionSetBend
 | EditorActionSetTap
-| EditorActionSetVibrato
-| EditorActionAddTrack
-| EditorActionSetTempo;
+| EditorActionSetTempo
+| EditorActionSetText
+| EditorActionSetVibrato;

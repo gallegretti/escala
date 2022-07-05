@@ -31,7 +31,6 @@ function CountInDisabledGlyph(props: DynamicGlyphProps) {
 
 export default function CountInGlyph(props: DynamicGlyphProps) {
   const Glyph = props.selected ? CountInEnabledGlyph : CountInDisabledGlyph;
-  console.log('CountInGlyph');
   return (
     <Tooltip title="Count-in">
       {Glyph(props)}

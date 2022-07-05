@@ -19,9 +19,11 @@ import EditorLeftMenu from './components/editor-left-menu';
 import {
   AccentuationType,
   AlphaTabApi,
+  Beat,
   Duration,
   DynamicValue,
   HarmonicType,
+  Note,
   PickStroke,
   Score,
   ScoreRenderer,
@@ -49,9 +51,8 @@ export default function App() {
   const [selectedTrackIndex, setSelectedTrackIndex] = useState(0);
 
   const setupWithApi = (newApi: AlphaTabApi) => {
-    // newApi.metronomeVolume = 1;
-    // newApi.countInVolume = 1;
     api = newApi;
+    // eslint-disable-next-line no-new
     new EventEmitter(api.renderer as ScoreRenderer, onEditorUIEvent);
     selectedNoteController = new SelectedNoteController(api.renderer as ScoreRenderer);
   };
@@ -69,6 +70,18 @@ export default function App() {
   const dispatchAction = (action: EditorActionEvent) => {
     const result = editorActions.doAction(action);
     handlerActionResult(result);
+  };
+
+  const undo = () => {
+    const result = editorActions.undoAction();
+    handlerActionResult(result);
+    forceUpdate();
+  };
+
+  const redo = () => {
+    const result = editorActions.redoAction();
+    handlerActionResult(result);
+    forceUpdate();
   };
 
   const onEditorUIEvent = (UIeventData: EditorUIEvent) => {
@@ -126,6 +139,15 @@ export default function App() {
     forceUpdate();
   };
 
+  // Helpers
+  const hasSelectedNote = (): boolean => !!selectedNoteController?.getSelectedSlot()?.note;
+
+  const hasSelectedBeat = (): boolean => !!selectedNoteController?.getSelectedSlot()?.beat;
+
+  const selectedBeat = (): Beat | null => selectedNoteController?.getSelectedSlot()?.beat ?? null;
+
+  const selectedNote = (): Note | null => selectedNoteController?.getSelectedSlot()?.note ?? null;
+
   const onAlphatabRenderFinished = () => {
     // TODO: It looks like alphaTab will emit the render finished event before it finishes updating the boundsLookup.
     // Needs to investigate if that's the case or something else, and how to remove this timeout
@@ -134,24 +156,12 @@ export default function App() {
     }, 50);
   };
 
-  const undo = () => {
-    const result = editorActions.undoAction();
-    handlerActionResult(result);
-    forceUpdate();
-  };
-
-  const redo = () => {
-    const result = editorActions.redoAction();
-    handlerActionResult(result);
-    forceUpdate();
-  };
-
   const togglePalmMute = () => {
-    const selectedNote = selectedNoteController.getSelectedNote();
-    if (!selectedNote) {
+    const note = selectedNote();
+    if (!note) {
       return;
     }
-    dispatchAction({ type: 'set-palm-mute', data: { note: selectedNote, isPalmMute: !selectedNote.isPalmMute } });
+    dispatchAction({ type: 'set-palm-mute', data: { note, isPalmMute: !note.isPalmMute } });
     forceUpdate();
   };
 
@@ -183,11 +193,11 @@ export default function App() {
   };
 
   const setBend = (bend: BendState) => {
-    const selectedNote = selectedNoteController.getSelectedNote();
-    if (!selectedNote) {
+    const note = selectedNote();
+    if (!note) {
       return;
     }
-    dispatchAction({ type: 'set-bend', data: { ...bend, note: selectedNote } });
+    dispatchAction({ type: 'set-bend', data: { ...bend, note } });
   };
 
   const newTrack = (params: { name: string }) => {
@@ -198,11 +208,11 @@ export default function App() {
   };
 
   const currentSelectedBend = (): BendState | null => {
-    const selectedNote = selectedNoteController?.getSelectedNote();
-    if (!selectedNote) {
+    const note = selectedNote();
+    if (!note) {
       return null;
     }
-    return getBendState(selectedNote);
+    return getBendState(note);
   };
 
   const currentFret = (): number | null => selectedNoteController?.getSelectedNote()?.fret ?? null;
@@ -223,31 +233,37 @@ export default function App() {
     }
   };
 
-  const currentSelectedBeatText = (): string | null => selectedNoteController?.getSelectedSlot()?.beat?.text ?? null;
+  const currentSelectedBeatText = (): string | null => selectedBeat()?.text ?? null;
 
-  const isCurrentSelectedNotePalmMute = (): boolean => selectedNoteController?.getSelectedSlot()?.note?.isPalmMute ?? false;
+  const isCurrentSelectedNotePalmMute = (): boolean => selectedNote()?.isPalmMute ?? false;
 
-  const isLeftHandTapNote = (): boolean => selectedNoteController?.getSelectedNote()?.isLeftHandTapped ?? false;
+  const isLeftHandTapNote = (): boolean => selectedNote()?.isLeftHandTapped ?? false;
 
-  const isVibrato = (): boolean => selectedNoteController?.getSelectedNote()?.vibrato !== 0 ?? false;
+  const isVibrato = (): boolean => selectedNote()?.vibrato !== 0 ?? false;
 
-  const hasSelectedNote = (): boolean => !!selectedNoteController?.getSelectedSlot()?.note;
+  const currentSelectedBeatDuration = (): Duration | null => selectedBeat()?.duration ?? null;
 
-  const hasSelectedBeat = (): boolean => !!selectedNoteController?.getSelectedSlot()?.beat;
+  const currentSelectedBeatDynamics = (): DynamicValue | null => selectedBeat()?.dynamics ?? null;
 
-  const currentSelectedBeatDuration = (): Duration | null => selectedNoteController?.getSelectedSlot()?.beat?.duration ?? null;
+  const currentSelectedBeatPickStroke = (): PickStroke | null => selectedBeat()?.pickStroke ?? null;
 
-  const currentSelectedBeatDynamics = (): DynamicValue | null => selectedNoteController?.getSelectedSlot()?.beat?.dynamics ?? null;
+  const currentSelectedNoteIsGhost = (): boolean | null => selectedNote()?.isGhost ?? null;
 
-  const currentSelectedBeatPickStroke = (): PickStroke | null => selectedNoteController?.getSelectedSlot()?.beat?.pickStroke ?? null;
+  const currentSelectedNoteAccentuation = (): AccentuationType | null => selectedNote()?.accentuated ?? null;
 
-  const currentSelectedNoteIsGhost = (): boolean | null => selectedNoteController?.getSelectedNote()?.isGhost ?? null;
+  const currentSelectedNoteHarmonicType = (): HarmonicType | null => selectedNote()?.harmonicType ?? null;
 
-  const currentSelectedNoteAccentuation = (): AccentuationType | null => selectedNoteController?.getSelectedNote()?.accentuated ?? null;
+  const currentSelectedNoteDead = (): boolean | null => selectedNote()?.isDead ?? null;
 
-  const currentSelectedNoteHarmonicType = (): HarmonicType | null => selectedNoteController?.getSelectedNote()?.harmonicType ?? null;
+  const currentSelectedNoteHammerOrPull = (): boolean | null => selectedNote()?.isHammerPullOrigin ?? null;
 
-  const currentSelectedNoteDead = (): boolean | null => selectedNoteController?.getSelectedNote()?.isDead ?? null;
+  const setHammer = (hammerOrPull: boolean): void => {
+    const note = selectedNote();
+    if (!note) {
+      return;
+    }
+    dispatchAction({ type: 'set-hammer', data: { note, hammerOrPull } });
+  };
 
   const setDynamics = (dynamics: DynamicValue): void => {
     const beat = selectedNoteController?.getSelectedSlot()?.beat;
@@ -265,7 +281,7 @@ export default function App() {
   };
 
   const setGhostNote = (isGhost: boolean): void => {
-    const note = selectedNoteController?.getSelectedNote();
+    const note = selectedNote();
     if (!note) {
       return;
     }
@@ -273,7 +289,7 @@ export default function App() {
   };
 
   const setAccentuationNote = (accentuation: AccentuationType): void => {
-    const note = selectedNoteController?.getSelectedNote();
+    const note = selectedNote();
     if (!note) {
       return;
     }
@@ -289,7 +305,7 @@ export default function App() {
   };
 
   const setHarmonicType = (harmonicType: HarmonicType): void => {
-    const note = selectedNoteController?.getSelectedNote();
+    const note = selectedNote();
     if (!note) {
       return;
     }
@@ -327,7 +343,7 @@ export default function App() {
   };
 
   const setDeadNote = (value: boolean) => {
-    const note = selectedNoteController.getSelectedNote();
+    const note = selectedNote();
     if (!note) {
       return;
     }
@@ -335,7 +351,7 @@ export default function App() {
   };
 
   const setTapNote = (value: boolean) => {
-    const note = selectedNoteController.getSelectedNote();
+    const note = selectedNote();
     if (!note) {
       return;
     }
@@ -343,7 +359,7 @@ export default function App() {
   };
 
   const setVibratoNote = (value: boolean) => {
-    const note = selectedNoteController.getSelectedNote();
+    const note = selectedNote();
     if (!note) {
       return;
     }
@@ -437,9 +453,11 @@ export default function App() {
                     setPickStroke={setPickStroke}
                     setAccentuationNote={setAccentuationNote}
                     setGhostNote={setGhostNote}
+                    setHammer={setHammer}
                     isGhost={currentSelectedNoteIsGhost()}
                     isLeftHandTapNote={isLeftHandTapNote()}
                     isVibrato={isVibrato()}
+                    isHammerOrPull={currentSelectedNoteHammerOrPull()}
                     setVibrato={setVibratoNote}
                     currentAccentuation={currentSelectedNoteAccentuation()}
                     hasSelectedBeat={hasSelectedBeat()}

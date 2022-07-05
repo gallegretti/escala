@@ -5,6 +5,14 @@ import EditorActionInterface from '../editor-action.interface';
 class RemoveNoteAction extends EditorActionInterface<EditorActionEventRemoveNote> {
   do(action: EditorActionEventRemoveNote): EditorActionResult {
     const { note } = action.data;
+    if (note.hammerPullOrigin) {
+      note.hammerPullOrigin.hammerPullDestination = null;
+      note.hammerPullOrigin = null;
+    }
+    if (note.hammerPullDestination) {
+      note.hammerPullDestination.hammerPullOrigin = null;
+      note.hammerPullDestination = null;
+    }
     note.beat.removeNote(note);
     return {
       requiresRerender: true,

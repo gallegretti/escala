@@ -14,6 +14,7 @@ import { BendType } from '../../../editor/bend-type';
 import TapNoteGlyph from '../icons/effects/tap-note';
 import VibratoNoteGlyph from '../icons/effects/vibratro';
 import { AccentuationType, HarmonicType } from '../../../alphatab-types/alphatab-types';
+import HammerPullNoteGlyph from '../icons/effects/hammer-pull';
 
 interface EffectsSectionProps {
   hasSelectedNote: boolean;
@@ -22,6 +23,7 @@ interface EffectsSectionProps {
   isDeadNote: boolean | null;
   isLeftHandTapNote: boolean | null;
   isVibrato: boolean | null;
+  isHammerOrPull: boolean | null;
   currentHarmonicType: HarmonicType | null;
   currentAccentuation: AccentuationType | null;
   currentBend: BendState | null;
@@ -33,6 +35,7 @@ interface EffectsSectionProps {
   setTapNote: (value: boolean) => void;
   setHarmonicType: (value: HarmonicType) => void;
   setBend: (bend: BendState) => void;
+  setHammer: (value: boolean) => void;
 }
 
 export default function EffectsSection(props: EffectsSectionProps) {
@@ -132,6 +135,12 @@ export default function EffectsSection(props: EffectsSectionProps) {
         setRelease={(bendType) => { setBend('release', bendType); }}
         isPopperOpen={openPopper === 'release'}
         setPopperOpen={() => updateOpenPopper('release')}
+      />
+      <Divider variant="middle" orientation="vertical" flexItem />
+      <HammerPullNoteGlyph
+        disabled={!props.hasSelectedNote}
+        onClick={() => { props.setHammer(!props.isHammerOrPull); }}
+        selected={props.isHammerOrPull ?? false}
       />
     </>
   );

@@ -1,9 +1,9 @@
 import { Note } from '../../../../alphatab-types/alphatab-types';
-import { EditorActionResult, EditorActionEventAddNote } from '../../editor-action-event';
+import { EditorActionResult, EditorActionAddNote } from '../../editor-action-event';
 import EditorActionInterface from '../editor-action.interface';
 
-class AddNoteAction extends EditorActionInterface<EditorActionEventAddNote> {
-  do(action: EditorActionEventAddNote): EditorActionResult {
+class AddNoteAction extends EditorActionInterface<EditorActionAddNote> {
+  do(action: EditorActionAddNote): EditorActionResult {
     const { beat, note } = action.data;
     const hasNoteOnString = beat.notes.find((beatNote: Note) => beatNote.string === note.string) !== undefined;
     if (hasNoteOnString) {
@@ -21,7 +21,7 @@ class AddNoteAction extends EditorActionInterface<EditorActionEventAddNote> {
     };
   }
 
-  undo(action: EditorActionEventAddNote): EditorActionResult {
+  undo(action: EditorActionAddNote): EditorActionResult {
     const { beat, note } = action.data;
     beat.removeNote(note);
     return {

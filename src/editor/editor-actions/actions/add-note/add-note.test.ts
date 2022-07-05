@@ -1,6 +1,6 @@
 import { mock } from 'jest-mock-extended';
 import importNoteAction from './add-note';
-import { EditorActionEventAddNote } from '../../editor-action-event';
+import { EditorActionAddNote } from '../../editor-action-event';
 import { Beat, Note } from '../../../../alphatab-types/alphatab-types';
 
 describe('add-note', () => {
@@ -12,7 +12,7 @@ describe('add-note', () => {
         finish: jest.fn(),
       });
       const note = mock<Note>({});
-      const event: EditorActionEventAddNote = {
+      const event: EditorActionAddNote = {
         type: 'add-note',
         data: {
           beat,
@@ -35,7 +35,7 @@ describe('add-note', () => {
       const note = mock<Note>({
         string: 1,
       });
-      const event: EditorActionEventAddNote = {
+      const event: EditorActionAddNote = {
         type: 'add-note',
         data: {
           beat,
@@ -56,7 +56,7 @@ describe('add-note', () => {
         removeNote: jest.fn(),
       });
       const note = mock<Note>({});
-      const event: EditorActionEventAddNote = {
+      const event: EditorActionAddNote = {
         type: 'add-note',
         data: {
           beat,
