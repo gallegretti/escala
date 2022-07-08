@@ -38,8 +38,8 @@ class SetHammerAction extends EditorActionInterface<EditorActionSetHammer> {
       });
     }
     return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
+      requiresRerender: false,
+      requiresMidiUpdate: false,
     };
   }
 }
