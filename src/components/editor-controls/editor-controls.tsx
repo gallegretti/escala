@@ -50,6 +50,7 @@ interface EditorControlsProps {
   isLeftHandTapNote: boolean | null,
   isVibrato: boolean | null,
   isHammerOrPull: boolean | null,
+  isSlide: boolean | null,
   currentAccentuation: number | null,
   currentPickStroke: PickStroke | null,
   currentHarmonicType: HarmonicType | null,
@@ -64,6 +65,7 @@ interface EditorControlsProps {
   setHarmonicType: (value: number) => void,
   setBend: (bend: BendState) => void,
   setHammer: (value: boolean) => void,
+  setSlide: (value: boolean) => void,
   setTap: (value: boolean) => void,
   setVibrato: (value: boolean) => void,
   setTempo: (value: number) => void,
@@ -200,10 +202,12 @@ export default function EditorControls(props: EditorControlsProps) {
             isLeftHandTapNote={props.isLeftHandTapNote}
             isVibrato={props.isVibrato}
             isHammerOrPull={props.isHammerOrPull}
+            isSlide={props.isSlide}
             setVibrato={props.setVibrato}
             setAccentuationNote={props.setAccentuationNote}
             setBend={props.setBend}
             setHammer={props.setHammer}
+            setSlide={props.setSlide}
             setDeadNote={props.setDeadNote}
             setHarmonicType={props.setHarmonicType}
             setGhostNote={props.setGhostNote}

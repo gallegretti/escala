@@ -155,6 +155,15 @@ export interface EditorActionSetHammer {
     }
 }
 
+export interface EditorActionSetSlide {
+    type: 'set-slide';
+    data: {
+        note: Note;
+        slide: boolean;
+        previousSlide?: boolean;
+    }
+}
+
 export interface EditorActionSetTap {
     type: 'set-tap',
     data: {
@@ -204,6 +213,7 @@ export type EditorActionEvent
 | EditorActionSetPalmMute
 | EditorActionSetPickStroke
 | EditorActionSetScoreInfo
+| EditorActionSetSlide
 | EditorActionSetTap
 | EditorActionSetTempo
 | EditorActionSetText

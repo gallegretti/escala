@@ -257,12 +257,22 @@ export default function App() {
 
   const currentSelectedNoteHammerOrPull = (): boolean | null => selectedNote()?.isHammerPullOrigin ?? null;
 
+  const currentSelectedNoteSlide = (): boolean | null => (selectedNote()?.slideOutType ?? 0) > 0;
+
   const setHammer = (hammerOrPull: boolean): void => {
     const note = selectedNote();
     if (!note) {
       return;
     }
     dispatchAction({ type: 'set-hammer', data: { note, hammerOrPull } });
+  };
+
+  const setSlide = (slide: boolean): void => {
+    const note = selectedNote();
+    if (!note) {
+      return;
+    }
+    dispatchAction({ type: 'set-slide', data: { note, slide } });
   };
 
   const setDynamics = (dynamics: DynamicValue): void => {
@@ -297,7 +307,7 @@ export default function App() {
   };
 
   const setPickStroke = (pickStroke: number): void => {
-    const beat = selectedNoteController?.getSelectedSlot()?.beat;
+    const beat = selectedBeat();
     if (!beat) {
       return;
     }
@@ -327,7 +337,7 @@ export default function App() {
   const score = (): Score | null => api?.score;
 
   const setDuration = (duration: Duration) => {
-    const beat = selectedNoteController.getSelectedSlot()?.beat;
+    const beat = selectedBeat();
     if (!beat) {
       return;
     }
@@ -454,10 +464,12 @@ export default function App() {
                     setAccentuationNote={setAccentuationNote}
                     setGhostNote={setGhostNote}
                     setHammer={setHammer}
+                    setSlide={setSlide}
                     isGhost={currentSelectedNoteIsGhost()}
                     isLeftHandTapNote={isLeftHandTapNote()}
                     isVibrato={isVibrato()}
                     isHammerOrPull={currentSelectedNoteHammerOrPull()}
+                    isSlide={currentSelectedNoteSlide()}
                     setVibrato={setVibratoNote}
                     currentAccentuation={currentSelectedNoteAccentuation()}
                     hasSelectedBeat={hasSelectedBeat()}

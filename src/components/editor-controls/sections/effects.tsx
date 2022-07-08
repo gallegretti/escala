@@ -15,6 +15,7 @@ import TapNoteGlyph from '../icons/effects/tap-note';
 import VibratoNoteGlyph from '../icons/effects/vibratro';
 import { AccentuationType, HarmonicType } from '../../../alphatab-types/alphatab-types';
 import HammerPullNoteGlyph from '../icons/effects/hammer-pull';
+import SlideNoteGlyph from '../icons/effects/slide';
 
 interface EffectsSectionProps {
   hasSelectedNote: boolean;
@@ -24,6 +25,7 @@ interface EffectsSectionProps {
   isLeftHandTapNote: boolean | null;
   isVibrato: boolean | null;
   isHammerOrPull: boolean | null;
+  isSlide: boolean | null;
   currentHarmonicType: HarmonicType | null;
   currentAccentuation: AccentuationType | null;
   currentBend: BendState | null;
@@ -36,6 +38,7 @@ interface EffectsSectionProps {
   setHarmonicType: (value: HarmonicType) => void;
   setBend: (bend: BendState) => void;
   setHammer: (value: boolean) => void;
+  setSlide: (value: boolean) => void;
 }
 
 export default function EffectsSection(props: EffectsSectionProps) {
@@ -141,6 +144,11 @@ export default function EffectsSection(props: EffectsSectionProps) {
         disabled={!props.hasSelectedNote}
         onClick={() => { props.setHammer(!props.isHammerOrPull); }}
         selected={props.isHammerOrPull ?? false}
+      />
+      <SlideNoteGlyph
+        disabled={!props.hasSelectedNote}
+        onClick={() => { props.setSlide(!props.isSlide); }}
+        selected={props.isSlide ?? false}
       />
     </>
   );

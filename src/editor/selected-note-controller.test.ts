@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 import { mock } from 'jest-mock-extended';
 import { Beat, Note, ScoreRenderer } from '../alphatab-types/alphatab-types';
 import SelectedNoteController from './selected-note-controller';
