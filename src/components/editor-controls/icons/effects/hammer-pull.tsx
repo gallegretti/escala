@@ -3,6 +3,7 @@ import { Tooltip } from '@mui/material';
 import { DynamicGlyphProps } from '../dynamics/dynamic';
 import { useGlyphColor } from '../glyphColor';
 import baseSvgStyle from '../glyphBaseSvgStyle';
+import { glyphAsciFontfamily } from '../glyphTextFont';
 
 export default function HammerPullNoteGlyph(props: DynamicGlyphProps) {
   const color = useGlyphColor(props);
@@ -15,7 +16,12 @@ export default function HammerPullNoteGlyph(props: DynamicGlyphProps) {
         onClick={props.onClick}
         style={baseSvgStyle(props)}
       >
-        <text fill={color} style={{ transform: 'translate(4px, 8px)', fontSize: '10px' }}>HO</text>
+        <text
+          fill={color}
+          style={{ transform: 'translate(4px, 8px)', fontFamily: glyphAsciFontfamily, fontSize: '10px' }}
+        >
+          HO
+        </text>
         <path d="M 0 20 C 6 12 16 12 22 20 M 20 20 C 14 14 8 14 2 20 Z" fill={color} style={{ stroke: 'none' }} />
       </svg>
     </Tooltip>
