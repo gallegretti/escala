@@ -15,10 +15,12 @@ import EffectsSection from './sections/effects';
 import DocumentSection from './sections/document';
 
 import {
+  Chord,
   Duration, DynamicValue, HarmonicType, PickStroke, Score,
 } from '../../alphatab-types/alphatab-types';
 import useDialog from './use-dialog';
 import DialogSetTempo from './dialog-set-tempo/dialog-set-tempo';
+import DialogChord from './dialog-chord/dialog-chord';
 
 export interface BendState {
   preBend: BendType;
@@ -55,6 +57,7 @@ interface EditorControlsProps {
   currentPickStroke: PickStroke | null,
   currentHarmonicType: HarmonicType | null,
   currentBend: BendState | null,
+  currentChord: Chord | null,
   score: Score | null,
   // Set note modifiers
   togglePalmMute: () => void,
@@ -96,6 +99,12 @@ export default function EditorControls(props: EditorControlsProps) {
     openDialog: openTempoDialog,
     closeDialog: closeTempoDialog,
     isDialogOpen: isTempoDialogOpen,
+  } = useDialog();
+
+  const {
+    openDialog: openChordDialog,
+    closeDialog: closeChordDialog,
+    isDialogOpen: isChordDialogOpen,
   } = useDialog();
 
   const saveNewText = (newText: string) => {
@@ -153,6 +162,13 @@ export default function EditorControls(props: EditorControlsProps) {
           score={props.score}
           onClose={closeScoreInfoDialog}
           onSave={saveNewScoreInfo}
+        />
+      )}
+      {props.currentChord && (
+        <DialogChord
+          isOpen={isChordDialogOpen}
+          chord={props.currentChord}
+          onClose={closeChordDialog}
         />
       )}
       <div style={{
@@ -221,6 +237,7 @@ export default function EditorControls(props: EditorControlsProps) {
             hasSelectedBeat={props.hasSelectedBeat}
             setPickStroke={props.setPickStroke}
             setText={() => openTextDialog()}
+            setChord={() => openChordDialog()}
           />
         </TabContainer>
         <TabContainer style={{ display: currentTab !== 3 ? 'none' : 'flex' }}>

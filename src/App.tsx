@@ -20,6 +20,7 @@ import {
   AccentuationType,
   AlphaTabApi,
   Beat,
+  Chord,
   Duration,
   DynamicValue,
   HarmonicType,
@@ -253,6 +254,8 @@ export default function App() {
 
   const currentSelectedNoteHarmonicType = (): HarmonicType | null => selectedNote()?.harmonicType ?? null;
 
+  const currentChord = () : Chord | null => selectedNote()?.beat.chord ?? null;
+
   const currentSelectedNoteDead = (): boolean | null => selectedNote()?.isDead ?? null;
 
   const currentSelectedNoteHammerOrPull = (): boolean | null => selectedNote()?.isHammerPullOrigin ?? null;
@@ -465,6 +468,7 @@ export default function App() {
                     setGhostNote={setGhostNote}
                     setHammer={setHammer}
                     setSlide={setSlide}
+                    currentChord={currentChord()}
                     isGhost={currentSelectedNoteIsGhost()}
                     isLeftHandTapNote={isLeftHandTapNote()}
                     isVibrato={isVibrato()}

@@ -4,11 +4,14 @@ import TextGlyph from '../icons/beat/text';
 import UpstrokeGlyph from '../icons/beat/upstroke';
 import DownStrokeGlyph from '../icons/beat/downstroke';
 import { PickStroke } from '../../../alphatab-types/alphatab-types';
+import Chord from '../icons/beat/chord';
 
 interface BeatSectionProps {
   currentPickStroke: number | null,
   setPickStroke: (stroke: number) => void,
-  hasSelectedBeat: boolean, setText: () => void
+  hasSelectedBeat: boolean,
+  setText: () => void,
+  setChord: () => void,
 }
 
 export default function BeatSection(props: BeatSectionProps) {
@@ -42,6 +45,13 @@ export default function BeatSection(props: BeatSectionProps) {
         selected={props.currentPickStroke === alphaTab.model.PickStroke.Down}
         onClick={() => setPickStroke(alphaTab.model.PickStroke.Down)}
       />
+      {/*
+      <Chord
+        disabled={!props.hasSelectedBeat}
+        selected={false}
+        onClick={() => props.setChord()}
+      />
+      */}
     </>
   );
 }

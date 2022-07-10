@@ -23,6 +23,7 @@ class RenderFinishedEventArgs extends alphaTab.rendering.RenderFinishedEventArgs
 class PlayerStateChangedEventArgs extends alphaTab.synth.PlayerStateChangedEventArgs {}
 class NoteBounds extends alphaTab.rendering.NoteBounds {}
 class ScoreRenderer extends alphaTab.rendering.ScoreRenderer {}
+class Chord extends alphaTab.model.Chord {}
 
 // Horrible hack so the enum type is corrent
 type Duration = (typeof alphaTab.model.Duration.Whole | typeof alphaTab.model.Duration.Half | typeof alphaTab.model.Duration.Quarter | typeof alphaTab.model.Duration.Eighth | typeof alphaTab.model.Duration.Sixteenth | typeof alphaTab.model.Duration.ThirtySecond | typeof alphaTab.model.Duration.SixtyFourth | typeof alphaTab.model.Duration.OneHundredTwentyEighth | typeof alphaTab.model.Duration.TwoHundredFiftySixth | typeof alphaTab.model.Duration.DoubleWhole | typeof alphaTab.model.Duration.QuadrupleWhole);
@@ -42,6 +43,7 @@ export type {
   Staff,
   Beat,
   Voice,
+  Chord,
   BendPoint,
   Score,
   Duration,
