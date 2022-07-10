@@ -291,6 +291,7 @@ export default function App() {
                     score={score()}
                     currentHarmonicType={currentSelectedNoteHarmonicType()}
                     currentPickStroke={currentSelectedBeatPickStroke()}
+                    setChord={editorActionDispatcher.setChord}
                     setText={editorActionDispatcher.setText}
                     setScoreInfo={editorActionDispatcher.setScoreInfo}
                     setHarmonicType={editorActionDispatcher.setHarmonicType}

@@ -1,0 +1,44 @@
+import React from 'react';
+import styled from '@emotion/styled';
+
+interface ChordNoteProps {
+  fret: number;
+  string: number;
+  isSelected: boolean;
+  noteClick: (fret: number, string: number) => void;
+}
+
+export default function ChordNote({
+  fret,
+  string,
+  isSelected,
+  noteClick,
+}: ChordNoteProps) {
+  const Note = styled('div')({
+    opacity: isSelected ? '1 !important' : '0',
+    cursor: 'pointer',
+    width: '20px',
+    height: '20px',
+    backgroundColor: 'white',
+    gridColumnStart: 1 + string * 2,
+    gridRowStart: 2 + fret * 2,
+    borderRadius: '50%',
+    placeSelf: 'center',
+    '&:focus': {
+      opacity: '0.5',
+    },
+    '&:hover': {
+      opacity: '0.5',
+    },
+  });
+  return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+    <Note
+      // eslint-disable-next-line react/no-array-index-key
+      aria-label={`fret ${fret} string ${string}`}
+      onClick={() => noteClick(fret, string)}
+      role="button"
+      tabIndex={0}
+    />
+  );
+}

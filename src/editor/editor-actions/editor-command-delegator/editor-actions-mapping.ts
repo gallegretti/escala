@@ -22,6 +22,7 @@ import setTapAction from '../actions/set-tap/set-tap';
 import setTempoAction from '../actions/set-tempo/set-tempo';
 import setTextAction from '../actions/set-text/set-text';
 import setVibratoAction from '../actions/set-vibrato/set-vibrato';
+import setChordAction from '../actions/set-chord/set-chord';
 
 const mapping: Record<string, EditorActionInterface<EditorActionEvent>> = {
   'add-beat': addBeatAction,
@@ -30,6 +31,7 @@ const mapping: Record<string, EditorActionInterface<EditorActionEvent>> = {
   'remove-note': removeNoteAction,
   'set-accentuation': setAccentuationAction,
   'set-bend': setBendAction,
+  'set-chord': setChordAction,
   'set-dead-note': setDeadNoteAction,
   'set-duration': setDurationAction,
   'set-dynamics': setDynamicAction,

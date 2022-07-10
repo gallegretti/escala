@@ -39,6 +39,7 @@ interface EditorControlsProps {
   setDynamics: (dynamics: DynamicValue) => void,
   setText: (newText: string) => void,
   setScoreInfo: (scoreInfo: ScoreInfo) => void,
+  setChord: (chord: Chord) => void,
   // Cursor state
   hasSelectedNote: boolean,
   hasSelectedBeat: boolean,
@@ -117,6 +118,11 @@ export default function EditorControls(props: EditorControlsProps) {
     props.setScoreInfo(scoreInfo);
   };
 
+  const saveChord = (chord: Chord) => {
+    closeChordDialog();
+    props.setChord(chord);
+  };
+
   const saveTempo = (tempo: number) => {
     closeTempoDialog();
     props.setTempo(tempo);
@@ -164,13 +170,12 @@ export default function EditorControls(props: EditorControlsProps) {
           onSave={saveNewScoreInfo}
         />
       )}
-      {props.currentChord && (
-        <DialogChord
-          isOpen={isChordDialogOpen}
-          chord={props.currentChord}
-          onClose={closeChordDialog}
-        />
-      )}
+      <DialogChord
+        isOpen={isChordDialogOpen}
+        chord={undefined}
+        onClose={closeChordDialog}
+        onSave={saveChord}
+      />
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',

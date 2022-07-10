@@ -1,7 +1,7 @@
 import { ScoreInfo } from './actions/set-score-info/score-info';
 import { BendType } from '../bend-type';
 import {
-  AccentuationType, Beat, Duration, DynamicValue, HarmonicType, Note, PickStroke, Score,
+  AccentuationType, Beat, Chord, Duration, DynamicValue, HarmonicType, Note, PickStroke, Score,
 } from '../../alphatab-types/alphatab-types';
 import { BendState } from '../../components/editor-controls/editor-controls';
 
@@ -191,6 +191,14 @@ export interface EditorActionSetPickStroke {
     }
 }
 
+export interface EditorActionSetChord {
+    type: 'set-chord',
+    data: {
+        beat: Beat;
+        chord?: Chord;
+    }
+}
+
 export interface EditorActionResult {
     requiresRerender: boolean;
     requiresMidiUpdate: boolean;
@@ -203,6 +211,7 @@ export type EditorActionEvent
 | EditorActionEventRemoveNote
 | EditorActionSetAccentuation
 | EditorActionSetBend
+| EditorActionSetChord
 | EditorActionSetDeadNote
 | EditorActionSetDuration
 | EditorActionSetDynamics

@@ -2,6 +2,7 @@ import { AlphaTabApi } from '@coderline/alphatab';
 import {
   AccentuationType,
   Beat,
+  Chord,
   Duration,
   DynamicValue,
   HarmonicType,
@@ -195,6 +196,13 @@ class EditorActionDispatcher {
     if (currentBeat) {
       const newBeat = new alphaTab.model.Beat();
       this.dispatchAction({ type: 'add-beat', data: { currentBeat, newBeat } });
+    }
+  };
+
+  setChord = (chord: Chord) => {
+    const currentBeat = this.selectedNoteController.getSelectedSlot()?.beat;
+    if (currentBeat) {
+      this.dispatchAction({ type: 'set-chord', data: { beat: currentBeat, chord } });
     }
   };
 
