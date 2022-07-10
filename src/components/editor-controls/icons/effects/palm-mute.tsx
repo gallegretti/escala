@@ -12,11 +12,16 @@ export default function PalmMuteGlyph(props: DynamicGlyphProps) {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="20px"
-        width="38px"
+        width="34px"
         onClick={props.onClick}
         style={baseSvgStyle(props)}
       >
-        <text fill={color} style={{ fontFamily: glyphAsciFontfamily, transform: 'translate(4px, 16px)' }}>P.M</text>
+        <text
+          fill={color}
+          style={{ fontSize: '16px', fontFamily: glyphAsciFontfamily, transform: 'translate(4px, 16px)' }}
+        >
+          P.M
+        </text>
       </svg>
     </Tooltip>
   );
