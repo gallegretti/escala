@@ -7,12 +7,11 @@ import SelectedNoteController from './editor/selected-note-controller';
 import EventEmitter from './editor/ui-actions/event-emitter';
 import { EditorUIEvent } from './editor/ui-actions/editor-ui-event';
 import EditorActions from './editor/editor-actions/editor-command-delegator/editor-actions';
-import { EditorActionEvent, EditorActionResult } from './editor/editor-actions/editor-action-event';
+import { EditorActionResult } from './editor/editor-actions/editor-action-event';
 import { EditorControls, BendState } from './components/editor-controls/editor-controls';
 import EditorCursor from './components/editor-cursor/editor-cursor';
 import EditorPlayerControls from './components/editor-player-controls/editor-player-controls';
 import AlphaTabViewport from './components/alphatab-viewport/alphatab-viewport';
-import { ScoreInfo } from './editor/editor-actions/actions/set-score-info/score-info';
 import { getBendState } from './editor/editor-actions/actions/set-bend/set-bend-lookup-table';
 import { ColorModeContext } from './editor/color-mode-context';
 import EditorLeftMenu from './components/editor-left-menu';
@@ -31,6 +30,7 @@ import {
   Track,
 } from './alphatab-types/alphatab-types';
 import { DialogContext } from './editor/dialog-context';
+import EditorActionDispatcher from './editor/editor-action-dispatcher';
 
 function useForceUpdate() {
   const [_, setValue] = useState(0); // integer state
@@ -40,6 +40,11 @@ function useForceUpdate() {
 const editorActions: EditorActions = new EditorActions();
 let selectedNoteController!: SelectedNoteController;
 let api!: AlphaTabApi;
+const editorActionDispatcher = new EditorActionDispatcher(
+  editorActions,
+  selectedNoteController,
+  () => {},
+);
 
 const Body = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[900] : 'inherit',
@@ -51,13 +56,6 @@ export default function App() {
 
   const [selectedTrackIndex, setSelectedTrackIndex] = useState(0);
 
-  const setupWithApi = (newApi: AlphaTabApi) => {
-    api = newApi;
-    // eslint-disable-next-line no-new
-    new EventEmitter(api.renderer as ScoreRenderer, onEditorUIEvent);
-    selectedNoteController = new SelectedNoteController(api.renderer as ScoreRenderer);
-  };
-
   const handlerActionResult = (result: EditorActionResult) => {
     if (result.requiresRerender) {
       api.render();
@@ -68,20 +66,14 @@ export default function App() {
     }
   };
 
-  const dispatchAction = (action: EditorActionEvent) => {
-    const result = editorActions.doAction(action);
-    handlerActionResult(result);
-  };
-
-  const undo = () => {
-    const result = editorActions.undoAction();
-    handlerActionResult(result);
-    forceUpdate();
-  };
-
-  const redo = () => {
-    const result = editorActions.redoAction();
-    handlerActionResult(result);
+  const setupWithApi = (newApi: AlphaTabApi) => {
+    api = newApi;
+    // eslint-disable-next-line no-new
+    new EventEmitter(api.renderer as ScoreRenderer, onEditorUIEvent);
+    selectedNoteController = new SelectedNoteController(api.renderer as ScoreRenderer);
+    editorActionDispatcher.api = newApi;
+    editorActionDispatcher.onResult = handlerActionResult;
+    editorActionDispatcher.selectedNoteController = selectedNoteController;
     forceUpdate();
   };
 
@@ -97,21 +89,13 @@ export default function App() {
       selectedNoteController.toggleNoteSelection(UIeventData.data.note);
     }
     if (UIeventData.type === 'delete-selected-note') {
-      const currentSelectedNote = selectedNoteController.getSelectedNote();
-      if (currentSelectedNote) {
-        dispatchAction({ type: 'remove-note', data: { note: currentSelectedNote } });
-        selectedNoteController.setSelectedSlot(null);
-      }
+      editorActionDispatcher.removeNote();
     }
     if (UIeventData.type === 'move-cursor-right' && selectedNoteController.hasSelectedSlot()) {
       UIeventData.rawEvent.preventDefault();
       const moved = selectedNoteController.moveSelectedNoteRight();
       if (!moved) {
-        const currentBeat = selectedNoteController.getSelectedSlot()?.beat;
-        if (currentBeat) {
-          const newBeat = new alphaTab.model.Beat();
-          dispatchAction({ type: 'add-beat', data: { currentBeat, newBeat } });
-        }
+        editorActionDispatcher.addBeat();
       }
     }
     if (UIeventData.type === 'move-cursor-left' && selectedNoteController.hasSelectedSlot()) {
@@ -131,10 +115,10 @@ export default function App() {
       selectedNoteController.setSelectedSlot(null);
     }
     if (UIeventData.type === 'undo-action') {
-      undo();
+      editorActionDispatcher.undo();
     }
     if (UIeventData.type === 'redo-action') {
-      redo();
+      editorActionDispatcher.redo();
     }
 
     forceUpdate();
@@ -157,15 +141,6 @@ export default function App() {
     }, 50);
   };
 
-  const togglePalmMute = () => {
-    const note = selectedNote();
-    if (!note) {
-      return;
-    }
-    dispatchAction({ type: 'set-palm-mute', data: { note, isPalmMute: !note.isPalmMute } });
-    forceUpdate();
-  };
-
   const playPause = () => {
     api.playPause();
     forceUpdate();
@@ -185,29 +160,6 @@ export default function App() {
     }
   };
 
-  const setText = (text: string) => {
-    const beat = selectedNoteController.getSelectedSlot()?.beat;
-    if (!beat) {
-      return;
-    }
-    dispatchAction({ type: 'set-text', data: { text, beat } });
-  };
-
-  const setBend = (bend: BendState) => {
-    const note = selectedNote();
-    if (!note) {
-      return;
-    }
-    dispatchAction({ type: 'set-bend', data: { ...bend, note } });
-  };
-
-  const newTrack = (params: { name: string }) => {
-    if (!api.score) {
-      return;
-    }
-    dispatchAction({ type: 'add-track', data: { score: api.score, track: { name: params.name } } });
-  };
-
   const currentSelectedBend = (): BendState | null => {
     const note = selectedNote();
     if (!note) {
@@ -217,22 +169,6 @@ export default function App() {
   };
 
   const currentFret = (): number | null => selectedNoteController?.getSelectedNote()?.fret ?? null;
-
-  const setFret = (fret: number) => {
-    const selectedSlot = selectedNoteController.getSelectedSlot();
-    if (!selectedSlot) {
-      return;
-    }
-    if (selectedSlot?.note) {
-      dispatchAction({ type: 'set-fret', data: { note: selectedSlot.note, fret } });
-    } else {
-      const note = new alphaTab.model.Note();
-      note.fret = fret;
-      note.string = selectedSlot?.string;
-      dispatchAction({ type: 'add-note', data: { beat: selectedSlot.beat, note } });
-      selectedNoteController.updateCurrentSelection();
-    }
-  };
 
   const currentSelectedBeatText = (): string | null => selectedBeat()?.text ?? null;
 
@@ -262,90 +198,11 @@ export default function App() {
 
   const currentSelectedNoteSlide = (): boolean | null => (selectedNote()?.slideOutType ?? 0) > 0;
 
-  const setHammer = (hammerOrPull: boolean): void => {
-    const note = selectedNote();
-    if (!note) {
-      return;
-    }
-    dispatchAction({ type: 'set-hammer', data: { note, hammerOrPull } });
-  };
-
-  const setSlide = (slide: boolean): void => {
-    const note = selectedNote();
-    if (!note) {
-      return;
-    }
-    dispatchAction({ type: 'set-slide', data: { note, slide } });
-  };
-
-  const setDynamics = (dynamics: DynamicValue): void => {
-    const beat = selectedNoteController?.getSelectedSlot()?.beat;
-    if (!beat) {
-      return;
-    }
-    dispatchAction({ type: 'set-dynamics', data: { beat, dynamics } });
-  };
-
-  const setTempo = (tempo: number): void => {
-    if (!api.score) {
-      return;
-    }
-    dispatchAction({ type: 'set-tempo', data: { tempo, score: api.score } });
-  };
-
-  const setGhostNote = (isGhost: boolean): void => {
-    const note = selectedNote();
-    if (!note) {
-      return;
-    }
-    dispatchAction({ type: 'set-ghost-note', data: { note, isGhost } });
-  };
-
-  const setAccentuationNote = (accentuation: AccentuationType): void => {
-    const note = selectedNote();
-    if (!note) {
-      return;
-    }
-    dispatchAction({ type: 'set-accentuation', data: { note, accentuation } });
-  };
-
-  const setPickStroke = (pickStroke: number): void => {
-    const beat = selectedBeat();
-    if (!beat) {
-      return;
-    }
-    dispatchAction({ type: 'set-pick-stroke', data: { beat, pickStroke } });
-  };
-
-  const setHarmonicType = (harmonicType: HarmonicType): void => {
-    const note = selectedNote();
-    if (!note) {
-      return;
-    }
-    dispatchAction({ type: 'set-harmonic', data: { note, harmonic: harmonicType } });
-  };
-
   const print = () => {
     api.print('', null);
   };
 
-  const setScoreInfo = (scoreInfo: ScoreInfo) => {
-    const { score } = api;
-    if (!score) {
-      return;
-    }
-    dispatchAction({ type: 'set-score-info', data: { score, scoreInfo } });
-  };
-
   const score = (): Score | null => api?.score;
-
-  const setDuration = (duration: Duration) => {
-    const beat = selectedBeat();
-    if (!beat) {
-      return;
-    }
-    dispatchAction({ type: 'set-duration', data: { beat, duration } });
-  };
 
   const setVolume = (volume: number) => {
     api.masterVolume = volume;
@@ -353,30 +210,6 @@ export default function App() {
 
   const setSpeed = (speed: number) => {
     api.playbackSpeed = speed;
-  };
-
-  const setDeadNote = (value: boolean) => {
-    const note = selectedNote();
-    if (!note) {
-      return;
-    }
-    dispatchAction({ type: 'set-dead-note', data: { note, isDeadNote: value } });
-  };
-
-  const setTapNote = (value: boolean) => {
-    const note = selectedNote();
-    if (!note) {
-      return;
-    }
-    dispatchAction({ type: 'set-tap', data: { note, isLeftHandTap: value } });
-  };
-
-  const setVibratoNote = (value: boolean) => {
-    const note = selectedNote();
-    if (!note) {
-      return;
-    }
-    dispatchAction({ type: 'set-vibrato', data: { note, isVibrato: value } });
   };
 
   const selectTrack = (track: Track) => {
@@ -446,42 +279,46 @@ export default function App() {
               <div className="app-content">
                 <EditorLeftMenu
                   score={api?.score}
-                  onNewTrack={newTrack}
+                  onNewTrack={editorActionDispatcher.newTrack}
                   selectedTrackIndex={selectedTrackIndex}
                   selectTrack={selectTrack}
                 />
                 <div className="app-editor-controls">
                   <EditorControls
-                    setScoreInfo={setScoreInfo}
-                    setText={setText}
-                    setHarmonicType={setHarmonicType}
-                    setTempo={setTempo}
                     newFile={newFile}
                     open={openFile}
-                    setDeadNote={setDeadNote}
                     isDeadNote={currentSelectedNoteDead()}
                     score={score()}
                     currentHarmonicType={currentSelectedNoteHarmonicType()}
                     currentPickStroke={currentSelectedBeatPickStroke()}
-                    setPickStroke={setPickStroke}
-                    setAccentuationNote={setAccentuationNote}
-                    setGhostNote={setGhostNote}
-                    setHammer={setHammer}
-                    setSlide={setSlide}
+                    setText={editorActionDispatcher.setText}
+                    setScoreInfo={editorActionDispatcher.setScoreInfo}
+                    setHarmonicType={editorActionDispatcher.setHarmonicType}
+                    setTempo={editorActionDispatcher.setTempo}
+                    setDeadNote={editorActionDispatcher.setDeadNote}
+                    setPickStroke={editorActionDispatcher.setPickStroke}
+                    setAccentuationNote={editorActionDispatcher.setAccentuationNote}
+                    setGhostNote={editorActionDispatcher.setGhostNote}
+                    setHammer={editorActionDispatcher.setHammer}
+                    setSlide={editorActionDispatcher.setSlide}
+                    setVibrato={editorActionDispatcher.setVibratoNote}
+                    setDynamics={editorActionDispatcher.setDynamics}
+                    setTap={editorActionDispatcher.setTapNote}
+                    setDuration={editorActionDispatcher.setDuration}
+                    togglePalmMute={editorActionDispatcher.togglePalmMute}
+                    undo={editorActionDispatcher.undo}
+                    redo={editorActionDispatcher.redo}
+                    setBend={editorActionDispatcher.setBend}
                     currentChord={currentChord()}
                     isGhost={currentSelectedNoteIsGhost()}
                     isLeftHandTapNote={isLeftHandTapNote()}
                     isVibrato={isVibrato()}
                     isHammerOrPull={currentSelectedNoteHammerOrPull()}
                     isSlide={currentSelectedNoteSlide()}
-                    setVibrato={setVibratoNote}
                     currentAccentuation={currentSelectedNoteAccentuation()}
                     hasSelectedBeat={hasSelectedBeat()}
-                    setDynamics={setDynamics}
                     currentDynamics={currentSelectedBeatDynamics()}
-                    setDuration={setDuration}
                     currentDuration={currentSelectedBeatDuration()}
-                    setBend={setBend}
                     currentBend={currentSelectedBend()}
                     exportGuitarPro={exportGuitarPro}
                     exportMidi={exportMidi}
@@ -489,12 +326,8 @@ export default function App() {
                     hasSelectedNote={hasSelectedNote()}
                     isPalmMute={isCurrentSelectedNotePalmMute()}
                     currentText={currentSelectedBeatText()}
-                    setTap={setTapNote}
-                    togglePalmMute={() => togglePalmMute()}
                     canRedo={editorActions.canRedo()}
                     canUndo={editorActions.canUndo()}
-                    undo={() => undo()}
-                    redo={() => redo()}
                   />
                 </div>
                 <AlphaTabViewport
@@ -505,7 +338,7 @@ export default function App() {
                   <EditorCursor
                     hasDialogOpen={hasDialog}
                     fret={currentFret()}
-                    setFret={(fret) => { setFret(fret); }}
+                    setFret={editorActionDispatcher.setFret}
                     bounds={selectedNoteController?.getNoteBounds()}
                   />
                 </AlphaTabViewport>
