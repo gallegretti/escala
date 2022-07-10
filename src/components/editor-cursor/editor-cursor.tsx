@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import styled from '@emotion/styled';
 import { useTheme } from '@mui/material';
 import { Bounds } from '../../alphatab-types/alphatab-types';
 
@@ -49,6 +50,20 @@ export default function EditorCursor(props: EditorCursorProps) {
   if (!props.bounds) {
     return <div />;
   }
+  const FretInput = styled('input')({
+    width: '10px',
+    opacity: '0',
+    // Hides the '+1' and '-1' input arrows
+    '&::-moz-appearance': 'textfield',
+    '&::-webkit-inner-spin-button': {
+      '-webkit-appearance': 'none',
+      margin: 0,
+    },
+    '&::-webkit-outer-spin-button': {
+      '-webkit-appearance': 'none',
+      margin: 0,
+    },
+  });
   return (
     <div
       id="editor-cursor"
@@ -65,9 +80,8 @@ export default function EditorCursor(props: EditorCursorProps) {
         pointerEvents: 'none',
       }}
     >
-      <input
+      <FretInput
         ref={inputRef}
-        style={{ width: '10px', appearance: 'textfield', opacity: '0' }}
         // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus
         type="number"
