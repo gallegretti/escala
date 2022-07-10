@@ -49,8 +49,13 @@ function setupListeners(renderer: ScoreRenderer) {
       });
       return;
     }
-    const barBounds = renderer?.boundsLookup?.findBeat(beat)?.barBounds.visualBounds;
-    const stringNumber = getStringNumber(y, barBounds!);
+    const beats = renderer?.boundsLookup?.findBeats(beat);
+    // [0] is the top staff and [1] is at the bottom
+    const barBounds = beats?.[1].barBounds.visualBounds;
+    if (!barBounds) {
+      return;
+    }
+    const stringNumber = getStringNumber(y, barBounds);
     if (stringNumber) {
       emitEvent({
         type: 'string-mouse-down',
