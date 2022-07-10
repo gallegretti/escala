@@ -36,7 +36,7 @@ describe('set-score-info', () => {
   });
 
   describe('undo', () => {
-    test('Should not undo', () => {
+    test('should not undo', () => {
       expect(setScoreInfo.canUndo()).toBe(false);
     });
   });

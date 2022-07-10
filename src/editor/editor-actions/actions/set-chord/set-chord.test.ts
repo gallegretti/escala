@@ -20,7 +20,7 @@ const chordAm = mock<Chord>({
 
 describe('set-chord', () => {
   describe('do', () => {
-    test('Should add the given chord', () => {
+    test('should add the given chord', () => {
       const beat = mock<Beat>({
         notes: [],
         addNote: jest.fn(),
@@ -47,7 +47,7 @@ describe('set-chord', () => {
       expect(beat.addNote).toBeCalledTimes(5); // Am chord has 5 played notes
     });
 
-    test('Should not add or remove any note if there`s already at least one note on the beat', () => {
+    test('should not add or remove any note if there`s already at least one note on the beat', () => {
       const beat = mock<Beat>({
         notes: [
           mock<Note>({}), // One note on the beat
