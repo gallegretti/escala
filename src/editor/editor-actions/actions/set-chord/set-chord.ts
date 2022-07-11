@@ -6,7 +6,7 @@ class SetChordAction extends EditorActionInterface<EditorActionSetChord> {
     const { beat, chord } = action.data;
     // If there's nothing on the current beat, create the notes. Otherwise don't modify them.
     if (chord) {
-      const chordId = '123456';
+      const chordId = chord.name;
       beat.voice.bar.staff.addChord(chordId, chord);
       beat.chordId = chordId;
       if (beat.notes.length === 0) {

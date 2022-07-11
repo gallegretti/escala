@@ -43,7 +43,7 @@ describe('set-chord', () => {
       };
       const result = setChordAction.do(event);
       expect(result.requiresRerender).toBe(true);
-      expect(beat.voice.bar.staff.addChord).toBeCalledWith('123456', event.data.chord);
+      expect(beat.voice.bar.staff.addChord).toBeCalledWith('Am', event.data.chord);
       expect(beat.addNote).toBeCalledTimes(5); // Am chord has 5 played notes
     });
 
@@ -72,7 +72,7 @@ describe('set-chord', () => {
       };
       const result = setChordAction.do(event);
       expect(result.requiresRerender).toBe(true);
-      expect(beat.voice.bar.staff.addChord).toBeCalledWith('123456', event.data.chord);
+      expect(beat.voice.bar.staff.addChord).toBeCalledWith('Am', event.data.chord);
       expect(beat.removeNote).not.toBeCalled();
       expect(beat.addNote).not.toBeCalled();
     });
