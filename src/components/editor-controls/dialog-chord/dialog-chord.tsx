@@ -20,6 +20,9 @@ export default function DialogChord(props: DialogChordProps) {
     setChordName(event.target.value);
   };
 
+  const numberOfStrings = 6;
+  const numberOfFrets = 6;
+
   const noteClick = (fret: number, string: number) => {
     const newStrings = [...strings];
     if (newStrings[string] === fret) {
@@ -36,12 +39,10 @@ export default function DialogChord(props: DialogChordProps) {
     chord.showDiagram = true;
     chord.showFingering = true;
     chord.showName = true;
-    chord.strings = strings;
+    chord.strings = [...strings].reverse();
     props.onSave(chord);
   };
 
-  const numberOfStrings = 6;
-  const numberOfFrets = 6;
   return (
     <Dialog
       open={props.isOpen}
@@ -49,25 +50,23 @@ export default function DialogChord(props: DialogChordProps) {
     >
       <DialogContent>
         <TextField
-          InputProps={{
-            style: {
-              textAlign: 'center',
-            },
-          }}
+          id="chord-name"
           label="Chord Name"
           autoFocus
           type="text"
           value={props.chord?.name ?? chordName}
           onChange={(event) => updateChordName(event)}
         />
-        <div style={{ position: 'relative', marginTop: '30px' }}>
-          <div style={{
-            position: 'absolute',
-            backgroundColor: 'white',
-            width: '100%',
-            height: '8px',
-            zIndex: '99',
-          }}
+        <div aria-label="Chord grid" style={{ position: 'relative', marginTop: '30px' }}>
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              backgroundColor: 'white',
+              width: '100%',
+              height: '8px',
+              zIndex: '99',
+            }}
           />
           <div style={{
             position: 'relative',
@@ -86,7 +85,7 @@ export default function DialogChord(props: DialogChordProps) {
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={save} title="Save">Save</Button>
+        <Button id="chord-save" onClick={save} title="Save">Save</Button>
       </DialogActions>
     </Dialog>
   );

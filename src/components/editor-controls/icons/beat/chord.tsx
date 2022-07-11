@@ -10,6 +10,7 @@ export default function ChordGlyph(props: DynamicGlyphProps) {
   return (
     <Tooltip title="Chord">
       <svg
+        id={props.id}
         height="25px"
         width="18px"
         onClick={props.onClick}

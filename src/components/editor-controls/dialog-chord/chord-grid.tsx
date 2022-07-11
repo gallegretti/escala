@@ -1,4 +1,5 @@
 import { useTheme } from '@mui/material';
+import { range } from 'lodash';
 import React from 'react';
 import ChordNote from './chord-note';
 
@@ -29,21 +30,21 @@ export default function ChordGrid({
     }}
     >
       {
-        [...Array(numberOfFrets - 1)].map((_, fret) => (
-          [...Array(numberOfStrings)].map((_2, string) => (
+        range(1, numberOfFrets).map((fret, fretIndex) => (
+          range(numberOfStrings).map((string, stringIndex) => (
             (
               <>
                 <div style={{
                   backgroundColor: theme.palette.mode === 'dark' ? 'rgb(56 56 56)' : 'white',
-                  gridColumnStart: 2 + string * 2,
-                  gridRowStart: 2 + fret * 2,
+                  gridColumnStart: 2 + stringIndex * 2,
+                  gridRowStart: 2 + fretIndex * 2,
                 }}
                 />
                 <ChordNote
-                  key={`${fret + 1}-${string + 1}`}
+                  key={`${fretIndex + 1}-${stringIndex + 1}`}
                   fret={fret}
-                  string={string}
-                  isSelected={strings[string] === fret}
+                  string={stringIndex}
+                  isSelected={strings[stringIndex] === fret}
                   noteClick={noteClick}
                 />
               </>

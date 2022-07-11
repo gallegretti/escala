@@ -21,7 +21,7 @@ export default function ChordNote({
     height: '20px',
     backgroundColor: 'white',
     gridColumnStart: 1 + string * 2,
-    gridRowStart: 2 + fret * 2,
+    gridRowStart: 2 + (fret - 1) * 2, // 1 -> 2, 2 -> 4, 3 -> 6, ...
     borderRadius: '50%',
     placeSelf: 'center',
     '&:focus': {
@@ -35,6 +35,7 @@ export default function ChordNote({
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events
     <Note
       // eslint-disable-next-line react/no-array-index-key
+      id={`fret-${fret}-string-${string}`}
       aria-label={`fret ${fret} string ${string}`}
       onClick={() => noteClick(fret, string)}
       role="button"

@@ -46,6 +46,7 @@ export default function BeatSection(props: BeatSectionProps) {
         onClick={() => setPickStroke(alphaTab.model.PickStroke.Down)}
       />
       <Chord
+        id="chord"
         disabled={!props.hasSelectedBeat}
         selected={false}
         onClick={() => props.setChord()}
