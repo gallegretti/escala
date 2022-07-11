@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Dialog, DialogActions, DialogContent, TextField,
@@ -10,15 +10,20 @@ interface DialogChordProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (chord: Chord) => void;
-  chord?: Chord;
+  chord: Chord | null;
 }
 
 export default function DialogChord(props: DialogChordProps) {
-  const [chordName, setChordName] = useState('');
+  const [chordName, setChordName] = useState(props.chord?.name ?? '');
   const [strings, setStrings] = useState([-1, -1, -1, -1, -1, -1]);
   const updateChordName = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setChordName(event.target.value);
   };
+
+  useEffect(() => {
+    setChordName(props.chord?.name ?? '');
+    setStrings(props.chord?.strings.reverse() ?? [-1, -1, -1, -1, -1, -1]);
+  }, [props.chord]);
 
   const numberOfStrings = 6;
   const numberOfFrets = 6;

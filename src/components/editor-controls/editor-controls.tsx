@@ -172,7 +172,7 @@ export default function EditorControls(props: EditorControlsProps) {
       )}
       <DialogChord
         isOpen={isChordDialogOpen}
-        chord={undefined}
+        chord={props.currentChord}
         onClose={closeChordDialog}
         onSave={saveChord}
       />
