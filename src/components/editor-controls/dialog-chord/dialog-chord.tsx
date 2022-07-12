@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useEffect, useState } from 'react';
 import {
   Button,
@@ -5,6 +7,7 @@ import {
 } from '@mui/material';
 import { Chord } from '../../../alphatab-types/alphatab-types';
 import ChordGrid from './chord-grid';
+import ChordNut from './chord-nut';
 
 interface DialogChordProps {
   isOpen: boolean;
@@ -63,6 +66,11 @@ export default function DialogChord(props: DialogChordProps) {
           onChange={(event) => updateChordName(event)}
         />
         <div aria-label="Chord grid" style={{ position: 'relative', marginTop: '30px' }}>
+          <ChordNut
+            noteClick={noteClick}
+            numberOfStrings={numberOfStrings}
+            strings={strings}
+          />
           <div
             aria-hidden="true"
             style={{
