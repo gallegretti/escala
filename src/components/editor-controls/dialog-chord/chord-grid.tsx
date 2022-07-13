@@ -1,6 +1,6 @@
+import React from 'react';
 import { useTheme } from '@mui/material';
 import { range } from 'lodash';
-import React from 'react';
 import ChordNote from './chord-note';
 
 interface ChordGridProps {

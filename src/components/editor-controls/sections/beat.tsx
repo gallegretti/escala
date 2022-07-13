@@ -3,8 +3,9 @@ import { Divider } from '@mui/material';
 import TextGlyph from '../icons/beat/text';
 import UpstrokeGlyph from '../icons/beat/upstroke';
 import DownStrokeGlyph from '../icons/beat/downstroke';
-import { PickStroke } from '../../../alphatab-types/alphatab-types';
-import Chord from '../icons/beat/chord';
+import ChordGlyph from '../icons/beat/chord';
+import { Chord, PickStroke } from '../../../alphatab-types/alphatab-types';
+import ChordButton from '../components/chord-button';
 
 interface BeatSectionProps {
   currentPickStroke: number | null,
@@ -12,6 +13,8 @@ interface BeatSectionProps {
   hasSelectedBeat: boolean,
   setText: () => void,
   setChord: () => void,
+  useChord: (arg: Chord) => void,
+  chords: Chord[],
 }
 
 export default function BeatSection(props: BeatSectionProps) {
@@ -45,11 +48,12 @@ export default function BeatSection(props: BeatSectionProps) {
         selected={props.currentPickStroke === alphaTab.model.PickStroke.Down}
         onClick={() => setPickStroke(alphaTab.model.PickStroke.Down)}
       />
-      <Chord
-        id="chord"
+      <Divider variant="middle" orientation="vertical" flexItem />
+      <ChordButton
         disabled={!props.hasSelectedBeat}
-        selected={false}
-        onClick={() => props.setChord()}
+        chords={props.chords}
+        setChord={props.setChord}
+        useChord={props.useChord}
       />
     </>
   );

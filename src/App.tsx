@@ -198,6 +198,11 @@ export default function App() {
 
   const currentSelectedNoteSlide = (): boolean | null => (selectedNote()?.slideOutType ?? 0) > 0;
 
+  const currentAvailableChords = (): Chord[] => {
+    const chords = api?.score?.tracks[0].staves[0].chords;
+    return Array.from(chords?.values() ?? []);
+  };
+
   const print = () => {
     api.print('', null);
   };
@@ -321,6 +326,7 @@ export default function App() {
                     currentDynamics={currentSelectedBeatDynamics()}
                     currentDuration={currentSelectedBeatDuration()}
                     currentBend={currentSelectedBend()}
+                    currentAvailableChords={currentAvailableChords()}
                     exportGuitarPro={exportGuitarPro}
                     exportMidi={exportMidi}
                     print={print}

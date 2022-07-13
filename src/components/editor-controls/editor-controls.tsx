@@ -59,6 +59,7 @@ interface EditorControlsProps {
   currentHarmonicType: HarmonicType | null,
   currentBend: BendState | null,
   currentChord: Chord | null,
+  currentAvailableChords: Chord[],
   score: Score | null,
   // Set note modifiers
   togglePalmMute: () => void,
@@ -243,6 +244,8 @@ export default function EditorControls(props: EditorControlsProps) {
             setPickStroke={props.setPickStroke}
             setText={() => openTextDialog()}
             setChord={() => openChordDialog()}
+            useChord={props.setChord}
+            chords={props.currentAvailableChords}
           />
         </TabContainer>
         <TabContainer style={{ display: currentTab !== 3 ? 'none' : 'flex' }}>
