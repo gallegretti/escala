@@ -17,19 +17,20 @@ interface DialogChordProps {
 }
 
 export default function DialogChord(props: DialogChordProps) {
+  const numberOfStrings = 6;
+  const numberOfFrets = 6;
+  const stringsInitialState = Array(numberOfStrings).fill(-1);
+
   const [chordName, setChordName] = useState(props.chord?.name ?? '');
-  const [strings, setStrings] = useState([-1, -1, -1, -1, -1, -1]);
+  const [strings, setStrings] = useState(stringsInitialState);
   const updateChordName = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setChordName(event.target.value);
   };
 
   useEffect(() => {
     setChordName(props.chord?.name ?? '');
-    setStrings(props.chord?.strings.reverse() ?? [-1, -1, -1, -1, -1, -1]);
+    setStrings(props.chord?.strings.reverse() ?? stringsInitialState);
   }, [props.chord]);
-
-  const numberOfStrings = 6;
-  const numberOfFrets = 6;
 
   const noteClick = (fret: number, string: number) => {
     const newStrings = [...strings];
