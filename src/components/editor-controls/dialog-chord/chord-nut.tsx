@@ -26,6 +26,7 @@ export default function ChordNut({ numberOfStrings, strings, noteClick }: ChordN
       justifyContent: 'space-between',
       width: '92%',
       margin: 'auto',
+      marginLeft: '20px',
     }}
     >
       {

@@ -23,7 +23,7 @@ export default function ChordGrid({
       display: 'grid',
       gridTemplateRows: `repeat(${numberOfFrets - 1}, 5px 1fr) 5px`,
       gridTemplateColumns: `repeat(${numberOfStrings - 1}, 5px 1fr) 5px`,
-      backgroundColor: 'white',
+      backgroundColor: theme.palette.text.primary,
       width: '100%',
       top: '0',
       height: '100%',
