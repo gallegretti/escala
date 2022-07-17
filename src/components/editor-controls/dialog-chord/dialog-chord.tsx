@@ -1,18 +1,15 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   TextField,
-  useTheme,
 } from '@mui/material';
 import { Chord } from '../../../alphatab-types/alphatab-types';
-import ChordGrid from './chord-grid';
-import ChordNut from './chord-nut';
+import ChordInput from './chord-input';
 
 interface DialogChordProps {
   isOpen: boolean;
@@ -20,22 +17,6 @@ interface DialogChordProps {
   onSave: (chord: Chord) => void;
   chord: Chord | null;
 }
-
-const FirstFretInput = styled('input')({
-  width: '10px',
-  height: '15px',
-  marginTop: '20px',
-  // Hides the '+1' and '-1' input arrows
-  '&::-moz-appearance': 'textfield',
-  '&::-webkit-inner-spin-button': {
-    '-webkit-appearance': 'none',
-    margin: 0,
-  },
-  '&::-webkit-outer-spin-button': {
-    '-webkit-appearance': 'none',
-    margin: 0,
-  },
-});
 
 const fretNotPlayed = -1;
 
@@ -47,7 +28,6 @@ export default function DialogChord(props: DialogChordProps) {
   const [firstFret, setFirstFret] = useState<number>(1);
   const [chordName, setChordName] = useState<string>(props.chord?.name ?? '');
   const [strings, setStrings] = useState<number[]>(stringsInitialState);
-  const theme = useTheme();
   const updateChordName = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setChordName(event.target.value);
   };
@@ -57,20 +37,6 @@ export default function DialogChord(props: DialogChordProps) {
     setFirstFret(props.chord?.firstFret ?? 1);
     setStrings(props.chord?.strings.reverse() ?? stringsInitialState);
   }, [props.chord]);
-
-  const noteClick = (fret: number, string: number) => {
-    const newStrings = [...strings];
-    if (newStrings[string] === fret) {
-      newStrings[string] = fretNotPlayed;
-    } else {
-      newStrings[string] = fret;
-    }
-    setStrings(newStrings);
-  };
-
-  const firstFretChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFirstFret(Number.parseInt(e.target.value, 10));
-  };
 
   const save = () => {
     const chord = new alphaTab.model.Chord();
@@ -103,44 +69,14 @@ export default function DialogChord(props: DialogChordProps) {
           onChange={(event) => updateChordName(event)}
         />
         <div aria-label="Chord grid" style={{ position: 'relative', marginTop: '30px' }}>
-          <ChordNut
-            noteClick={noteClick}
+          <ChordInput
+            firstFret={firstFret}
+            setFirstFret={setFirstFret}
+            numberOfFrets={numberOfFrets}
             numberOfStrings={numberOfStrings}
+            setStrings={setStrings}
             strings={strings}
           />
-
-          <div style={{ display: 'flex' }}>
-            <FirstFretInput
-              type="number"
-              onChange={firstFretChange}
-              value={firstFret}
-            />
-            <div style={{
-              position: 'relative',
-              width: '90%',
-              height: '300px',
-              margin: 'auto',
-            }}
-            >
-              <div
-                aria-hidden="true"
-                style={{
-                  position: 'absolute',
-                  backgroundColor: theme.palette.text.primary,
-                  left: '-12px',
-                  width: 'calc(100% + 24px)',
-                  height: '8px',
-                  zIndex: '99',
-                }}
-              />
-              <ChordGrid
-                noteClick={noteClick}
-                numberOfFrets={numberOfFrets}
-                numberOfStrings={numberOfStrings}
-                strings={strings}
-              />
-            </div>
-          </div>
         </div>
       </DialogContent>
       <DialogActions>
