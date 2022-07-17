@@ -26,9 +26,9 @@ export function ScoreInfoComponent(props: ScoreInfoProps) {
 
   const [state, setState] = useState(stateFromProps());
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const propertyName = e.target.name as keyof ScoreInfo;
-    const propertyValue = e.target.value as string;
+    const propertyValue = e.target.value;
     const newState: Partial<ScoreInfo> = {
       [propertyName]: propertyValue,
     };

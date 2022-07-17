@@ -1,13 +1,14 @@
 import { useTheme } from '@mui/material';
+import React from 'react';
 
 export interface GlyphBaseProps {
-    height?: string;
-    width?: string;
-    title?: string;
-    selected: boolean;
-    disabled: boolean;
-    onClick: () => void;
-    children?: JSX.Element | string;
+  height?: string;
+  width?: string;
+  title?: string;
+  selected: boolean;
+  disabled: boolean;
+  onClick: () => void;
+  children?: React.ReactNode;
 }
 
 export function useGlyphColor(props: { disabled: boolean, selected: boolean }) {
