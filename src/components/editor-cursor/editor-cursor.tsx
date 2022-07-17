@@ -54,13 +54,13 @@ export default function EditorCursor(props: EditorCursorProps) {
     width: '10px',
     opacity: '0',
     // Hides the '+1' and '-1' input arrows
-    '&::-moz-appearance': 'textfield',
+    MozAppearance: 'textfield',
     '&::-webkit-inner-spin-button': {
-      '-webkit-appearance': 'none',
+      WebkitAppearance: 'none',
       margin: 0,
     },
     '&::-webkit-outer-spin-button': {
-      '-webkit-appearance': 'none',
+      WebkitAppearance: 'none',
       margin: 0,
     },
   });

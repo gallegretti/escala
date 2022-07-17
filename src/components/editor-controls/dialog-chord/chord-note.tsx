@@ -16,11 +16,12 @@ export default function ChordNote({
   noteClick,
 }: ChordNoteProps) {
   const theme = useTheme();
+  const noteDiameter = '20px';
   const Note = styled('div')({
     opacity: isSelected ? '1 !important' : '0',
     cursor: 'pointer',
-    width: '20px',
-    height: '20px',
+    width: noteDiameter,
+    height: noteDiameter,
     backgroundColor: theme.palette.text.primary,
     gridColumnStart: 1 + string * 2,
     gridRowStart: 2 + (fret - 1) * 2, // 1 -> 2, 2 -> 4, 3 -> 6, ...

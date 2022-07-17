@@ -17,12 +17,14 @@ export default function ChordGrid({
   noteClick,
 }: ChordGridProps) {
   const theme = useTheme();
+  const stringWidth = '5px';
+  const fretWidth = '5px';
   return (
     <div style={{
       position: 'absolute',
       display: 'grid',
-      gridTemplateRows: `repeat(${numberOfFrets - 1}, 5px 1fr) 5px`,
-      gridTemplateColumns: `repeat(${numberOfStrings - 1}, 5px 1fr) 5px`,
+      gridTemplateRows: `repeat(${numberOfFrets - 1}, ${fretWidth} 1fr) ${fretWidth}`,
+      gridTemplateColumns: `repeat(${numberOfStrings - 1}, ${stringWidth} 1fr) ${stringWidth}`,
       backgroundColor: theme.palette.text.primary,
       width: '100%',
       top: '0',

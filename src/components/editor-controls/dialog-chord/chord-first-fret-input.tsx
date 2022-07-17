@@ -10,13 +10,13 @@ export default function ChordFirstFretInput(props: { firstFret: number, setFirst
     left: `calc(-16px - ${props.firstFret.toString().length}ch)`, // Right align
     textAlign: 'center',
     // Hides the '+1' and '-1' input arrows
-    '&::-moz-appearance': 'textfield',
+    MozAppearance: 'textfield',
     '&::-webkit-inner-spin-button': {
-      '-webkit-appearance': 'none',
+      WebkitAppearance: 'none',
       margin: 0,
     },
     '&::-webkit-outer-spin-button': {
-      '-webkit-appearance': 'none',
+      WebkitAppearance: 'none',
       margin: 0,
     },
   }), [props.firstFret]);
