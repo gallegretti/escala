@@ -25,13 +25,20 @@ export default function ChordButton(props: ChordButtonProps) {
     setIsPopperOpen(!isPopperOpen);
   };
 
+  const clickChord = () => {
+    if (props.disabled) {
+      return;
+    }
+    props.setChord();
+  };
+
   return (
-    <div>
+    <div style={{ display: 'flex' }}>
       <ChordGlyph
         id="chord"
         disabled={props.disabled}
         selected={false}
-        onClick={() => props.setChord()}
+        onClick={clickChord}
       />
       {props.chords.length > 0
         && <ExpandMoreGlyph disabled={false} selected={false} onClick={onExpandMoreClick} />}

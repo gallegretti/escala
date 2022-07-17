@@ -33,7 +33,7 @@ export default function ChordGrid({
         range(1, numberOfFrets).map((fret, fretIndex) => (
           range(numberOfStrings).map((string, stringIndex) => (
             (
-              <>
+              <React.Fragment key={`${fret}-${string}`}>
                 <div style={{
                   backgroundColor: theme.palette.mode === 'dark' ? 'rgb(56 56 56)' : 'white',
                   gridColumnStart: 2 + stringIndex * 2,
@@ -47,7 +47,7 @@ export default function ChordGrid({
                   isSelected={strings[stringIndex] === fret}
                   noteClick={noteClick}
                 />
-              </>
+              </React.Fragment>
             )))
         ))
       }
