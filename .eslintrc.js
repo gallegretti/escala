@@ -34,6 +34,7 @@ module.exports = {
     '@typescript-eslint/no-useless-constructor': ['error'],
     'react/jsx-filename-extension': [1, { extensions: ['.tsx'] }],
     'react/require-default-props': 'off',
+    'react/jsx-props-no-spreading': 'off',
     'max-len': ['error', { code: 120 }],
     'react/destructuring-assignment': 'off',
     'class-methods-use-this': 'off',

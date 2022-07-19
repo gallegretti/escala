@@ -8,7 +8,13 @@ export default function HeavyAccentuatedNoteGlyph(props: DynamicGlyphProps) {
   const color = useGlyphColor(props);
   return (
     <Tooltip title="Heavy Accentuated Note">
-      <svg height="20px" width="20px" onClick={props.onClick} xmlns="http://www.w3.org/2000/svg" style={baseSvgStyle(props)}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="20px"
+        width="20px"
+        onClick={props.onClick}
+        style={baseSvgStyle(props)}
+      >
         <text fill={color} style={{ transform: 'translate(4px, 16px)', fontSize: '40px' }}></text>
       </svg>
     </Tooltip>
