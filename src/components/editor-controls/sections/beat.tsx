@@ -3,7 +3,6 @@ import { Divider } from '@mui/material';
 import TextGlyph from '../icons/beat/text';
 import UpstrokeGlyph from '../icons/beat/upstroke';
 import DownStrokeGlyph from '../icons/beat/downstroke';
-import ChordGlyph from '../icons/beat/chord';
 import { Chord, PickStroke } from '../../../alphatab-types/alphatab-types';
 import ChordButton from '../components/chord-button';
 
