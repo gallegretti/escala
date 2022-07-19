@@ -21,6 +21,9 @@ export default function ChordButton(props: ChordButtonProps) {
   const theme = useTheme();
 
   const onExpandMoreClick = (e: any) => {
+    if (props.disabled) {
+      return;
+    }
     setAnchorElement(e);
     setIsPopperOpen(!isPopperOpen);
   };
@@ -41,7 +44,7 @@ export default function ChordButton(props: ChordButtonProps) {
         onClick={clickChord}
       />
       {props.chords.length > 0
-        && <ExpandMoreGlyph disabled={false} selected={false} onClick={onExpandMoreClick} />}
+        && <ExpandMoreGlyph disabled={props.disabled} selected={false} onClick={onExpandMoreClick} />}
       <StyledPopper anchorEl={anchorElem} open={isPopperOpen} disablePortal>
         {props.chords.map((chord) => (
           <div
