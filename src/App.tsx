@@ -53,6 +53,7 @@ const Body = styled('div')(({ theme }) => ({
 
 export default function App() {
   const forceUpdate = useForceUpdate();
+  const [hasDialog, setHasDialog] = useState(false);
 
   const [selectedTrackIndex, setSelectedTrackIndex] = useState(0);
 
@@ -174,6 +175,8 @@ export default function App() {
 
   const isCurrentSelectedNotePalmMute = (): boolean => selectedNote()?.isPalmMute ?? false;
 
+  const isCurrentSelectedNoteTie = (): boolean => selectedNote()?.isTieOrigin ?? false;
+
   const isLeftHandTapNote = (): boolean => selectedNote()?.isLeftHandTapped ?? false;
 
   const isVibrato = (): boolean => selectedNote()?.vibrato !== 0 ?? false;
@@ -273,8 +276,6 @@ export default function App() {
     [paletteMode],
   );
 
-  const [hasDialog, setHasDialog] = useState(false);
-
   return (
     <ColorModeContext.Provider value={colorMode}>
       <DialogContext.Provider value={{ hasDialog, setHasDialog }}>
@@ -310,6 +311,7 @@ export default function App() {
                     setVibrato={editorActionDispatcher.setVibratoNote}
                     setDynamics={editorActionDispatcher.setDynamics}
                     setTap={editorActionDispatcher.setTapNote}
+                    setTie={editorActionDispatcher.setTieNote}
                     setDuration={editorActionDispatcher.setDuration}
                     togglePalmMute={editorActionDispatcher.togglePalmMute}
                     undo={editorActionDispatcher.undo}
@@ -321,6 +323,7 @@ export default function App() {
                     isVibrato={isVibrato()}
                     isHammerOrPull={currentSelectedNoteHammerOrPull()}
                     isSlide={currentSelectedNoteSlide()}
+                    isTie={isCurrentSelectedNoteTie()}
                     currentAccentuation={currentSelectedNoteAccentuation()}
                     hasSelectedBeat={hasSelectedBeat()}
                     currentDynamics={currentSelectedBeatDynamics()}

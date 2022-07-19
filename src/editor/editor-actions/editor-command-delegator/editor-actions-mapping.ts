@@ -19,6 +19,7 @@ import setPickStroke from '../actions/set-pick-stroke/set-pick-stroke';
 import setScoreInfo from '../actions/set-score-info/set-score-info';
 import setSlideAction from '../actions/set-slide/set-slide';
 import setTapAction from '../actions/set-tap/set-tap';
+import setTieAction from '../actions/set-tie/set-tie';
 import setTempoAction from '../actions/set-tempo/set-tempo';
 import setTextAction from '../actions/set-text/set-text';
 import setVibratoAction from '../actions/set-vibrato/set-vibrato';
@@ -44,6 +45,7 @@ const mapping: Record<string, EditorActionInterface<EditorActionEvent>> = {
   'set-score-info': setScoreInfo,
   'set-slide': setSlideAction,
   'set-tap': setTapAction,
+  'set-tie': setTieAction,
   'set-tempo': setTempoAction,
   'set-text': setTextAction,
   'set-vibrato': setVibratoAction,

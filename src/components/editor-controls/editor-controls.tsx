@@ -54,6 +54,7 @@ interface EditorControlsProps {
   isVibrato: boolean | null,
   isHammerOrPull: boolean | null,
   isSlide: boolean | null,
+  isTie: boolean | null,
   currentAccentuation: number | null,
   currentPickStroke: PickStroke | null,
   currentHarmonicType: HarmonicType | null,
@@ -72,6 +73,7 @@ interface EditorControlsProps {
   setHammer: (value: boolean) => void,
   setSlide: (value: boolean) => void,
   setTap: (value: boolean) => void,
+  setTie: (value: boolean) => void,
   setVibrato: (value: boolean) => void,
   setTempo: (value: number) => void,
   // Others
@@ -253,6 +255,8 @@ export default function EditorControls(props: EditorControlsProps) {
             currentDuration={props.currentDuration}
             hasSelectedNote={props.hasSelectedNote}
             setDuration={(duration) => props.setDuration(duration)}
+            setTie={props.setTie}
+            isTie={props.isTie ?? false}
           />
         </TabContainer>
         <TabContainer style={{ display: currentTab !== 4 ? 'none' : 'flex' }}>

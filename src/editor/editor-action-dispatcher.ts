@@ -128,6 +128,14 @@ class EditorActionDispatcher {
     this.dispatchAction({ type: 'set-tap', data: { note, isLeftHandTap: value } });
   };
 
+  setTieNote = (value: boolean) => {
+    const note = this.selectedNote();
+    if (!note) {
+      return;
+    }
+    this.dispatchAction({ type: 'set-tie', data: { note, tie: value } });
+  };
+
   setVibratoNote = (value: boolean) => {
     const note = this.selectedNote();
     if (!note) {
