@@ -202,8 +202,13 @@ class EditorActionDispatcher {
   addBeat = () => {
     const currentBeat = this.selectedNoteController.getSelectedSlot()?.beat;
     if (currentBeat) {
-      const newBeat = new alphaTab.model.Beat();
-      this.dispatchAction({ type: 'add-beat', data: { currentBeat, newBeat } });
+      if (currentBeat.voice.beats.length === currentBeat.voice.bar.masterBar.timeSignatureNumerator) {
+        const currentBar = currentBeat.voice.bar;
+        this.dispatchAction({ type: 'add-bar', data: { currentBar } });
+      } else {
+        const newBeat = new alphaTab.model.Beat();
+        this.dispatchAction({ type: 'add-beat', data: { currentBeat, newBeat } });
+      }
     }
   };
 

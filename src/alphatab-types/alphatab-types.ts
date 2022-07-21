@@ -14,6 +14,7 @@ class AlphaTabApi extends alphaTab.AlphaTabApi {
 }
 
 class Beat extends alphaTab.model.Beat {}
+class Bar extends alphaTab.model.Bar {}
 class Voice extends alphaTab.model.Voice {}
 class BendPoint extends alphaTab.model.BendPoint {}
 class Score extends alphaTab.model.Score {}
@@ -42,6 +43,7 @@ export type {
   Note,
   Staff,
   Beat,
+  Bar,
   Voice,
   Chord,
   BendPoint,

@@ -1,7 +1,7 @@
 import { ScoreInfo } from './actions/set-score-info/score-info';
 import { BendType } from '../bend-type';
 import {
-  AccentuationType, Beat, Chord, Duration, DynamicValue, HarmonicType, Note, PickStroke, Score,
+  AccentuationType, Bar, Beat, Chord, Duration, DynamicValue, HarmonicType, Note, PickStroke, Score,
 } from '../../alphatab-types/alphatab-types';
 import { BendState } from '../../components/editor-controls/editor-controls';
 
@@ -54,6 +54,13 @@ export interface EditorActionEventAddBeat {
   data: {
     currentBeat: Beat,
     newBeat: Beat,
+  }
+}
+
+export interface EditorActionEventAddBar {
+  type: 'add-bar',
+  data: {
+    currentBar: Bar,
   }
 }
 
@@ -217,6 +224,7 @@ export type EditorActionEvent
   = EditorActionAddNote
   | EditorActionAddTrack
   | EditorActionEventAddBeat
+  | EditorActionEventAddBar
   | EditorActionEventRemoveNote
   | EditorActionSetAccentuation
   | EditorActionSetBend
