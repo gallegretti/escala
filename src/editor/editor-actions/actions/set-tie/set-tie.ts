@@ -32,7 +32,7 @@ class SetTieAction extends EditorActionInterface<EditorActionSetTie> {
       return this.do({
         type: action.type,
         data: {
-          tie: action.data.tie,
+          tie: action.data.previousTie,
           note: action.data.note,
         },
       });
