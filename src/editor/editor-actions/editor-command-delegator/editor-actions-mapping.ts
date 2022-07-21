@@ -5,6 +5,7 @@ import addBarAction from '../actions/add-bar/add-bar';
 import addBeatAction from '../actions/add-beat/add-beat';
 import addNoteAction from '../actions/add-note/add-note';
 import addTrackAction from '../actions/add-track/add-track';
+import editTrackAction from '../actions/edit-track.ts/edit-track';
 import removeNoteAction from '../actions/remote-note/remove-note';
 import setAccentuationAction from '../actions/set-accentuation/set-accentuation';
 import setBendAction from '../actions/set-bend/set-bend';
@@ -31,6 +32,7 @@ const mapping: Record<string, EditorActionInterface<EditorActionEvent>> = {
   'add-beat': addBeatAction,
   'add-note': addNoteAction,
   'add-track': addTrackAction,
+  'edit-track': editTrackAction,
   'remove-note': removeNoteAction,
   'set-accentuation': setAccentuationAction,
   'set-bend': setBendAction,
@@ -47,9 +49,9 @@ const mapping: Record<string, EditorActionInterface<EditorActionEvent>> = {
   'set-score-info': setScoreInfo,
   'set-slide': setSlideAction,
   'set-tap': setTapAction,
-  'set-tie': setTieAction,
   'set-tempo': setTempoAction,
   'set-text': setTextAction,
+  'set-tie': setTieAction,
   'set-vibrato': setVibratoAction,
 };
 

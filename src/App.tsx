@@ -286,6 +286,7 @@ export default function App() {
                 <EditorLeftMenu
                   score={api?.score}
                   onNewTrack={editorActionDispatcher.newTrack}
+                  onTrackEdit={editorActionDispatcher.editTrack}
                   selectedTrackIndex={selectedTrackIndex}
                   selectTrack={selectTrack}
                 />

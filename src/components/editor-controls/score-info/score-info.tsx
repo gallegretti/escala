@@ -1,7 +1,7 @@
-import React, { ChangeEventHandler, useState } from 'react';
+import React, { useState } from 'react';
 import './score-info';
 import {
-  Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, OutlinedInputProps,
+  Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button,
 } from '@mui/material';
 import { ScoreInfo } from '../../../editor/editor-actions/actions/set-score-info/score-info';
 import { Score } from '../../../alphatab-types/alphatab-types';

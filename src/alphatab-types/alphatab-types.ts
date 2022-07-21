@@ -13,6 +13,7 @@ class Note extends alphaTab.model.Note {
 class AlphaTabApi extends alphaTab.AlphaTabApi {
 }
 
+class Tuning extends alphaTab.model.Tuning {}
 class Beat extends alphaTab.model.Beat {}
 class Bar extends alphaTab.model.Bar {}
 class Voice extends alphaTab.model.Voice {}
@@ -44,6 +45,7 @@ export type {
   Staff,
   Beat,
   Bar,
+  Tuning,
   Voice,
   Chord,
   BendPoint,

@@ -4,6 +4,7 @@ import EditorTrackSelector from './editor-track-selector/editor-track-selector';
 import { Score, Track } from '../alphatab-types/alphatab-types';
 import TrackDialog from './tracks/track-dialog';
 import useDialog from './editor-controls/use-dialog';
+import TrackInfo from '../editor/editor-actions/actions/edit-track.ts/track-info';
 
 const SideMenuDiv = styled('div')(({ theme }) => ({
   position: 'absolute',
@@ -20,14 +21,15 @@ const SideMenuDiv = styled('div')(({ theme }) => ({
 }));
 
 interface EditorLeftMenuProps {
-  onNewTrack: (params: { name: string }) => void;
+  onNewTrack: (params: TrackInfo) => void;
+  onTrackEdit: (track: Track, params: TrackInfo) => void;
   score: Score | null;
   selectedTrackIndex: number;
   selectTrack: (track: Track) => void;
 }
 
 export default function EditorLeftMenu({
-  score, selectedTrackIndex, selectTrack, onNewTrack,
+  score, selectedTrackIndex, selectTrack, onNewTrack, onTrackEdit,
 }: EditorLeftMenuProps) {
   const {
     closeDialog,
@@ -35,12 +37,22 @@ export default function EditorLeftMenu({
     openDialog,
   } = useDialog();
 
+  const onSave = (params: TrackInfo) => {
+    onTrackEdit(score?.tracks[selectedTrackIndex]!, params);
+    closeDialog();
+  };
+
+  const onSelectTrack = (track: Track) => {
+    openDialog();
+  };
+
   return (
     <>
       <TrackDialog
         isOpen={isDialogOpen}
         onClose={closeDialog}
-        onSave={(params) => { onNewTrack(params); closeDialog(); }}
+        currentTrack={score?.tracks[selectedTrackIndex]}
+        onSave={onSave}
       />
       <SideMenuDiv>
         {score?.tracks
@@ -48,7 +60,7 @@ export default function EditorLeftMenu({
             <EditorTrackSelector
               onNewTrack={openDialog}
               selectedTrackIndex={selectedTrackIndex}
-              onTrackSelected={selectTrack}
+              onTrackSelected={onSelectTrack}
               tracks={score?.tracks}
             />
           )}

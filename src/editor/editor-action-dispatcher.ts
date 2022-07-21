@@ -7,8 +7,10 @@ import {
   DynamicValue,
   HarmonicType,
   Note,
+  Track,
 } from '../alphatab-types/alphatab-types';
 import { BendState } from '../components/editor-controls/editor-controls';
+import TrackInfo from './editor-actions/actions/edit-track.ts/track-info';
 import { ScoreInfo } from './editor-actions/actions/set-score-info/score-info';
 import { EditorActionEvent, EditorActionResult } from './editor-actions/editor-action-event';
 import EditorActions from './editor-actions/editor-command-delegator/editor-actions';
@@ -168,11 +170,18 @@ class EditorActionDispatcher {
     this.dispatchAction({ type: 'set-palm-mute', data: { note, isPalmMute: !note.isPalmMute } });
   };
 
-  newTrack = (params: { name: string }) => {
+  newTrack = (params: TrackInfo) => {
     if (!this.api?.score) {
       return;
     }
-    this.dispatchAction({ type: 'add-track', data: { score: this.api.score, track: { name: params.name } } });
+    this.dispatchAction({ type: 'add-track', data: { score: this.api.score, trackInfo: params } });
+  };
+
+  editTrack = (track: Track, trackInfo: TrackInfo) => {
+    if (!this.api?.score) {
+      return;
+    }
+    this.dispatchAction({ type: 'edit-track', data: { track, trackInfo } });
   };
 
   setFret = (fret: number) => {

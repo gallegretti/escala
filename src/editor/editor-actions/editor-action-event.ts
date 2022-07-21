@@ -1,9 +1,10 @@
 import { ScoreInfo } from './actions/set-score-info/score-info';
 import { BendType } from '../bend-type';
 import {
-  AccentuationType, Bar, Beat, Chord, Duration, DynamicValue, HarmonicType, Note, PickStroke, Score,
+  AccentuationType, Bar, Beat, Chord, Duration, DynamicValue, HarmonicType, Note, PickStroke, Score, Track,
 } from '../../alphatab-types/alphatab-types';
 import { BendState } from '../../components/editor-controls/editor-controls';
+import TrackInfo from './actions/edit-track.ts/track-info';
 
 export interface EditorActionAddNote {
   type: 'add-note',
@@ -17,9 +18,15 @@ export interface EditorActionAddTrack {
   type: 'add-track',
   data: {
     score: Score;
-    track: {
-      name: string;
-    }
+    trackInfo: TrackInfo;
+  }
+}
+
+export interface EditorActionEditTrack {
+  type: 'edit-track',
+  data: {
+    track: Track;
+    trackInfo: TrackInfo;
   }
 }
 
@@ -223,8 +230,9 @@ export interface EditorActionResult {
 export type EditorActionEvent
   = EditorActionAddNote
   | EditorActionAddTrack
-  | EditorActionEventAddBeat
+  | EditorActionEditTrack
   | EditorActionEventAddBar
+  | EditorActionEventAddBeat
   | EditorActionEventRemoveNote
   | EditorActionSetAccentuation
   | EditorActionSetBend

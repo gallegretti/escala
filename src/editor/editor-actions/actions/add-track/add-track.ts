@@ -3,7 +3,7 @@ import EditorActionInterface from '../editor-action.interface';
 
 class AddTrackAction extends EditorActionInterface<EditorActionAddTrack> {
   do(action: EditorActionAddTrack): EditorActionResult {
-    const { track, score } = action.data;
+    const { trackInfo: track, score } = action.data;
     const trackModel = new alphaTab.model.Track();
     trackModel.name = track.name;
     trackModel.ensureStaveCount(1);
