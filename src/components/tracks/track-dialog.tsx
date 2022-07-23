@@ -30,9 +30,12 @@ export default function TrackDialog(props: TrackDialogProps) {
   const [tuning, setTuning] = useState<Tuning>(defaultTuning);
 
   useEffect(() => {
+    const currentTuning = props.currentTrack?.staves[0].stringTuning;
+    if (currentTuning) {
+      setTuning(tunings.find((t) => t.name === currentTuning.name) ?? defaultTuning);
+    }
     setTrackName(props.currentTrack?.shortName ?? 'New Track');
     setCapo(props.currentTrack?.staves[0].capo ?? 0);
-    setTuning(props.currentTrack?.staves[0].stringTuning ?? defaultTuning);
   }, [props.currentTrack]);
 
   const onTrackNameChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
