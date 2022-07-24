@@ -12,6 +12,9 @@ import { BendState } from '../components/editor-controls/editor-controls';
 import { getBendState } from './editor-actions/actions/set-bend/set-bend-lookup-table';
 import SelectedNoteController from './selected-note-controller';
 
+/**
+ * Class containing logic on how to get information regarding the current note and beat selection
+ */
 export default class EditorScoreState {
   constructor(
     public selectedNoteController: SelectedNoteController,
@@ -33,7 +36,16 @@ export default class EditorScoreState {
   get selectedNote(): Note | null {
     return this.selectedNoteController?.getSelectedSlot()?.note ?? null;
   }
+
   // State
+
+  get isOpenRepeat(): boolean {
+    return this.selectedBeat?.voice.bar.masterBar.isRepeatStart ?? false;
+  }
+
+  get numberOfRepetitions(): number {
+    return this.selectedBeat?.voice.bar.masterBar.repeatCount ?? 0;
+  }
 
   currentFret = (): number | null => this.selectedNoteController?.getSelectedNote()?.fret ?? null;
 

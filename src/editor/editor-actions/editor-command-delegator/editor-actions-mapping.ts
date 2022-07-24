@@ -10,6 +10,7 @@ import removeNoteAction from '../actions/remote-note/remove-note';
 import setAccentuationAction from '../actions/set-accentuation/set-accentuation';
 import setBendAction from '../actions/set-bend/set-bend';
 import setChordAction from '../actions/set-chord/set-chord';
+import setCloseRepeatAction from '../actions/set-close-repeat/set-close-repeat';
 import setDeadNoteAction from '../actions/set-dead-note/set-dead-note';
 import setDurationAction from '../actions/set-duration/set-duration';
 import setDynamicAction from '../actions/set-dynamics/set-dynamics';
@@ -38,6 +39,7 @@ const mapping: Record<string, EditorActionInterface<EditorActionEvent>> = {
   'set-accentuation': setAccentuationAction,
   'set-bend': setBendAction,
   'set-chord': setChordAction,
+  'set-close-repeat': setCloseRepeatAction,
   'set-dead-note': setDeadNoteAction,
   'set-duration': setDurationAction,
   'set-dynamics': setDynamicAction,

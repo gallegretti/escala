@@ -7,14 +7,14 @@ import CountInGlyph from '../editor-controls/icons/player-controls/count-in';
 import MetronomeGlyph from '../editor-controls/icons/player-controls/metronome';
 
 interface EditorPlayerControlsProps {
-    playPause: () => void,
-    isPlaying: boolean,
-    isCountIn: boolean,
-    isMetronome: boolean,
-    onCountInChange: (countIn: boolean) => void,
-    onMetronomeChange: (metronome: boolean) => void,
-    onVolumeChange: (volume: number) => void,
-    onSpeedChange: (speed: number) => void,
+  playPause: () => void,
+  isPlaying: boolean,
+  isCountIn: boolean,
+  isMetronome: boolean,
+  onCountInChange: (countIn: boolean) => void,
+  onMetronomeChange: (metronome: boolean) => void,
+  onVolumeChange: (volume: number) => void,
+  onSpeedChange: (speed: number) => void,
 }
 
 const EditorPlayerControlsDiv = styled('div')(({ theme }) => ({

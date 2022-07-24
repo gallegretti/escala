@@ -168,6 +168,16 @@ export interface EditorActionSetOpenRepeat {
     previousOpenRepeat?: boolean;
   }
 }
+
+export interface EditorActionSetCloseRepeat {
+  type: 'set-close-repeat';
+  data: {
+    beat: Beat;
+    numberOfRepetitions: number;
+    previousNumberOfRepetitions?: number;
+  }
+}
+
 export interface EditorActionSetHammer {
   type: 'set-hammer';
   data: {
@@ -245,6 +255,7 @@ export type EditorActionEvent
   | EditorActionSetAccentuation
   | EditorActionSetBend
   | EditorActionSetChord
+  | EditorActionSetCloseRepeat
   | EditorActionSetDeadNote
   | EditorActionSetDuration
   | EditorActionSetDynamics

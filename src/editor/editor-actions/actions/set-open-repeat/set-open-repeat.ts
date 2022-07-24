@@ -6,7 +6,6 @@ class SetOpenRepeatAction extends EditorActionInterface<EditorActionSetOpenRepea
     const { masterBar } = action.data.beat.voice.bar;
     action.data.previousOpenRepeat = masterBar.isRepeatStart;
     masterBar.isRepeatStart = action.data.openRepeat;
-    masterBar.repeatCount = 3; // TODO: Move to close repeat
     masterBar.score.rebuildRepeatGroups();
     return {
       requiresRerender: true,

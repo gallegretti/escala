@@ -95,10 +95,6 @@ export default function EditorControls(props: EditorControlsProps) {
   };
 
   const colorMode = React.useContext(ColorModeContext);
-  const theme = useTheme();
-
-  const backgroundColor = theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100];
-  const borderColor = theme.palette.mode === 'dark' ? theme.palette.grey[900] : '#ede9e9';
 
   const TabContainer = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100],
@@ -111,6 +107,11 @@ export default function EditorControls(props: EditorControlsProps) {
     paddingRight: '10px',
     boxShadow: `0 4px 2px -2px ${theme.palette.mode === 'dark' ? '#312f2f' : '#e6e6e6'}`,
   }));
+
+  const theme = useTheme();
+
+  const backgroundColor = theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100];
+  const borderColor = theme.palette.mode === 'dark' ? theme.palette.grey[900] : '#ede9e9';
 
   return (
     <div>
@@ -204,15 +205,13 @@ export default function EditorControls(props: EditorControlsProps) {
         </TabContainer>
         <TabContainer style={{ display: currentTab !== 2 ? 'none' : 'flex' }}>
           <BeatSection
-            currentPickStroke={props.editorScoreState.currentSelectedBeatPickStroke()}
-            hasSelectedBeat={props.editorScoreState.hasSelectedBeat}
+            editorScoreState={props.editorScoreState}
             setPickStroke={props.actionDispatcher.setPickStroke}
             setText={() => openTextDialog()}
             setChord={() => openChordDialog()}
             useChord={props.actionDispatcher.setChord}
             setHasOpenRepeat={props.actionDispatcher.setOpenRepeat}
-            hasCloseRepeat={false}
-            hasOpenRepeat={false}
+            setCloseRepeat={props.actionDispatcher.setCloseRepeat}
             chords={props.currentAvailableChords}
           />
         </TabContainer>
