@@ -11,6 +11,6 @@ export default defineConfig({
       // eslint-disable-next-line global-require
       return require('./cypress/plugins/index.js')(on, config);
     },
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'http://localhost:5173',
   },
 });
