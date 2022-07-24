@@ -17,6 +17,7 @@ import setFretAction from '../actions/set-fret/set-fret';
 import setGhostNoteAction from '../actions/set-ghost-note/set-ghost-note';
 import setHammerAction from '../actions/set-hammer/set-hammer';
 import setHarmonic from '../actions/set-harmonic/set-harmonic';
+import setOpenRepeatAction from '../actions/set-open-repeat/set-open-repeat';
 import setPalmMuteAction from '../actions/set-palm-mute/set-palm-mute';
 import setPickStroke from '../actions/set-pick-stroke/set-pick-stroke';
 import setScoreInfo from '../actions/set-score-info/set-score-info';
@@ -44,6 +45,7 @@ const mapping: Record<string, EditorActionInterface<EditorActionEvent>> = {
   'set-ghost-note': setGhostNoteAction,
   'set-hammer': setHammerAction,
   'set-harmonic': setHarmonic,
+  'set-open-repeat': setOpenRepeatAction,
   'set-palm-mute': setPalmMuteAction,
   'set-pick-stroke': setPickStroke,
   'set-score-info': setScoreInfo,

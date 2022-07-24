@@ -76,6 +76,7 @@ interface EditorControlsProps {
   setTie: (value: boolean) => void,
   setVibrato: (value: boolean) => void,
   setTempo: (value: number) => void,
+  setOpenRepeat: (value: boolean) => void,
   // Others
   print: () => void,
   exportGuitarPro: () => void,
@@ -247,6 +248,9 @@ export default function EditorControls(props: EditorControlsProps) {
             setText={() => openTextDialog()}
             setChord={() => openChordDialog()}
             useChord={props.setChord}
+            setHasOpenRepeat={props.setOpenRepeat}
+            hasCloseRepeat={false}
+            hasOpenRepeat={false}
             chords={props.currentAvailableChords}
           />
         </TabContainer>

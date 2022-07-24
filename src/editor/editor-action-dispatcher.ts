@@ -177,6 +177,14 @@ class EditorActionDispatcher {
     this.dispatchAction({ type: 'add-track', data: { score: this.api.score, trackInfo: params } });
   };
 
+  setOpenRepeat = (openRepeat: boolean) => {
+    const beat = this.selectedBeat();
+    if (!beat) {
+      return;
+    }
+    this.dispatchAction({ type: 'set-open-repeat', data: { beat, openRepeat } });
+  };
+
   editTrack = (track: Track, trackInfo: TrackInfo) => {
     if (!this.api?.score) {
       return;

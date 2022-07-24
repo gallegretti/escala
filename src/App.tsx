@@ -314,6 +314,7 @@ export default function App() {
                     setTap={editorActionDispatcher.setTapNote}
                     setTie={editorActionDispatcher.setTieNote}
                     setDuration={editorActionDispatcher.setDuration}
+                    setOpenRepeat={editorActionDispatcher.setOpenRepeat}
                     togglePalmMute={editorActionDispatcher.togglePalmMute}
                     undo={editorActionDispatcher.undo}
                     redo={editorActionDispatcher.redo}

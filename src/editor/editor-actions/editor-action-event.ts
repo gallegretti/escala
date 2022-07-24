@@ -160,6 +160,14 @@ export interface EditorActionSetHarmonic {
   }
 }
 
+export interface EditorActionSetOpenRepeat {
+  type: 'set-open-repeat';
+  data: {
+    beat: Beat;
+    openRepeat: boolean;
+    previousOpenRepeat?: boolean;
+  }
+}
 export interface EditorActionSetHammer {
   type: 'set-hammer';
   data: {
@@ -244,6 +252,7 @@ export type EditorActionEvent
   | EditorActionSetGhostNote
   | EditorActionSetHammer
   | EditorActionSetHarmonic
+  | EditorActionSetOpenRepeat
   | EditorActionSetPalmMute
   | EditorActionSetPickStroke
   | EditorActionSetScoreInfo

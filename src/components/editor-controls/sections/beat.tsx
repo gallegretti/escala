@@ -5,11 +5,16 @@ import UpstrokeGlyph from '../icons/beat/upstroke';
 import DownStrokeGlyph from '../icons/beat/downstroke';
 import { Chord, PickStroke } from '../../../alphatab-types/alphatab-types';
 import ChordButton from '../components/chord-button';
+import OpenRepeatGlyph from '../icons/beat/open-repeat';
+import CloseRepeatGlyph from '../icons/beat/close-repeat';
 
 interface BeatSectionProps {
   currentPickStroke: number | null,
   setPickStroke: (stroke: number) => void,
   hasSelectedBeat: boolean,
+  hasOpenRepeat: boolean,
+  hasCloseRepeat: boolean,
+  setHasOpenRepeat: (hasOpenRepeat: boolean) => void,
   setText: () => void,
   setChord: () => void,
   useChord: (arg: Chord) => void,
@@ -53,6 +58,17 @@ export default function BeatSection(props: BeatSectionProps) {
         chords={props.chords}
         setChord={props.setChord}
         useChord={props.useChord}
+      />
+      <Divider variant="middle" orientation="vertical" flexItem />
+      <OpenRepeatGlyph
+        selected={props.hasOpenRepeat}
+        disabled={!props.hasSelectedBeat}
+        onClick={() => props.setHasOpenRepeat(!props.hasOpenRepeat)}
+      />
+      <CloseRepeatGlyph
+        selected={props.hasCloseRepeat}
+        disabled={!props.hasSelectedBeat}
+        onClick={() => {}}
       />
     </>
   );
