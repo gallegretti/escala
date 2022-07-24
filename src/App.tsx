@@ -8,29 +8,22 @@ import EventEmitter from './editor/ui-actions/event-emitter';
 import { EditorUIEvent } from './editor/ui-actions/editor-ui-event';
 import EditorActions from './editor/editor-actions/editor-command-delegator/editor-actions';
 import { EditorActionResult } from './editor/editor-actions/editor-action-event';
-import { EditorControls, BendState } from './components/editor-controls/editor-controls';
+import { EditorControls } from './components/editor-controls/editor-controls';
 import EditorCursor from './components/editor-cursor/editor-cursor';
 import EditorPlayerControls from './components/editor-player-controls/editor-player-controls';
 import AlphaTabViewport from './components/alphatab-viewport/alphatab-viewport';
-import { getBendState } from './editor/editor-actions/actions/set-bend/set-bend-lookup-table';
 import { ColorModeContext } from './editor/color-mode-context';
 import EditorLeftMenu from './components/editor-left-menu';
 import {
-  AccentuationType,
   AlphaTabApi,
-  Beat,
   Chord,
-  Duration,
-  DynamicValue,
-  HarmonicType,
-  Note,
-  PickStroke,
   Score,
   ScoreRenderer,
   Track,
 } from './alphatab-types/alphatab-types';
 import { DialogContext } from './editor/dialog-context';
 import EditorActionDispatcher from './editor/editor-action-dispatcher';
+import EditorScoreState from './editor/editor-score-state';
 
 function useForceUpdate() {
   const [_, setValue] = useState(0); // integer state
@@ -39,6 +32,7 @@ function useForceUpdate() {
 
 const editorActions: EditorActions = new EditorActions();
 let selectedNoteController!: SelectedNoteController;
+// let editorScoreState = new EditorScoreState(selectedNoteController);
 let api!: AlphaTabApi;
 const editorActionDispatcher = new EditorActionDispatcher(
   editorActions,
@@ -57,9 +51,12 @@ export default function App() {
 
   const [selectedTrackIndex, setSelectedTrackIndex] = useState(0);
 
+  const [editorScoreState, setEditorScoreState] = useState(new EditorScoreState(selectedNoteController));
+
   const handlerActionResult = (result: EditorActionResult) => {
     if (result.requiresRerender) {
       api.render();
+      setEditorScoreState(new EditorScoreState(selectedNoteController));
     }
     if (result.requiresMidiUpdate) {
       // loadMidiForScore is a private function.
@@ -123,16 +120,8 @@ export default function App() {
     }
 
     forceUpdate();
+    setEditorScoreState(new EditorScoreState(selectedNoteController));
   };
-
-  // Helpers
-  const hasSelectedNote = (): boolean => !!selectedNoteController?.getSelectedSlot()?.note;
-
-  const hasSelectedBeat = (): boolean => !!selectedNoteController?.getSelectedSlot()?.beat;
-
-  const selectedBeat = (): Beat | null => selectedNoteController?.getSelectedSlot()?.beat ?? null;
-
-  const selectedNote = (): Note | null => selectedNoteController?.getSelectedSlot()?.note ?? null;
 
   const onAlphatabRenderFinished = () => {
     // TODO: It looks like alphaTab will emit the render finished event before it finishes updating the boundsLookup.
@@ -160,46 +149,6 @@ export default function App() {
       forceUpdate();
     }
   };
-
-  const currentSelectedBend = (): BendState | null => {
-    const note = selectedNote();
-    if (!note) {
-      return null;
-    }
-    return getBendState(note);
-  };
-
-  const currentFret = (): number | null => selectedNoteController?.getSelectedNote()?.fret ?? null;
-
-  const currentSelectedBeatText = (): string | null => selectedBeat()?.text ?? null;
-
-  const isCurrentSelectedNotePalmMute = (): boolean => selectedNote()?.isPalmMute ?? false;
-
-  const isCurrentSelectedNoteTie = (): boolean => selectedNote()?.isTieOrigin ?? false;
-
-  const isLeftHandTapNote = (): boolean => selectedNote()?.isLeftHandTapped ?? false;
-
-  const isVibrato = (): boolean => selectedNote()?.vibrato !== 0 ?? false;
-
-  const currentSelectedBeatDuration = (): Duration | null => selectedBeat()?.duration ?? null;
-
-  const currentSelectedBeatDynamics = (): DynamicValue | null => selectedBeat()?.dynamics ?? null;
-
-  const currentSelectedBeatPickStroke = (): PickStroke | null => selectedBeat()?.pickStroke ?? null;
-
-  const currentSelectedNoteIsGhost = (): boolean | null => selectedNote()?.isGhost ?? null;
-
-  const currentSelectedNoteAccentuation = (): AccentuationType | null => selectedNote()?.accentuated ?? null;
-
-  const currentSelectedNoteHarmonicType = (): HarmonicType | null => selectedNote()?.harmonicType ?? null;
-
-  const currentChord = () : Chord | null => selectedNote()?.beat.chord ?? null;
-
-  const currentSelectedNoteDead = (): boolean | null => selectedNote()?.isDead ?? null;
-
-  const currentSelectedNoteHammerOrPull = (): boolean | null => selectedNote()?.isHammerPullOrigin ?? null;
-
-  const currentSelectedNoteSlide = (): boolean | null => (selectedNote()?.slideOutType ?? 0) > 0;
 
   const currentAvailableChords = (): Chord[] => {
     const chords = api?.score?.tracks[0].staves[0].chords;
@@ -294,50 +243,13 @@ export default function App() {
                   <EditorControls
                     newFile={newFile}
                     open={openFile}
-                    isDeadNote={currentSelectedNoteDead()}
                     score={score()}
-                    currentHarmonicType={currentSelectedNoteHarmonicType()}
-                    currentPickStroke={currentSelectedBeatPickStroke()}
-                    setChord={editorActionDispatcher.setChord}
-                    setText={editorActionDispatcher.setText}
-                    setScoreInfo={editorActionDispatcher.setScoreInfo}
-                    setHarmonicType={editorActionDispatcher.setHarmonicType}
-                    setTempo={editorActionDispatcher.setTempo}
-                    setDeadNote={editorActionDispatcher.setDeadNote}
-                    setPickStroke={editorActionDispatcher.setPickStroke}
-                    setAccentuationNote={editorActionDispatcher.setAccentuationNote}
-                    setGhostNote={editorActionDispatcher.setGhostNote}
-                    setHammer={editorActionDispatcher.setHammer}
-                    setSlide={editorActionDispatcher.setSlide}
-                    setVibrato={editorActionDispatcher.setVibratoNote}
-                    setDynamics={editorActionDispatcher.setDynamics}
-                    setTap={editorActionDispatcher.setTapNote}
-                    setTie={editorActionDispatcher.setTieNote}
-                    setDuration={editorActionDispatcher.setDuration}
-                    setOpenRepeat={editorActionDispatcher.setOpenRepeat}
-                    togglePalmMute={editorActionDispatcher.togglePalmMute}
-                    undo={editorActionDispatcher.undo}
-                    redo={editorActionDispatcher.redo}
-                    setBend={editorActionDispatcher.setBend}
-                    currentChord={currentChord()}
-                    isGhost={currentSelectedNoteIsGhost()}
-                    isLeftHandTapNote={isLeftHandTapNote()}
-                    isVibrato={isVibrato()}
-                    isHammerOrPull={currentSelectedNoteHammerOrPull()}
-                    isSlide={currentSelectedNoteSlide()}
-                    isTie={isCurrentSelectedNoteTie()}
-                    currentAccentuation={currentSelectedNoteAccentuation()}
-                    hasSelectedBeat={hasSelectedBeat()}
-                    currentDynamics={currentSelectedBeatDynamics()}
-                    currentDuration={currentSelectedBeatDuration()}
-                    currentBend={currentSelectedBend()}
                     currentAvailableChords={currentAvailableChords()}
+                    editorScoreState={editorScoreState}
+                    actionDispatcher={editorActionDispatcher}
                     exportGuitarPro={exportGuitarPro}
                     exportMidi={exportMidi}
                     print={print}
-                    hasSelectedNote={hasSelectedNote()}
-                    isPalmMute={isCurrentSelectedNotePalmMute()}
-                    currentText={currentSelectedBeatText()}
                     canRedo={editorActions.canRedo()}
                     canUndo={editorActions.canUndo()}
                   />
@@ -349,7 +261,7 @@ export default function App() {
                 >
                   <EditorCursor
                     hasDialogOpen={hasDialog}
-                    fret={currentFret()}
+                    fret={editorScoreState.currentFret()}
                     setFret={editorActionDispatcher.setFret}
                     bounds={selectedNoteController?.getNoteBounds()}
                   />
