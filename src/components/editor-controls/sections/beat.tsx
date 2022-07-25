@@ -8,24 +8,23 @@ import ChordButton from '../components/chord-button';
 import OpenRepeatGlyph from '../icons/beat/open-repeat';
 import CloseRepeatGlyph from '../icons/beat/close-repeat';
 import EditorScoreState from '../../../editor/editor-score-state';
+import EditorActionDispatcher from '../../../editor/editor-action-dispatcher';
 
 interface BeatSectionProps {
-  editorScoreState: EditorScoreState,
-  setPickStroke: (stroke: number) => void,
-  setHasOpenRepeat: (hasOpenRepeat: boolean) => void,
-  setCloseRepeat: (numberOfRepetitions: number) => void,
-  setText: () => void,
-  setChord: () => void,
-  useChord: (arg: Chord) => void,
-  chords: Chord[],
+  editorScoreState: EditorScoreState;
+  actionDispatcher: EditorActionDispatcher;
+  setText: () => void;
+  setChord: () => void;
+  useChord: (arg: Chord) => void;
+  chords: Chord[];
 }
 
 export default function BeatSection(props: BeatSectionProps) {
   const setPickStroke = (newPickStroke: PickStroke) => {
-    if (props.editorScoreState.currentSelectedBeatPickStroke() === newPickStroke) {
-      props.setPickStroke(alphaTab.model.PickStroke.None);
+    if (props.editorScoreState.currentSelectedBeatPickStroke === newPickStroke) {
+      props.actionDispatcher.setPickStroke(alphaTab.model.PickStroke.None);
     } else {
-      props.setPickStroke(newPickStroke);
+      props.actionDispatcher.setPickStroke(newPickStroke);
     }
   };
 
@@ -43,12 +42,12 @@ export default function BeatSection(props: BeatSectionProps) {
       <Divider variant="middle" orientation="vertical" flexItem />
       <UpstrokeGlyph
         disabled={!props.editorScoreState.hasSelectedBeat}
-        selected={props.editorScoreState.currentSelectedBeatPickStroke() === alphaTab.model.PickStroke.Up}
+        selected={props.editorScoreState.currentSelectedBeatPickStroke === alphaTab.model.PickStroke.Up}
         onClick={() => setPickStroke(alphaTab.model.PickStroke.Up)}
       />
       <DownStrokeGlyph
         disabled={!props.editorScoreState.hasSelectedBeat}
-        selected={props.editorScoreState.currentSelectedBeatPickStroke() === alphaTab.model.PickStroke.Down}
+        selected={props.editorScoreState.currentSelectedBeatPickStroke === alphaTab.model.PickStroke.Down}
         onClick={() => setPickStroke(alphaTab.model.PickStroke.Down)}
       />
       <Divider variant="middle" orientation="vertical" flexItem />
@@ -62,7 +61,7 @@ export default function BeatSection(props: BeatSectionProps) {
       <OpenRepeatGlyph
         selected={props.editorScoreState.isOpenRepeat}
         disabled={!props.editorScoreState.hasSelectedBeat}
-        onClick={() => props.setHasOpenRepeat(!props.editorScoreState.isOpenRepeat)}
+        onClick={() => props.actionDispatcher.setOpenRepeat(!props.editorScoreState.isOpenRepeat)}
       />
       <CloseRepeatGlyph
         selected={props.editorScoreState.numberOfRepetitions > 1}
@@ -70,9 +69,9 @@ export default function BeatSection(props: BeatSectionProps) {
         onClick={() => {
           // TODO: get number of repetitions from user
           if (props.editorScoreState.numberOfRepetitions === 0) {
-            props.setCloseRepeat(2);
+            props.actionDispatcher.setCloseRepeat(2);
           } else {
-            props.setCloseRepeat(0);
+            props.actionDispatcher.setCloseRepeat(0);
           }
         }}
       />

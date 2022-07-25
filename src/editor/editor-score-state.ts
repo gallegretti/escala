@@ -47,42 +47,74 @@ export default class EditorScoreState {
     return this.selectedBeat?.voice.bar.masterBar.repeatCount ?? 0;
   }
 
-  currentFret = (): number | null => this.selectedNoteController?.getSelectedNote()?.fret ?? null;
+  get currentFret(): number | null {
+    return this.selectedNote?.fret ?? null;
+  }
 
-  currentSelectedBeatText = (): string | null => this.selectedBeat?.text ?? null;
+  get currentSelectedBeatText(): string | null {
+    return this.selectedBeat?.text ?? null;
+  }
 
-  isCurrentSelectedNotePalmMute = (): boolean => this.selectedNote?.isPalmMute ?? false;
+  get isCurrentSelectedNotePalmMute(): boolean {
+    return this.selectedNote?.isPalmMute ?? false;
+  }
 
-  isCurrentSelectedNoteTie = (): boolean => this.selectedNote?.isTieOrigin ?? false;
+  get isCurrentSelectedNoteTie(): boolean {
+    return this.selectedNote?.isTieOrigin ?? false;
+  }
 
-  isLeftHandTapNote = (): boolean => this.selectedNote?.isLeftHandTapped ?? false;
+  get isLeftHandTapNote(): boolean {
+    return this.selectedNote?.isLeftHandTapped ?? false;
+  }
 
-  isVibrato = (): boolean => this.selectedNote?.vibrato !== 0 ?? false;
+  get isVibrato(): boolean {
+    return this.selectedNote?.vibrato !== 0 ?? false;
+  }
 
-  currentSelectedBeatDuration = (): Duration | null => this.selectedBeat?.duration ?? null;
+  get currentSelectedBeatDuration(): Duration | null {
+    return this.selectedBeat?.duration ?? null;
+  }
 
-  currentSelectedBeatDynamics = (): DynamicValue | null => this.selectedBeat?.dynamics ?? null;
+  get currentSelectedBeatDynamics(): DynamicValue | null {
+    return this.selectedBeat?.dynamics ?? null;
+  }
 
-  currentSelectedBeatPickStroke = (): PickStroke | null => this.selectedBeat?.pickStroke ?? null;
+  get currentSelectedBeatPickStroke(): PickStroke | null {
+    return this.selectedBeat?.pickStroke ?? null;
+  }
 
-  currentSelectedNoteIsGhost = (): boolean | null => this.selectedNote?.isGhost ?? null;
+  get currentSelectedNoteIsGhost(): boolean | null {
+    return this.selectedNote?.isGhost ?? null;
+  }
 
-  currentSelectedNoteAccentuation = (): AccentuationType | null => this.selectedNote?.accentuated ?? null;
+  get currentSelectedNoteAccentuation(): AccentuationType | null {
+    return this.selectedNote?.accentuated ?? null;
+  }
 
-  currentSelectedNoteHarmonicType = (): HarmonicType | null => this.selectedNote?.harmonicType ?? null;
+  get currentSelectedNoteHarmonicType(): HarmonicType | null {
+    return this.selectedNote?.harmonicType ?? null;
+  }
 
-  currentChord = () : Chord | null => this.selectedNote?.beat.chord ?? null;
+  get currentChord(): Chord | null {
+    return this.selectedNote?.beat.chord ?? null;
+  }
 
-  currentSelectedNoteDead = (): boolean | null => this.selectedNote?.isDead ?? null;
+  get currentSelectedNoteDead(): boolean | null {
+    return this.selectedNote?.isDead ?? null;
+  }
 
-  currentSelectedNoteHammerOrPull = (): boolean | null => this.selectedNote?.isHammerPullOrigin ?? null;
+  get currentSelectedNoteHammerOrPull(): boolean | null {
+    return this.selectedNote?.isHammerPullOrigin ?? null;
+  }
 
-  currentSelectedNoteSlide = (): boolean | null => (this.selectedNote?.slideOutType ?? 0) > 0;
+  get currentSelectedNoteSlide(): boolean | null {
+    return (this.selectedNote?.slideOutType ?? 0) > 0;
+  }
 
-  currentSelectedBend = (): BendState | null => {
+  get currentSelectedBend(): BendState | null {
     if (!this.selectedNote) {
       return null;
     }
     return getBendState(this.selectedNote);
-  };
+  }
 }

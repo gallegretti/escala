@@ -8,59 +8,57 @@ import SixTeenthGlyph from '../icons/duration/sixteenth';
 import ThirtySecondGlyph from '../icons/duration/thirty-second';
 import SixtyFourGlyph from '../icons/duration/sixty-four';
 import Tie from '../icons/duration/tie';
-import { Duration } from '../../../alphatab-types/alphatab-types';
+import EditorScoreState from '../../../editor/editor-score-state';
+import EditorActionDispatcher from '../../../editor/editor-action-dispatcher';
 
 interface DurationSectionProps {
-  hasSelectedNote: boolean;
-  currentDuration: Duration | null;
-  setDuration: (duration: Duration) => void;
-  setTie: (tie: boolean) => void;
-  isTie: boolean;
+  editorScoreState: EditorScoreState;
+  actionDispatcher: EditorActionDispatcher;
 }
 
-export default function DurationSetion(props: DurationSectionProps) {
+export default function DurationSetion({ actionDispatcher, editorScoreState }: DurationSectionProps) {
   return (
     <>
       <WholeGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDuration === alphaTab.model.Duration.Whole}
-        onClick={() => props.setDuration(alphaTab.model.Duration.Whole)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.Whole}
+        onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.Whole)}
       />
       <HalfGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDuration === alphaTab.model.Duration.Half}
-        onClick={() => props.setDuration(alphaTab.model.Duration.Half)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.Half}
+        onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.Half)}
       />
       <QuarterGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDuration === alphaTab.model.Duration.Quarter}
-        onClick={() => props.setDuration(alphaTab.model.Duration.Quarter)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.Quarter}
+        onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.Quarter)}
       />
       <EighthGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDuration === alphaTab.model.Duration.Eighth}
-        onClick={() => props.setDuration(alphaTab.model.Duration.Eighth)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.Eighth}
+        onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.Eighth)}
       />
       <SixTeenthGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDuration === alphaTab.model.Duration.Sixteenth}
-        onClick={() => props.setDuration(alphaTab.model.Duration.Sixteenth)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.Sixteenth}
+        onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.Sixteenth)}
       />
       <ThirtySecondGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDuration === alphaTab.model.Duration.ThirtySecond}
-        onClick={() => props.setDuration(alphaTab.model.Duration.ThirtySecond)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.ThirtySecond}
+        onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.ThirtySecond)}
       />
       <SixtyFourGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDuration === alphaTab.model.Duration.SixtyFourth}
-        onClick={() => props.setDuration(alphaTab.model.Duration.SixtyFourth)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.SixtyFourth}
+        onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.SixtyFourth)}
       />
       <Divider variant="middle" orientation="vertical" flexItem />
       <Tie
-        disabled={!props.hasSelectedNote}
-        onClick={() => props.setTie(!props.isTie)}
-        selected={props.isTie}
+        disabled={!editorScoreState.hasSelectedNote}
+        onClick={() => actionDispatcher.setTieNote(!editorScoreState.isCurrentSelectedNoteTie)}
+        selected={editorScoreState.isCurrentSelectedNoteTie}
       />
     </>
   );

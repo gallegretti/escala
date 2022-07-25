@@ -13,48 +13,31 @@ import { BendState } from '../editor-controls';
 import { BendType } from '../../../editor/bend-type';
 import TapNoteGlyph from '../icons/effects/tap-note';
 import VibratoNoteGlyph from '../icons/effects/vibratro';
-import { AccentuationType, HarmonicType } from '../../../alphatab-types/alphatab-types';
+import { AccentuationType } from '../../../alphatab-types/alphatab-types';
 import HammerPullNoteGlyph from '../icons/effects/hammer-pull';
 import SlideNoteGlyph from '../icons/effects/slide';
+import EditorScoreState from '../../../editor/editor-score-state';
+import EditorActionDispatcher from '../../../editor/editor-action-dispatcher';
 
 interface EffectsSectionProps {
-  hasSelectedNote: boolean;
-  isPalmMute: boolean | null;
-  isGhost: boolean | null;
-  isDeadNote: boolean | null;
-  isLeftHandTapNote: boolean | null;
-  isVibrato: boolean | null;
-  isHammerOrPull: boolean | null;
-  isSlide: boolean | null;
-  currentHarmonicType: HarmonicType | null;
-  currentAccentuation: AccentuationType | null;
-  currentBend: BendState | null;
-  togglePalmMute: () => void;
-  setVibrato: (value: boolean) => void;
-  setGhostNote: (value: boolean) => void;
-  setAccentuationNote: (value: AccentuationType) => void;
-  setDeadNote: (value: boolean) => void;
-  setTapNote: (value: boolean) => void;
-  setHarmonicType: (value: HarmonicType) => void;
-  setBend: (bend: BendState) => void;
-  setHammer: (value: boolean) => void;
-  setSlide: (value: boolean) => void;
+  editorScoreState: EditorScoreState;
+  actionDispatcher: EditorActionDispatcher;
 }
 
 export default function EffectsSection(props: EffectsSectionProps) {
   const [openPopper, setOpenPopper] = useState<string | null>(null);
   const setBend = (newBend: keyof BendState, bendType: BendType) => {
-    if (props.currentBend === null) {
+    if (props.editorScoreState.currentSelectedBend === null) {
       return;
     }
-    if (props.currentBend[newBend] === bendType) {
-      props.setBend({
-        ...props.currentBend,
+    if (props.editorScoreState.currentSelectedBend[newBend] === bendType) {
+      props.actionDispatcher.setBend({
+        ...props.editorScoreState.currentSelectedBend,
         [newBend]: null,
       });
     } else {
-      props.setBend({
-        ...props.currentBend,
+      props.actionDispatcher.setBend({
+        ...props.editorScoreState.currentSelectedBend,
         [newBend]: bendType,
       });
     }
@@ -65,90 +48,90 @@ export default function EffectsSection(props: EffectsSectionProps) {
   };
 
   const setAccentuation = (accentuation: AccentuationType) => {
-    if (props.currentAccentuation === accentuation) {
-      props.setAccentuationNote(alphaTab.model.AccentuationType.None);
+    if (props.editorScoreState.currentSelectedNoteAccentuation === accentuation) {
+      props.actionDispatcher.setAccentuationNote(alphaTab.model.AccentuationType.None);
     } else {
-      props.setAccentuationNote(accentuation);
+      props.actionDispatcher.setAccentuationNote(accentuation);
     }
   };
 
   return (
     <>
       <PalmMuteGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.isPalmMute ?? false}
-        onClick={() => props.togglePalmMute()}
+        disabled={!props.editorScoreState.hasSelectedNote}
+        selected={props.editorScoreState.isCurrentSelectedNotePalmMute ?? false}
+        onClick={() => props.actionDispatcher.togglePalmMute()}
       />
       <GhostNoteGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.isGhost ?? false}
-        onClick={() => props.setGhostNote(!props.isGhost)}
+        disabled={!props.editorScoreState.hasSelectedNote}
+        selected={props.editorScoreState.currentSelectedNoteIsGhost ?? false}
+        onClick={() => props.actionDispatcher.setGhostNote(!props.editorScoreState.currentSelectedNoteIsGhost)}
       />
       <AccentuatedNoteGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentAccentuation === alphaTab.model.AccentuationType.Normal}
+        disabled={!props.editorScoreState.hasSelectedNote}
+        selected={props.editorScoreState.currentSelectedNoteAccentuation === alphaTab.model.AccentuationType.Normal}
         onClick={() => setAccentuation(alphaTab.model.AccentuationType.Normal)}
       />
       <HeavyAccentuatedNoteGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentAccentuation === alphaTab.model.AccentuationType.Heavy}
+        disabled={!props.editorScoreState.hasSelectedNote}
+        selected={props.editorScoreState.currentSelectedNoteAccentuation === alphaTab.model.AccentuationType.Heavy}
         onClick={() => setAccentuation(alphaTab.model.AccentuationType.Heavy)}
       />
       <DeadNoteGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.isDeadNote ?? false}
-        onClick={() => props.setDeadNote(!props.isDeadNote)}
+        disabled={!props.editorScoreState.hasSelectedNote}
+        selected={props.editorScoreState.currentSelectedNoteDead ?? false}
+        onClick={() => props.actionDispatcher.setDeadNote(!props.editorScoreState.currentSelectedNoteDead)}
       />
       <TapNoteGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.isLeftHandTapNote ?? false}
-        onClick={() => props.setTapNote(!props.isLeftHandTapNote)}
+        disabled={!props.editorScoreState.hasSelectedNote}
+        selected={props.editorScoreState.isLeftHandTapNote ?? false}
+        onClick={() => props.actionDispatcher.setTapNote(!props.editorScoreState.isLeftHandTapNote)}
       />
       <VibratoNoteGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.isVibrato ?? false}
-        onClick={() => props.setVibrato(!props.isVibrato)}
+        disabled={!props.editorScoreState.hasSelectedNote}
+        selected={props.editorScoreState.isVibrato ?? false}
+        onClick={() => props.actionDispatcher.setVibratoNote(!props.editorScoreState.isVibrato)}
       />
       <Divider variant="middle" orientation="vertical" flexItem />
       <HarmonicButton
-        disabled={!props.hasSelectedNote}
-        currentHarmonicType={props.currentHarmonicType ?? 0}
-        setHarmonicType={props.setHarmonicType}
+        disabled={!props.editorScoreState.hasSelectedNote}
+        currentHarmonicType={props.editorScoreState.currentSelectedNoteHarmonicType ?? 0}
+        setHarmonicType={props.actionDispatcher.setHarmonicType}
         isPopperOpen={openPopper === 'harmonic'}
         setPopperOpen={() => updateOpenPopper('harmonic')}
       />
       <Divider variant="middle" orientation="vertical" flexItem />
       <PreBendButton
-        disabled={!props.hasSelectedNote}
-        preBend={props.currentBend?.preBend ?? null}
+        disabled={!props.editorScoreState.hasSelectedNote}
+        preBend={props.editorScoreState.currentSelectedBend?.preBend ?? null}
         setPreBend={(bendType) => { setBend('preBend', bendType); }}
         isPopperOpen={openPopper === 'pre-bend'}
         setPopperOpen={() => updateOpenPopper('pre-bend')}
       />
       <BendButton
-        disabled={!props.hasSelectedNote}
-        bend={props.currentBend?.bend ?? null}
+        disabled={!props.editorScoreState.hasSelectedNote}
+        bend={props.editorScoreState.currentSelectedBend?.bend ?? null}
         setBend={(bendType) => { setBend('bend', bendType); }}
         isPopperOpen={openPopper === 'bend'}
         setPopperOpen={() => updateOpenPopper('bend')}
       />
       <ReleaseBendButton
-        disabled={!props.hasSelectedNote}
-        release={props.currentBend?.release ?? null}
+        disabled={!props.editorScoreState.hasSelectedNote}
+        release={props.editorScoreState.currentSelectedBend?.release ?? null}
         setRelease={(bendType) => { setBend('release', bendType); }}
         isPopperOpen={openPopper === 'release'}
         setPopperOpen={() => updateOpenPopper('release')}
       />
       <Divider variant="middle" orientation="vertical" flexItem />
       <HammerPullNoteGlyph
-        disabled={!props.hasSelectedNote}
-        onClick={() => { props.setHammer(!props.isHammerOrPull); }}
-        selected={props.isHammerOrPull ?? false}
+        disabled={!props.editorScoreState.hasSelectedNote}
+        onClick={() => { props.actionDispatcher.setHammer(!props.editorScoreState.currentSelectedNoteHammerOrPull); }}
+        selected={props.editorScoreState.currentSelectedNoteHammerOrPull ?? false}
       />
       <SlideNoteGlyph
-        disabled={!props.hasSelectedNote}
-        onClick={() => { props.setSlide(!props.isSlide); }}
-        selected={props.isSlide ?? false}
+        disabled={!props.editorScoreState.hasSelectedNote}
+        onClick={() => { props.actionDispatcher.setSlide(!props.editorScoreState.currentSelectedNoteSlide); }}
+        selected={props.editorScoreState.currentSelectedNoteSlide ?? false}
       />
     </>
   );

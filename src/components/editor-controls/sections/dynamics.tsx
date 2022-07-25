@@ -7,56 +7,56 @@ import ForteGlyph from '../icons/dynamics/f';
 import FortissimoGlyph from '../icons/dynamics/ff';
 import MezzoForteGlyph from '../icons/dynamics/mf';
 import ForteFortissimoGlyph from '../icons/dynamics/fff';
-import { DynamicValue } from '../../../alphatab-types/alphatab-types';
+import EditorActionDispatcher from '../../../editor/editor-action-dispatcher';
+import EditorScoreState from '../../../editor/editor-score-state';
 
 interface DynamicsSectionProps {
-  hasSelectedNote: boolean;
-  currentDynamics: DynamicValue | null;
-  setDynamics: (v: DynamicValue) => void;
+  editorScoreState: EditorScoreState;
+  actionDispatcher: EditorActionDispatcher;
 }
 
-export default function DynamicsSection(props: DynamicsSectionProps) {
+export default function DynamicsSection({ actionDispatcher, editorScoreState }: DynamicsSectionProps) {
   return (
     <>
       <PianoPianissimoGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDynamics === alphaTab.model.DynamicValue.PPP}
-        onClick={() => props.setDynamics(alphaTab.model.DynamicValue.PPP)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.PPP}
+        onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.PPP)}
       />
       <PianissimoGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDynamics === alphaTab.model.DynamicValue.PP}
-        onClick={() => props.setDynamics(alphaTab.model.DynamicValue.PP)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.PP}
+        onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.PP)}
       />
       <PianoGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDynamics === alphaTab.model.DynamicValue.P}
-        onClick={() => props.setDynamics(alphaTab.model.DynamicValue.P)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.P}
+        onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.P)}
       />
       <MezzoPianoGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDynamics === alphaTab.model.DynamicValue.MP}
-        onClick={() => props.setDynamics(alphaTab.model.DynamicValue.MP)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.MP}
+        onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.MP)}
       />
       <MezzoForteGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDynamics === alphaTab.model.DynamicValue.MF}
-        onClick={() => props.setDynamics(alphaTab.model.DynamicValue.MF)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.MF}
+        onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.MF)}
       />
       <ForteGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDynamics === alphaTab.model.DynamicValue.F}
-        onClick={() => props.setDynamics(alphaTab.model.DynamicValue.F)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.F}
+        onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.F)}
       />
       <FortissimoGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDynamics === alphaTab.model.DynamicValue.FF}
-        onClick={() => props.setDynamics(alphaTab.model.DynamicValue.FF)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.FF}
+        onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.FF)}
       />
       <ForteFortissimoGlyph
-        disabled={!props.hasSelectedNote}
-        selected={props.currentDynamics === alphaTab.model.DynamicValue.FFF}
-        onClick={() => props.setDynamics(alphaTab.model.DynamicValue.FFF)}
+        disabled={!editorScoreState.hasSelectedNote}
+        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.FFF}
+        onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.FFF)}
       />
     </>
   );

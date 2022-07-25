@@ -31,14 +31,13 @@ export interface BendState {
 
 interface EditorControlsProps {
   editorScoreState: EditorScoreState,
+  actionDispatcher: EditorActionDispatcher,
   // Undo/Redo
   canUndo: boolean,
   canRedo: boolean,
   // Selection state
   currentAvailableChords: Chord[],
   score: Score | null,
-  // Set note modifiers
-  actionDispatcher: EditorActionDispatcher,
   // Others
   print: () => void,
   exportGuitarPro: () => void,
@@ -117,7 +116,7 @@ export default function EditorControls(props: EditorControlsProps) {
     <div>
       <DialogSetText
         isOpen={isTextDialogOpen}
-        currentText={props.editorScoreState.currentSelectedBeatText()}
+        currentText={props.editorScoreState.currentSelectedBeatText}
         onClose={closeTextDialog}
         onSave={saveNewText}
       />
@@ -139,7 +138,7 @@ export default function EditorControls(props: EditorControlsProps) {
       )}
       <DialogChord
         isOpen={isChordDialogOpen}
-        chord={props.editorScoreState.currentChord()}
+        chord={props.editorScoreState.currentChord}
         onClose={closeChordDialog}
         onSave={saveChord}
       />
@@ -174,61 +173,36 @@ export default function EditorControls(props: EditorControlsProps) {
             print={props.print}
             redo={props.actionDispatcher.redo}
             undo={props.actionDispatcher.undo}
-            openTempoDialog={() => openTempoDialog()}
-            openScoreInfo={() => openScoreInfoDialog()}
+            openTempoDialog={openTempoDialog}
+            openScoreInfo={openScoreInfoDialog}
           />
         </TabContainer>
         <TabContainer style={{ display: currentTab !== 1 ? 'none' : 'flex' }}>
           <EffectsSection
-            currentAccentuation={props.editorScoreState.currentSelectedNoteAccentuation()}
-            currentBend={props.editorScoreState.currentSelectedBend()}
-            currentHarmonicType={props.editorScoreState.currentSelectedNoteHarmonicType()}
-            hasSelectedNote={props.editorScoreState.hasSelectedNote}
-            isDeadNote={props.editorScoreState.currentSelectedNoteDead()}
-            isGhost={props.editorScoreState.currentSelectedNoteIsGhost()}
-            isPalmMute={props.editorScoreState.isCurrentSelectedNotePalmMute()}
-            isLeftHandTapNote={props.editorScoreState.isLeftHandTapNote()}
-            isVibrato={props.editorScoreState.isVibrato()}
-            isHammerOrPull={props.editorScoreState.currentSelectedNoteHammerOrPull()}
-            isSlide={props.editorScoreState.currentSelectedNoteSlide()}
-            setVibrato={props.actionDispatcher.setVibratoNote}
-            setAccentuationNote={props.actionDispatcher.setAccentuationNote}
-            setBend={props.actionDispatcher.setBend}
-            setHammer={props.actionDispatcher.setHammer}
-            setSlide={props.actionDispatcher.setSlide}
-            setDeadNote={props.actionDispatcher.setDeadNote}
-            setHarmonicType={props.actionDispatcher.setHarmonicType}
-            setGhostNote={props.actionDispatcher.setGhostNote}
-            setTapNote={props.actionDispatcher.setTapNote}
-            togglePalmMute={props.actionDispatcher.togglePalmMute}
+            editorScoreState={props.editorScoreState}
+            actionDispatcher={props.actionDispatcher}
           />
         </TabContainer>
         <TabContainer style={{ display: currentTab !== 2 ? 'none' : 'flex' }}>
           <BeatSection
+            actionDispatcher={props.actionDispatcher}
             editorScoreState={props.editorScoreState}
-            setPickStroke={props.actionDispatcher.setPickStroke}
-            setText={() => openTextDialog()}
-            setChord={() => openChordDialog()}
+            setText={openTextDialog}
+            setChord={openChordDialog}
             useChord={props.actionDispatcher.setChord}
-            setHasOpenRepeat={props.actionDispatcher.setOpenRepeat}
-            setCloseRepeat={props.actionDispatcher.setCloseRepeat}
             chords={props.currentAvailableChords}
           />
         </TabContainer>
         <TabContainer style={{ display: currentTab !== 3 ? 'none' : 'flex' }}>
           <DurationSetion
-            currentDuration={props.editorScoreState.currentSelectedBeatDuration()}
-            hasSelectedNote={props.editorScoreState.hasSelectedNote}
-            setDuration={props.actionDispatcher.setDuration}
-            setTie={props.actionDispatcher.setTieNote}
-            isTie={props.editorScoreState.isCurrentSelectedNoteTie()}
+            editorScoreState={props.editorScoreState}
+            actionDispatcher={props.actionDispatcher}
           />
         </TabContainer>
         <TabContainer style={{ display: currentTab !== 4 ? 'none' : 'flex' }}>
           <DynamicsSection
-            currentDynamics={props.editorScoreState.currentSelectedBeatDynamics()}
-            hasSelectedNote={props.editorScoreState.hasSelectedNote}
-            setDynamics={props.actionDispatcher.setDynamics}
+            editorScoreState={props.editorScoreState}
+            actionDispatcher={props.actionDispatcher}
           />
         </TabContainer>
       </div>

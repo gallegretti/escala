@@ -225,9 +225,17 @@ export default function App() {
     [paletteMode],
   );
 
+  const hasDialogContext = React.useMemo(
+    () => ({
+      hasDialog,
+      setHasDialog,
+    }),
+    [],
+  );
+
   return (
     <ColorModeContext.Provider value={colorMode}>
-      <DialogContext.Provider value={{ hasDialog, setHasDialog }}>
+      <DialogContext.Provider value={hasDialogContext}>
         <ThemeProvider theme={theme}>
           <Body>
             <div className="app-container">
@@ -261,7 +269,7 @@ export default function App() {
                 >
                   <EditorCursor
                     hasDialogOpen={hasDialog}
-                    fret={editorScoreState.currentFret()}
+                    fret={editorScoreState.currentFret}
                     setFret={editorActionDispatcher.setFret}
                     bounds={selectedNoteController?.getNoteBounds()}
                   />
