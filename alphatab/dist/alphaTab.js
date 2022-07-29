@@ -3645,6 +3645,10 @@
             let index = this.notes.indexOf(note);
             if (index >= 0) {
                 this.notes.splice(index, 1);
+                // https://github.com/CoderLine/alphaTab/pull/933
+                if (note.isStringed) {
+                    this.noteStringLookup.delete(note.string);
+                }
             }
         }
         getAutomation(type) {
