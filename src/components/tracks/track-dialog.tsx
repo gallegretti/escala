@@ -51,7 +51,7 @@ export default function TrackDialog(props: TrackDialogProps) {
   };
 
   return (
-    <Dialog open={props.isOpen}>
+    <Dialog open={props.isOpen} onClose={props.onClose}>
       <DialogTitle>{props.currentTrack ? 'Edit Track' : 'New Track'}</DialogTitle>
       <DialogContent>
         <TextField
