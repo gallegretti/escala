@@ -10,7 +10,7 @@
     "unit-test": "jest",
     "e2e-test": "cypress run",
     "cypress-open": "cypress open",
-    "postinstall": "cp -r ./node_modules/@coderline/alphatab ./public && cp -r ./node_modules/@coderline/alphatab/dist/soundfont/ ./public/alphatab/soundfont/"
+    "postinstall": "patch-package && cp -r ./node_modules/@coderline/alphatab ./public && cp -r ./node_modules/@coderline/alphatab/dist/soundfont/ ./public/alphatab/soundfont/"
   },
   "dependencies": {
     "@coderline/alphatab": "^1.3.0-alpha.306",
@@ -39,6 +39,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "jest": "^28.1.0",
     "jest-mock-extended": "^2.0.6",
+    "patch-package": "^6.4.7",
     "ts-jest": "^28.0.3",
     "typescript": "^4.6.3",
     "vite": "^3.0.0"
