@@ -220,7 +220,10 @@ class EditorActionDispatcher {
     const currentSelectedNote = this.selectedNote();
     if (currentSelectedNote) {
       this.dispatchAction({ type: 'remove-note', data: { note: currentSelectedNote } });
-      this.selectedNoteController.setSelectedSlot(null);
+      this.selectedNoteController.setSelectedSlot({
+        beat: currentSelectedNote.beat,
+        string: currentSelectedNote.string,
+      });
     }
   };
 
