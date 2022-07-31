@@ -1,5 +1,5 @@
 /**
- * alphaTab v1.3.0-alpha.306 (develop, build 306)
+ * alphaTab v1.3.0-alpha.341 (develop, build 341)
  * 
  * Copyright © 2022, Daniel Kuschny and Contributors, All rights reserved.
  * 
@@ -40978,8 +40978,8 @@ class CoreSettings {
 // </auto-generated>
 class VersionInfo {
 }
-VersionInfo.version = '1.3.0-alpha.306';
-VersionInfo.date = '2022-06-21T00:47:08.161Z';
+VersionInfo.version = '1.3.0-alpha.341';
+VersionInfo.date = '2022-07-26T00:55:38.526Z';
 
 var index$5 = /*#__PURE__*/Object.freeze({
     __proto__: null,
