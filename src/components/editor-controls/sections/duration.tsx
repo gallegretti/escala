@@ -1,13 +1,13 @@
 import React from 'react';
 import { Divider } from '@mui/material';
-import WholeGlyph from '../icons/duration/whole';
-import HalfGlyph from '../icons/duration/half';
-import QuarterGlyph from '../icons/duration/quarter';
-import EighthGlyph from '../icons/duration/eighth';
-import SixTeenthGlyph from '../icons/duration/sixteenth';
-import ThirtySecondGlyph from '../icons/duration/thirty-second';
-import SixtyFourGlyph from '../icons/duration/sixty-four';
-import Tie from '../icons/duration/tie';
+import WholeGlyph from '@glyphs/duration/whole';
+import HalfGlyph from '@glyphs/duration/half';
+import QuarterGlyph from '@glyphs/duration/quarter';
+import EighthGlyph from '@glyphs/duration/eighth';
+import SixTeenthGlyph from '@glyphs/duration/sixteenth';
+import ThirtySecondGlyph from '@glyphs/duration/thirty-second';
+import SixtyFourGlyph from '@glyphs/duration/sixty-four';
+import Tie from '@glyphs/duration/tie';
 import EditorScoreState from '../../../editor/editor-score-state';
 import EditorActionDispatcher from '../../../editor/editor-action-dispatcher';
 

@@ -1,7 +1,7 @@
 import React from 'react';
-import FullPreBendGlyph from '../../icons/effects/bend/full-pre-bend';
-import HalfPreBendGlyph from '../../icons/effects/bend/half-pre-bend';
-import PreBendGlyph from '../../icons/effects/bend/pre-bend';
+import FullPreBendGlyph from '@glyphs/effects/bend/full-pre-bend';
+import HalfPreBendGlyph from '@glyphs/effects/bend/half-pre-bend';
+import PreBendGlyph from '@glyphs/effects/bend/pre-bend';
 import { BendType } from '../../../../editor/bend-type';
 import GenericBendButton from './generic-bend-button';
 

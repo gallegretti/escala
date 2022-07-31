@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import {
   Tabs, Tab, useTheme, styled,
 } from '@mui/material';
+import DarkModeGlyph from '@glyphs/settings/dark-mode';
+import useDialog from '@hooks/use-dialog';
 import DialogSetText from './dialog-set-text/dialog-set-text';
 import ScoreInfoComponent from './score-info/score-info';
 import { ScoreInfo } from '../../editor/editor-actions/actions/set-score-info/score-info';
 import { BendType } from '../../editor/bend-type';
-import DarkModeGlyph from './icons/settings/dark-mode';
 import { ColorModeContext } from '../../editor/color-mode-context';
 import DynamicsSection from './sections/dynamics';
 import DurationSetion from './sections/duration';
@@ -17,7 +18,6 @@ import DocumentSection from './sections/document';
 import {
   Chord, Score,
 } from '../../alphatab-types/alphatab-types';
-import useDialog from '../../hooks/use-dialog';
 import DialogSetTempo from './dialog-set-tempo/dialog-set-tempo';
 import DialogChord from './dialog-chord/dialog-chord';
 import EditorActionDispatcher from '../../editor/editor-action-dispatcher';

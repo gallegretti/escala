@@ -2,11 +2,11 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState } from 'react';
 import { useTheme } from '@mui/material';
+import ChordGlyph from '@glyphs/beat/chord';
+import ExpandMoreGlyph from '@glyphs/generic/expand-more';
+import useAnchorElem from '@hooks/use-anchor-element';
 import { Chord } from '../../../alphatab-types/alphatab-types';
-import ChordGlyph from '../icons/beat/chord';
-import ExpandMoreGlyph from '../icons/generic/expand-more';
 import { StyledPopper } from './styled-popper';
-import useAnchorElem from '../../../hooks/use-anchor-element';
 
 interface ChordButtonProps {
   disabled: boolean;

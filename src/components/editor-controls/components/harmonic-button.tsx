@@ -1,13 +1,13 @@
 import React from 'react';
-import NaturalHarmonicGlyph from '../icons/effects/harmonic/natural-harmonic';
-import ArtificialHarmonicGlyph from '../icons/effects/harmonic/artificial-harmonic';
-import PinchHarmonicGlyph from '../icons/effects/harmonic/pinch-harmonic';
-import TapHarmonicGlyph from '../icons/effects/harmonic/tap-harmonic';
-import SemiHarmonicGlyph from '../icons/effects/harmonic/semi-harmonic';
-import FeedbackHarmonicGlyph from '../icons/effects/harmonic/feedback-harmonic';
-import GenericHarmonicGlyph from '../icons/effects/harmonic/generic-harmonic';
+import NaturalHarmonicGlyph from '@glyphs/effects/harmonic/natural-harmonic';
+import ArtificialHarmonicGlyph from '@glyphs/effects/harmonic/artificial-harmonic';
+import PinchHarmonicGlyph from '@glyphs/effects/harmonic/pinch-harmonic';
+import TapHarmonicGlyph from '@glyphs/effects/harmonic/tap-harmonic';
+import SemiHarmonicGlyph from '@glyphs/effects/harmonic/semi-harmonic';
+import FeedbackHarmonicGlyph from '@glyphs/effects/harmonic/feedback-harmonic';
+import GenericHarmonicGlyph from '@glyphs/effects/harmonic/generic-harmonic';
+import useAnchorElem from '@hooks/use-anchor-element';
 import { StyledPopper } from './styled-popper';
-import useAnchorElem from '../../../hooks/use-anchor-element';
 
 interface HarmonicButtonProps {
   disabled: boolean;

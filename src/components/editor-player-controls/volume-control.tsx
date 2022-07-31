@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import React, { useState } from 'react';
 import { Slider, styled } from '@mui/material';
-import VolumeGlyph from '../editor-controls/icons/player-controls/volume';
+import VolumeGlyph from '@glyphs/player-controls/volume';
 
 interface VolumeControlProps {
     volume: number,

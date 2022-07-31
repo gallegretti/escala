@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { styled } from '@mui/material';
-import PlayPauseGlyph from '../editor-controls/icons/player-controls/play';
+import PlayPauseGlyph from '@glyphs/player-controls/play';
+import CountInGlyph from '@glyphs/player-controls/count-in';
+import MetronomeGlyph from '@glyphs/player-controls/metronome';
 import VolumeControlComponent from './volume-control';
 import EditorPlayerSpeedComponent from './editor-player-speed';
-import CountInGlyph from '../editor-controls/icons/player-controls/count-in';
-import MetronomeGlyph from '../editor-controls/icons/player-controls/metronome';
 
 interface EditorPlayerControlsProps {
   playPause: () => void,
