@@ -17,14 +17,14 @@ import { Track, Tuning } from '../../alphatab-types/alphatab-types';
 import TrackInfo from '../../editor-actions/actions/edit-track/track-info';
 import { defaultTuning, tunings } from '../../editor-actions/actions/edit-track/tunings';
 
-interface TrackDialogProps {
+interface DialogTrackProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (params: TrackInfo) => void;
   currentTrack?: Track;
 }
 
-export default function TrackDialog(props: TrackDialogProps) {
+export default function DialogTrack(props: DialogTrackProps) {
   const [trackName, setTrackName] = useState('');
   const [capo, setCapo] = useState(0);
   const [tuning, setTuning] = useState<Tuning>(defaultTuning);

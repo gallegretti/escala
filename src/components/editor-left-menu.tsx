@@ -3,7 +3,7 @@ import { styled } from '@mui/material';
 import useDialog from '@hooks/use-dialog';
 import EditorTrackSelector from './editor-track-selector/editor-track-selector';
 import { Score, Track } from '../alphatab-types/alphatab-types';
-import TrackDialog from './tracks/track-dialog';
+import DialogTrack from '../dialogs/dialog-track/dialog-track';
 import TrackInfo from '../editor-actions/actions/edit-track/track-info';
 
 const SideMenuDiv = styled('div')(({ theme }) => ({
@@ -48,7 +48,7 @@ export default function EditorLeftMenu({
 
   return (
     <>
-      <TrackDialog
+      <DialogTrack
         isOpen={isDialogOpen}
         onClose={closeDialog}
         currentTrack={score?.tracks[selectedTrackIndex]}
