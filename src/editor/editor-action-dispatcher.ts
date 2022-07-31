@@ -10,10 +10,10 @@ import {
   Track,
 } from '../alphatab-types/alphatab-types';
 import { BendState } from '../components/editor-controls/editor-controls';
-import TrackInfo from './editor-actions/actions/edit-track.ts/track-info';
-import { ScoreInfo } from './editor-actions/actions/set-score-info/score-info';
-import { EditorActionEvent, EditorActionResult } from './editor-actions/editor-action-event';
-import EditorActions from './editor-actions/editor-command-delegator/editor-actions';
+import TrackInfo from '../editor-actions/actions/edit-track/track-info';
+import { ScoreInfo } from '../editor-actions/actions/set-score-info/score-info';
+import { EditorActionEvent, EditorActionResult } from '../editor-actions/editor-action-event';
+import EditorActions from '../editor-actions/editor-command-delegator/editor-actions';
 import SelectedNoteController from './selected-note-controller';
 
 class EditorActionDispatcher {

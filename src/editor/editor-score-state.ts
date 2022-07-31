@@ -9,7 +9,7 @@ import {
   PickStroke,
 } from '../alphatab-types/alphatab-types';
 import { BendState } from '../components/editor-controls/editor-controls';
-import { getBendState } from './editor-actions/actions/set-bend/set-bend-lookup-table';
+import { getBendState } from '../editor-actions/actions/set-bend/set-bend-lookup-table';
 import SelectedNoteController from './selected-note-controller';
 
 /**

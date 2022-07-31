@@ -3,7 +3,7 @@ import './dialog-score-info';
 import {
   Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button,
 } from '@mui/material';
-import { ScoreInfo } from '../../editor/editor-actions/actions/set-score-info/score-info';
+import { ScoreInfo } from '../../editor-actions/actions/set-score-info/score-info';
 import { Score } from '../../alphatab-types/alphatab-types';
 
 interface ScoreInfoProps {

@@ -14,8 +14,8 @@ import {
   TextField,
 } from '@mui/material';
 import { Track, Tuning } from '../../alphatab-types/alphatab-types';
-import TrackInfo from '../../editor/editor-actions/actions/edit-track.ts/track-info';
-import { defaultTuning, tunings } from '../../editor/editor-actions/actions/edit-track.ts/tunings';
+import TrackInfo from '../../editor-actions/actions/edit-track/track-info';
+import { defaultTuning, tunings } from '../../editor-actions/actions/edit-track/tunings';
 
 interface TrackDialogProps {
   isOpen: boolean;

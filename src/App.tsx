@@ -6,8 +6,8 @@ import {
 import SelectedNoteController from './editor/selected-note-controller';
 import EventEmitter from './editor/ui-actions/event-emitter';
 import { EditorUIEvent } from './editor/ui-actions/editor-ui-event';
-import EditorActions from './editor/editor-actions/editor-command-delegator/editor-actions';
-import { EditorActionResult } from './editor/editor-actions/editor-action-event';
+import EditorActions from './editor-actions/editor-command-delegator/editor-actions';
+import { EditorActionResult } from './editor-actions/editor-action-event';
 import { EditorControls } from './components/editor-controls/editor-controls';
 import EditorCursor from './components/editor-cursor/editor-cursor';
 import EditorPlayerControls from './components/editor-player-controls/editor-player-controls';

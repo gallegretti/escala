@@ -7,7 +7,7 @@ import useDialog from '@hooks/use-dialog';
 import DialogText from '@dialogs/dialog-text/dialog-text';
 import DialogScoreInfo from '@dialogs/dialog-score-info/dialog-score-info';
 import DialogTempo from '@dialogs/dialog-tempo/dialog-tempo';
-import { ScoreInfo } from '../../editor/editor-actions/actions/set-score-info/score-info';
+import { ScoreInfo } from '../../editor-actions/actions/set-score-info/score-info';
 import { BendType } from '../../editor/bend-type';
 import { ColorModeContext } from '../../editor/color-mode-context';
 import DynamicsSection from '../../editor-sections/dynamics';

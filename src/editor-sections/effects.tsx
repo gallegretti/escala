@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import SectionDivider from './section-divider';
 import PalmMuteGlyph from '@glyphs/effects/palm-mute';
 import GhostNoteGlyph from '@glyphs/effects/ghost-note';
 import AccentuatedNoteGlyph from '@glyphs/effects/accentuated-note';
@@ -13,6 +12,7 @@ import HarmonicButton from '@editor-section-part/harmonic-button';
 import PreBendButton from '@editor-section-part/bends/pre-bend-button';
 import BendButton from '@editor-section-part/bends/bend-button';
 import ReleaseBendButton from '@editor-section-part/bends/release-button';
+import SectionDivider from './section-divider';
 import { BendState } from '../components/editor-controls/editor-controls';
 import { BendType } from '../editor/bend-type';
 import { AccentuationType } from '../alphatab-types/alphatab-types';
