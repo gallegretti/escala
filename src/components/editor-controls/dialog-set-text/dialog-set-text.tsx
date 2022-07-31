@@ -33,6 +33,7 @@ export default function DialogSetText(props: DialogSetTextProps) {
       <DialogTitle>Set text</DialogTitle>
       <DialogContent>
         <TextField
+          id="field-beat-text"
           autoFocus
           value={newTextValue ?? props.currentText ?? ''}
           onChange={(event) => updateNewText(event)}
