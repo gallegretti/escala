@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider, Input } from '@mui/material';
+import { Input } from '@mui/material';
 import OpenRepeatGlyph from '@glyphs/beat/open-repeat';
 import TextGlyph from '@glyphs/beat/text';
 import UpstrokeGlyph from '@glyphs/beat/upstroke';
@@ -12,6 +12,7 @@ import ChordButton from '@editor-section-part/chord-button';
 import { Chord, PickStroke } from '../alphatab-types/alphatab-types';
 import EditorScoreState from '../editor/editor-score-state';
 import EditorActionDispatcher from '../editor/editor-action-dispatcher';
+import SectionDivider from './section-divider';
 
 interface BeatSectionProps {
   editorScoreState: EditorScoreState;
@@ -47,7 +48,7 @@ export default function BeatSection(props: BeatSectionProps) {
           }
         }}
       />
-      <Divider variant="middle" orientation="vertical" flexItem />
+      <SectionDivider />
       <UpstrokeGlyph
         disabled={isDisabled}
         selected={props.editorScoreState.currentSelectedBeatPickStroke === alphaTab.model.PickStroke.Up}
@@ -58,14 +59,14 @@ export default function BeatSection(props: BeatSectionProps) {
         selected={props.editorScoreState.currentSelectedBeatPickStroke === alphaTab.model.PickStroke.Down}
         onClick={() => setPickStroke(alphaTab.model.PickStroke.Down)}
       />
-      <Divider variant="middle" orientation="vertical" flexItem />
+      <SectionDivider />
       <ChordButton
         disabled={isDisabled}
         chords={props.chords}
         setChord={props.setChord}
         useChord={props.useChord}
       />
-      <Divider variant="middle" orientation="vertical" flexItem />
+      <SectionDivider />
       <OpenRepeatGlyph
         selected={props.editorScoreState.isOpenRepeat}
         disabled={isDisabled}

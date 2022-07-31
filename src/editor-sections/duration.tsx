@@ -1,5 +1,4 @@
 import React from 'react';
-import { Divider } from '@mui/material';
 import WholeGlyph from '@glyphs/duration/whole';
 import HalfGlyph from '@glyphs/duration/half';
 import QuarterGlyph from '@glyphs/duration/quarter';
@@ -10,6 +9,7 @@ import SixtyFourGlyph from '@glyphs/duration/sixty-four';
 import Tie from '@glyphs/duration/tie';
 import EditorScoreState from '../editor/editor-score-state';
 import EditorActionDispatcher from '../editor/editor-action-dispatcher';
+import SectionDivider from './section-divider';
 
 interface DurationSectionProps {
   editorScoreState: EditorScoreState;
@@ -54,7 +54,7 @@ export default function DurationSetion({ actionDispatcher, editorScoreState }: D
         selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.SixtyFourth}
         onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.SixtyFourth)}
       />
-      <Divider variant="middle" orientation="vertical" flexItem />
+      <SectionDivider />
       <Tie
         disabled={!editorScoreState.hasSelectedNote}
         onClick={() => actionDispatcher.setTieNote(!editorScoreState.isCurrentSelectedNoteTie)}

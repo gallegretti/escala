@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Divider } from '@mui/material';
+import SectionDivider from './section-divider';
 import PalmMuteGlyph from '@glyphs/effects/palm-mute';
 import GhostNoteGlyph from '@glyphs/effects/ghost-note';
 import AccentuatedNoteGlyph from '@glyphs/effects/accentuated-note';
@@ -92,7 +92,7 @@ export default function EffectsSection(props: EffectsSectionProps) {
         selected={props.editorScoreState.isVibrato ?? false}
         onClick={() => props.actionDispatcher.setVibratoNote(!props.editorScoreState.isVibrato)}
       />
-      <Divider variant="middle" orientation="vertical" flexItem />
+      <SectionDivider />
       <HarmonicButton
         disabled={!props.editorScoreState.hasSelectedNote}
         currentHarmonicType={props.editorScoreState.currentSelectedNoteHarmonicType ?? 0}
@@ -100,7 +100,7 @@ export default function EffectsSection(props: EffectsSectionProps) {
         isPopperOpen={openPopper === 'harmonic'}
         setPopperOpen={() => updateOpenPopper('harmonic')}
       />
-      <Divider variant="middle" orientation="vertical" flexItem />
+      <SectionDivider />
       <PreBendButton
         disabled={!props.editorScoreState.hasSelectedNote}
         preBend={props.editorScoreState.currentSelectedBend?.preBend ?? null}
@@ -122,7 +122,7 @@ export default function EffectsSection(props: EffectsSectionProps) {
         isPopperOpen={openPopper === 'release'}
         setPopperOpen={() => updateOpenPopper('release')}
       />
-      <Divider variant="middle" orientation="vertical" flexItem />
+      <SectionDivider />
       <HammerPullNoteGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
         onClick={() => { props.actionDispatcher.setHammer(!props.editorScoreState.currentSelectedNoteHammerOrPull); }}
