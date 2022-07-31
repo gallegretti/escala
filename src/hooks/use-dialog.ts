@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { DialogContext } from '../../editor/dialog-context';
+import { DialogContext } from '../editor/dialog-context';
 
 export default function useDialog() {
   const { setHasDialog } = useContext(DialogContext);

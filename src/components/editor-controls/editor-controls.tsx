@@ -17,7 +17,7 @@ import DocumentSection from './sections/document';
 import {
   Chord, Score,
 } from '../../alphatab-types/alphatab-types';
-import useDialog from './use-dialog';
+import useDialog from '../../hooks/use-dialog';
 import DialogSetTempo from './dialog-set-tempo/dialog-set-tempo';
 import DialogChord from './dialog-chord/dialog-chord';
 import EditorActionDispatcher from '../../editor/editor-action-dispatcher';

@@ -6,7 +6,7 @@ import { Chord } from '../../../alphatab-types/alphatab-types';
 import ChordGlyph from '../icons/beat/chord';
 import ExpandMoreGlyph from '../icons/generic/expand-more';
 import { StyledPopper } from './styled-popper';
-import useAnchorElem from './use-anchor-element';
+import useAnchorElem from '../../../hooks/use-anchor-element';
 
 interface ChordButtonProps {
   disabled: boolean;

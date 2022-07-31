@@ -3,7 +3,7 @@ import { styled } from '@mui/material';
 import EditorTrackSelector from './editor-track-selector/editor-track-selector';
 import { Score, Track } from '../alphatab-types/alphatab-types';
 import TrackDialog from './tracks/track-dialog';
-import useDialog from './editor-controls/use-dialog';
+import useDialog from '../hooks/use-dialog';
 import TrackInfo from '../editor/editor-actions/actions/edit-track.ts/track-info';
 
 const SideMenuDiv = styled('div')(({ theme }) => ({

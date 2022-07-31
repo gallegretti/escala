@@ -6,7 +6,7 @@ import UndoGlyph from '../icons/document/undo';
 import RedoGlyph from '../icons/document/redo';
 import PrintGlyph from '../icons/document/print';
 import ExportGlyph from '../icons/document/export';
-import useAnchorElem from '../components/use-anchor-element';
+import useAnchorElem from '../../../hooks/use-anchor-element';
 import { StyledPopper } from '../components/styled-popper';
 import GuitarProGlyph from '../icons/document/download/guitar-pro';
 import MidGlyph from '../icons/document/download/mid';
