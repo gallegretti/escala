@@ -9,15 +9,15 @@ import TapNoteGlyph from '@glyphs/effects/tap-note';
 import VibratoNoteGlyph from '@glyphs/effects/vibratro';
 import HammerPullNoteGlyph from '@glyphs/effects/hammer-pull';
 import SlideNoteGlyph from '@glyphs/effects/slide';
-import HarmonicButton from '../components/harmonic-button';
-import PreBendButton from '../components/bends/pre-bend-button';
-import BendButton from '../components/bends/bend-button';
-import ReleaseBendButton from '../components/bends/release-button';
-import { BendState } from '../editor-controls';
-import { BendType } from '../../../editor/bend-type';
-import { AccentuationType } from '../../../alphatab-types/alphatab-types';
-import EditorScoreState from '../../../editor/editor-score-state';
-import EditorActionDispatcher from '../../../editor/editor-action-dispatcher';
+import HarmonicButton from '@editor-section-part/harmonic-button';
+import PreBendButton from '@editor-section-part/bends/pre-bend-button';
+import BendButton from '@editor-section-part/bends/bend-button';
+import ReleaseBendButton from '@editor-section-part/bends/release-button';
+import { BendState } from '../components/editor-controls/editor-controls';
+import { BendType } from '../editor/bend-type';
+import { AccentuationType } from '../alphatab-types/alphatab-types';
+import EditorScoreState from '../editor/editor-score-state';
+import EditorActionDispatcher from '../editor/editor-action-dispatcher';
 
 interface EffectsSectionProps {
   editorScoreState: EditorScoreState;

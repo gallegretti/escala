@@ -8,8 +8,8 @@ import SixTeenthGlyph from '@glyphs/duration/sixteenth';
 import ThirtySecondGlyph from '@glyphs/duration/thirty-second';
 import SixtyFourGlyph from '@glyphs/duration/sixty-four';
 import Tie from '@glyphs/duration/tie';
-import EditorScoreState from '../../../editor/editor-score-state';
-import EditorActionDispatcher from '../../../editor/editor-action-dispatcher';
+import EditorScoreState from '../editor/editor-score-state';
+import EditorActionDispatcher from '../editor/editor-action-dispatcher';
 
 interface DurationSectionProps {
   editorScoreState: EditorScoreState;

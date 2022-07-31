@@ -7,8 +7,8 @@ import ForteGlyph from '@glyphs/dynamics/f';
 import FortissimoGlyph from '@glyphs/dynamics/ff';
 import MezzoForteGlyph from '@glyphs/dynamics/mf';
 import ForteFortissimoGlyph from '@glyphs/dynamics/fff';
-import EditorActionDispatcher from '../../../editor/editor-action-dispatcher';
-import EditorScoreState from '../../../editor/editor-score-state';
+import EditorActionDispatcher from '../editor/editor-action-dispatcher';
+import EditorScoreState from '../editor/editor-score-state';
 
 interface DynamicsSectionProps {
   editorScoreState: EditorScoreState;

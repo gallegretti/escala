@@ -10,7 +10,7 @@ interface DialogSetTepoProps {
   onSet: (arg: number) => void;
 }
 
-export default function DialogSetTempo(props: DialogSetTepoProps) {
+export default function DialogTempo(props: DialogSetTepoProps) {
   const [newTempoValue, setNewTempoValue] = useState(props.currentTempo);
   const updateNewText = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setNewTempoValue(Number.parseInt(event.target.value, 10));

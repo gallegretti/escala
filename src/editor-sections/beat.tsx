@@ -7,11 +7,11 @@ import DownStrokeGlyph from '@glyphs/beat/downstroke';
 import CloseRepeatGlyph from '@glyphs/beat/close-repeat';
 import ExpandMoreGlyph from '@glyphs/generic/expand-more';
 import useAnchorElem from '@hooks/use-anchor-element';
-import { Chord, PickStroke } from '../../../alphatab-types/alphatab-types';
-import ChordButton from '../components/chord-button';
-import EditorScoreState from '../../../editor/editor-score-state';
-import EditorActionDispatcher from '../../../editor/editor-action-dispatcher';
-import { StyledPopper } from '../components/styled-popper';
+import { StyledPopper } from '@editor-section-part/styled-popper';
+import ChordButton from '@editor-section-part/chord-button';
+import { Chord, PickStroke } from '../alphatab-types/alphatab-types';
+import EditorScoreState from '../editor/editor-score-state';
+import EditorActionDispatcher from '../editor/editor-action-dispatcher';
 
 interface BeatSectionProps {
   editorScoreState: EditorScoreState;

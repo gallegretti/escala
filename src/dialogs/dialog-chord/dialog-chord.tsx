@@ -6,7 +6,7 @@ import {
   DialogContent,
   TextField,
 } from '@mui/material';
-import { Chord } from '../../../alphatab-types/alphatab-types';
+import { Chord } from '../../alphatab-types/alphatab-types';
 import ChordInput from './chord-input';
 
 interface DialogChordProps {

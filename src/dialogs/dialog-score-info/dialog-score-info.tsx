@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './score-info';
+import './dialog-score-info';
 import {
   Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button,
 } from '@mui/material';
@@ -13,7 +13,7 @@ interface ScoreInfoProps {
     score: Score;
 }
 
-export function ScoreInfoComponent(props: ScoreInfoProps) {
+export function DialogScoreInfo(props: ScoreInfoProps) {
   const stateFromProps = () => ({
     title: props.score?.title ?? '',
     subTitle: props.score?.subTitle ?? '',
@@ -131,4 +131,4 @@ export function ScoreInfoComponent(props: ScoreInfoProps) {
   );
 }
 
-export default ScoreInfoComponent;
+export default DialogScoreInfo;

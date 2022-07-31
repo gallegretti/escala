@@ -4,22 +4,22 @@ import {
 } from '@mui/material';
 import DarkModeGlyph from '@glyphs/settings/dark-mode';
 import useDialog from '@hooks/use-dialog';
-import DialogSetText from './dialog-set-text/dialog-set-text';
-import ScoreInfoComponent from './score-info/score-info';
+import DialogText from '@dialogs/dialog-text/dialog-text';
+import DialogScoreInfo from '@dialogs/dialog-score-info/dialog-score-info';
+import DialogTempo from '@dialogs/dialog-tempo/dialog-tempo';
 import { ScoreInfo } from '../../editor/editor-actions/actions/set-score-info/score-info';
 import { BendType } from '../../editor/bend-type';
 import { ColorModeContext } from '../../editor/color-mode-context';
-import DynamicsSection from './sections/dynamics';
-import DurationSetion from './sections/duration';
-import BeatSection from './sections/beat';
-import EffectsSection from './sections/effects';
-import DocumentSection from './sections/document';
+import DynamicsSection from '../../editor-sections/dynamics';
+import DurationSetion from '../../editor-sections/duration';
+import BeatSection from '../../editor-sections/beat';
+import EffectsSection from '../../editor-sections/effects';
+import DocumentSection from '../../editor-sections/document';
 
 import {
   Chord, Score,
 } from '../../alphatab-types/alphatab-types';
-import DialogSetTempo from './dialog-set-tempo/dialog-set-tempo';
-import DialogChord from './dialog-chord/dialog-chord';
+import DialogChord from '../../dialogs/dialog-chord/dialog-chord';
 import EditorActionDispatcher from '../../editor/editor-action-dispatcher';
 import EditorScoreState from '../../editor/editor-score-state';
 
@@ -114,14 +114,14 @@ export default function EditorControls(props: EditorControlsProps) {
 
   return (
     <div>
-      <DialogSetText
+      <DialogText
         isOpen={isTextDialogOpen}
         currentText={props.editorScoreState.currentSelectedBeatText}
         onClose={closeTextDialog}
         onSave={saveNewText}
       />
       {props.score && (
-        <DialogSetTempo
+        <DialogTempo
           currentTempo={props.score?.tempo ?? 0}
           isOpen={isTempoDialogOpen}
           onClose={closeTempoDialog}
@@ -129,7 +129,7 @@ export default function EditorControls(props: EditorControlsProps) {
         />
       )}
       {props.score && (
-        <ScoreInfoComponent
+        <DialogScoreInfo
           isOpen={isScoreInfoDialogOpen}
           score={props.score}
           onClose={closeScoreInfoDialog}

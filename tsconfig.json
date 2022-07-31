@@ -17,8 +17,10 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "@glyphs/*": ["./src/components/editor-controls/icons/*"],
+      "@glyphs/*": ["./src/glyphs/*"],
+      "@dialogs/*": ["./src/dialogs/*"],
       "@hooks/*": ["./src/hooks/*"],
+      "@editor-section-part/*": ["./src/editor-section-part/*"],
     }
   },
   "include": ["src"],

@@ -3,14 +3,14 @@ import {
   Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button,
 } from '@mui/material';
 
-interface DialogSetTextProps {
+interface DialogTextProps {
   isOpen: boolean,
   currentText: string | null,
   onClose: () => void,
   onSave: (arg: string) => void,
 }
 
-export default function DialogSetText(props: DialogSetTextProps) {
+export default function DialogText(props: DialogTextProps) {
   const [newTextValue, setNewTextValue] = useState(props.currentText);
   const updateNewText = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setNewTextValue(event.target.value);

@@ -11,7 +11,7 @@ import MidGlyph from '@glyphs/document/download/mid';
 import NewGlyph from '@glyphs/document/new';
 import TempoGlyph from '@glyphs/document/tempo';
 import useAnchorElem from '@hooks/use-anchor-element';
-import { StyledPopper } from '../components/styled-popper';
+import { StyledPopper } from '@editor-section-part/styled-popper';
 
 interface DocumentSectionProps {
   canUndo: boolean;
