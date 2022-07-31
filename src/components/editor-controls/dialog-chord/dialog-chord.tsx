@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useEffect, useState } from 'react';
 import {
   Button,
@@ -65,8 +63,8 @@ export default function DialogChord(props: DialogChordProps) {
           label="Chord Name"
           autoFocus
           type="text"
-          value={props.chord?.name ?? chordName}
-          onChange={(event) => updateChordName(event)}
+          value={chordName}
+          onChange={updateChordName}
         />
         <div aria-label="Chord grid" style={{ position: 'relative', marginTop: '30px' }}>
           <ChordInput
@@ -80,7 +78,14 @@ export default function DialogChord(props: DialogChordProps) {
         </div>
       </DialogContent>
       <DialogActions>
-        <Button id="chord-save" onClick={save} title="Save">Save</Button>
+        <Button
+          disabled={chordName.length === 0}
+          id="chord-save"
+          onClick={save}
+          title="Save"
+        >
+          Save
+        </Button>
       </DialogActions>
     </Dialog>
   );
