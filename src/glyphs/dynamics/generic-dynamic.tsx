@@ -8,7 +8,13 @@ export default function GenericDynamicGlyph(props: DynamicGlyphProps) {
   const color = useGlyphColor(props);
   return (
     <Tooltip title={props.title ?? ''}>
-      <svg onClick={props.onClick} height={props.height ?? '25px'} width={props.width ?? '50px'} xmlns="http://www.w3.org/2000/svg" style={baseSvgStyle(props)}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        onClick={props.onClick}
+        height={props.height ?? '25px'}
+        width={props.width ?? '50px'}
+        style={baseSvgStyle(props)}
+      >
         <text fill={color} style={{ ...baseTextStyle(), transform: 'translate(4px, 16px)' }}>
           {props.children}
         </text>

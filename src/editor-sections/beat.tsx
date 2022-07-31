@@ -1,19 +1,13 @@
 import React from 'react';
-import { Input } from '@mui/material';
-import OpenRepeatGlyph from '@glyphs/beat/open-repeat';
 import TextGlyph from '@glyphs/beat/text';
 import UpstrokeGlyph from '@glyphs/beat/upstroke';
 import DownStrokeGlyph from '@glyphs/beat/downstroke';
-import CloseRepeatGlyph from '@glyphs/beat/close-repeat';
-import ExpandMoreGlyph from '@glyphs/generic/expand-more';
-import useAnchorElem from '@hooks/use-anchor-element';
-import { StyledPopper } from '@editor-section-part/styled-popper';
 import ChordButton from '@editor-section-part/chord-button';
+import RepeatPart from '@editor-section-part/repeat-part';
 import { Chord, PickStroke } from '../alphatab-types/alphatab-types';
 import EditorScoreState from '../editor/editor-score-state';
 import EditorActionDispatcher from '../editor/editor-action-dispatcher';
 import SectionDivider from './section-divider';
-import RepeatPart from '@editor-section-part/repeat-part';
 
 interface BeatSectionProps {
   editorScoreState: EditorScoreState;

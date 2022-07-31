@@ -18,7 +18,8 @@ export default function TextGlyph(props: DynamicGlyphProps) {
       >
         <text
           fill={color}
-          style={{ transform: 'translate(4px, 16px)', fontFamily: glyphAsciFontfamily, fontSize: '20px' }}>
+          style={{ transform: 'translate(4px, 16px)', fontFamily: glyphAsciFontfamily, fontSize: '20px' }}
+        >
           Text
         </text>
       </svg>

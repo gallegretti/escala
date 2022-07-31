@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import { Tooltip } from '@mui/material';
 import { useGlyphColor } from '../glyphColor';
@@ -9,7 +10,17 @@ export default function OpenGlyph(props: BaseGlyphProps) {
   // https://fonts.google.com/icons?selected=Material%20Icons%3Afile_open%3A
   return (
     <Tooltip title="Open File">
-      <svg id={props.id} xmlns="http://www.w3.org/2000/svg" enableBackground="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" onClick={props.onClick} style={baseSvgStyle(props)} fill={color}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        id={props.id}
+        enableBackground="new 0 0 24 24"
+        height="24px"
+        viewBox="0 0 24 24"
+        width="24px"
+        onClick={props.onClick}
+        style={baseSvgStyle(props)}
+        fill={color}
+      >
         <g>
           <rect fill="none" height="24" width="24" />
         </g>
