@@ -1,29 +1,29 @@
 import React, { useEffect } from 'react';
 import { styled } from '@mui/material';
-import { PlayerStateChangedEventArgs, RenderFinishedEventArgs } from '../../alphatab-types/alphatab-types';
+import { AlphaTabApi, PlayerStateChangedEventArgs, RenderFinishedEventArgs } from '../../alphatab-types/alphatab-types';
 
 interface AlphaTabViewportProps {
-    playerStateChanged?: (arg0: PlayerStateChangedEventArgs) => void;
-    renderFinished?: (arg0: RenderFinishedEventArgs) => void;
-    apiReady?: (api: any) => void;
-    children: any;
+  playerStateChanged?: (arg0: PlayerStateChangedEventArgs) => void;
+  renderFinished?: (arg0: RenderFinishedEventArgs) => void;
+  apiReady?: (api: AlphaTabApi) => void;
+  children: JSX.Element;
 }
 
 const AlphaTabContainer = styled('div')`
-    ${(props) => (props.theme.palette.mode === 'dark' ? `
-    fill: white;
-    background-color: black;
-    & rect {
-        fill: white;
-    }
-    & text {
-        fill: white;
-    }
-    & path {
-        fill: white;
-        stroke: white;
-    }
-    ` : '')}
+  ${(props) => (props.theme.palette.mode === 'dark' ? `
+  fill: white;
+  background-color: black;
+  & rect {
+      fill: white;
+  }
+  & text {
+      fill: white;
+  }
+  & path {
+      fill: white;
+      stroke: white;
+  }
+  ` : '')}
 `;
 
 export default function AlphaTabViewport(props: AlphaTabViewportProps) {
@@ -49,7 +49,7 @@ export default function AlphaTabViewport(props: AlphaTabViewportProps) {
     };
     const newApi = new alphaTab.AlphaTabApi(main!, settings);
     if (props.apiReady) {
-      props.apiReady(newApi as any);
+      props.apiReady(newApi);
     }
     // Setup observables
     if (props.playerStateChanged) {
