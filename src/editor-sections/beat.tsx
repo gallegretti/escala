@@ -13,6 +13,7 @@ import { Chord, PickStroke } from '../alphatab-types/alphatab-types';
 import EditorScoreState from '../editor/editor-score-state';
 import EditorActionDispatcher from '../editor/editor-action-dispatcher';
 import SectionDivider from './section-divider';
+import RepeatPart from '@editor-section-part/repeat-part';
 
 interface BeatSectionProps {
   editorScoreState: EditorScoreState;
@@ -24,8 +25,6 @@ interface BeatSectionProps {
 }
 
 export default function BeatSection(props: BeatSectionProps) {
-  const [anchorElem, setAnchorElem] = useAnchorElem();
-
   const setPickStroke = (newPickStroke: PickStroke) => {
     if (props.editorScoreState.currentSelectedBeatPickStroke === newPickStroke) {
       props.actionDispatcher.setPickStroke(alphaTab.model.PickStroke.None);
@@ -34,7 +33,6 @@ export default function BeatSection(props: BeatSectionProps) {
     }
   };
 
-  const hasCloseRepeat = props.editorScoreState.numberOfRepetitions > 0;
   const isDisabled = !props.editorScoreState.hasSelectedBeat;
 
   return (
@@ -67,58 +65,10 @@ export default function BeatSection(props: BeatSectionProps) {
         useChord={props.useChord}
       />
       <SectionDivider />
-      <OpenRepeatGlyph
-        selected={props.editorScoreState.isOpenRepeat}
-        disabled={isDisabled}
-        onClick={() => props.actionDispatcher.setOpenRepeat(!props.editorScoreState.isOpenRepeat)}
+      <RepeatPart
+        actionDispatcher={props.actionDispatcher}
+        editorScoreState={props.editorScoreState}
       />
-      <CloseRepeatGlyph
-        selected={hasCloseRepeat}
-        disabled={isDisabled}
-        onClick={(event) => {
-          if (isDisabled) {
-            return;
-          }
-          setAnchorElem(event);
-          if (!hasCloseRepeat) {
-            props.actionDispatcher.setCloseRepeat(1);
-          } else {
-            props.actionDispatcher.setCloseRepeat(0);
-          }
-        }}
-      />
-      {hasCloseRepeat
-        && (
-          <ExpandMoreGlyph
-            disabled={false}
-            selected={false}
-            onClick={(e) => {
-              if (isDisabled) {
-                return;
-              }
-              if (anchorElem) {
-                setAnchorElem(null);
-              } else {
-                setAnchorElem(e);
-              }
-            }}
-          />
-        )}
-
-      {anchorElem
-        && (
-          <StyledPopper anchorEl={anchorElem} open disablePortal>
-            <Input
-              type="number"
-              title="Number of repetitions"
-              value={props.editorScoreState.numberOfRepetitions}
-              onChange={(e) => {
-                props.actionDispatcher.setCloseRepeat(Number.parseInt(e.target.value, 10));
-              }}
-              style={{ width: '40px' }}
-            />
-          </StyledPopper>
-        )}
     </>
   );
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import BendGlyph from '@glyphs/effects/bend/bend';
 import FullBendGlyph from '@glyphs/effects/bend/full-bend';
 import HalfBendGlyph from '@glyphs/effects/bend/half-bend';
-import { BendType } from '../../../../editor/bend-type';
+import { BendType } from '../../editor/bend-type';
 import GenericBendButton from './generic-bend-button';
 
 interface BendButtonProps {
