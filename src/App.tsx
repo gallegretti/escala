@@ -89,16 +89,27 @@ export default function App() {
     if (UIeventData.type === 'delete-selected-note') {
       editorActionDispatcher.removeNote();
     }
+    if (UIeventData.type === 'move-cursor-next-bar' && selectedNoteController.hasSelectedSlot()) {
+      UIeventData.rawEvent.preventDefault();
+      selectedNoteController.moveNextBar();
+    }
+    if (UIeventData.type === 'move-cursor-previous-bar' && selectedNoteController.hasSelectedSlot()) {
+      UIeventData.rawEvent.preventDefault();
+      const moved = selectedNoteController.movePreviousBar();
+      if (!moved) {
+        selectedNoteController.moveStartOfCurrentBar();
+      }
+    }
     if (UIeventData.type === 'move-cursor-right' && selectedNoteController.hasSelectedSlot()) {
       UIeventData.rawEvent.preventDefault();
-      const moved = selectedNoteController.moveSelectedNoteRight();
+      const moved = selectedNoteController.moveNextBeat();
       if (!moved) {
         editorActionDispatcher.addBeat();
       }
     }
     if (UIeventData.type === 'move-cursor-left' && selectedNoteController.hasSelectedSlot()) {
       UIeventData.rawEvent.preventDefault();
-      selectedNoteController.moveSelectedNoteLeft();
+      selectedNoteController.movePreviousBeat();
     }
     if (UIeventData.type === 'move-cursor-up' && selectedNoteController.hasSelectedSlot()) {
       UIeventData.rawEvent.preventDefault();

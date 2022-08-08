@@ -32,12 +32,24 @@ class SelectedNoteController {
     }
   }
 
-  public moveSelectedNoteLeft() {
+  public movePreviousBeat() {
     return this.moveSelectedNoteHorizontal((beat) => beat.previousBeat);
   }
 
-  public moveSelectedNoteRight(): boolean {
+  public moveNextBeat(): boolean {
     return this.moveSelectedNoteHorizontal((beat) => beat.nextBeat);
+  }
+
+  public moveNextBar(): boolean {
+    return this.moveSelectedNoteHorizontal((beat) => beat.voice.bar.nextBar?.voices[0].beats[0] ?? null);
+  }
+
+  public movePreviousBar(): boolean {
+    return this.moveSelectedNoteHorizontal((beat) => beat.voice.bar.previousBar?.voices[0].beats[0] ?? null);
+  }
+
+  public moveStartOfCurrentBar(): boolean {
+    return this.moveSelectedNoteHorizontal((beat) => beat.voice.beats[0] ?? null);
   }
 
   public moveSelectedNoteUp() {

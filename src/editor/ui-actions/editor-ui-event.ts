@@ -21,6 +21,18 @@ interface EditorUIEventDeleteSelectedNote {
   data: Record<string, never>
 }
 
+interface EditorUIEventMoveNextBar {
+  type: 'move-cursor-next-bar',
+  rawEvent: Event,
+  data: Record<string, never>,
+}
+
+interface EditorUIEventMovePreviousBar {
+  type: 'move-cursor-previous-bar',
+  rawEvent: Event,
+  data: Record<string, never>,
+}
+
 interface EditorUIEventMoveCursorLeft {
   type: 'move-cursor-left',
   rawEvent: Event,
@@ -64,13 +76,15 @@ interface EditorUIEventRedoAction {
 }
 
 export type EditorUIEvent =
-  EditorUIEventNoteMouseDown |
-  EditorUIEventStringDown |
   EditorUIEventDeleteSelectedNote |
+  EditorUIEventDeselectCursor |
+  EditorUIEventMoveCursorDown |
   EditorUIEventMoveCursorLeft |
   EditorUIEventMoveCursorRight |
   EditorUIEventMoveCursorUp |
-  EditorUIEventMoveCursorDown |
-  EditorUIEventDeselectCursor |
-  EditorUIEventUndoAction |
-  EditorUIEventRedoAction;
+  EditorUIEventMoveNextBar |
+  EditorUIEventMovePreviousBar |
+  EditorUIEventNoteMouseDown |
+  EditorUIEventRedoAction |
+  EditorUIEventStringDown |
+  EditorUIEventUndoAction;

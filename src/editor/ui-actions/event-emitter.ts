@@ -77,18 +77,34 @@ function setupListeners(renderer: ScoreRenderer) {
       });
     }
     if (event.type === 'keydown' && event.key === 'ArrowLeft') {
-      emitEvent({
-        type: 'move-cursor-left',
-        rawEvent: event,
-        data: {},
-      });
+      if (event.ctrlKey) {
+        emitEvent({
+          type: 'move-cursor-previous-bar',
+          rawEvent: event,
+          data: {},
+        });
+      } else {
+        emitEvent({
+          type: 'move-cursor-left',
+          rawEvent: event,
+          data: {},
+        });
+      }
     }
     if (event.type === 'keydown' && event.key === 'ArrowRight') {
-      emitEvent({
-        type: 'move-cursor-right',
-        rawEvent: event,
-        data: {},
-      });
+      if (event.ctrlKey) {
+        emitEvent({
+          type: 'move-cursor-next-bar',
+          rawEvent: event,
+          data: {},
+        });
+      } else {
+        emitEvent({
+          type: 'move-cursor-right',
+          rawEvent: event,
+          data: {},
+        });
+      }
     }
     if (event.type === 'keydown' && event.key === 'ArrowUp') {
       emitEvent({
