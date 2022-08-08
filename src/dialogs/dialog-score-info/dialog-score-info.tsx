@@ -7,10 +7,10 @@ import { ScoreInfo } from '../../editor-actions/actions/set-score-info/score-inf
 import { Score } from '../../alphatab-types/alphatab-types';
 
 interface ScoreInfoProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onSave: (scoreInfo: ScoreInfo) => void;
-    score: Score;
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (scoreInfo: ScoreInfo) => void;
+  score: Score;
 }
 
 export function DialogScoreInfo(props: ScoreInfoProps) {

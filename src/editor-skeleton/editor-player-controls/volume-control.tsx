@@ -4,8 +4,8 @@ import { Slider, styled } from '@mui/material';
 import VolumeGlyph from '@glyphs/player-controls/volume';
 
 interface VolumeControlProps {
-    volume: number,
-    setVolume: (arg: number) => void,
+  volume: number,
+  setVolume: (arg: number) => void,
 }
 
 const VolumeControlsDiv = styled('div')(() => ({

@@ -8,12 +8,12 @@ import EventEmitter from './editor/ui-actions/event-emitter';
 import { EditorUIEvent } from './editor/ui-actions/editor-ui-event';
 import EditorActions from './editor-actions/editor-command-delegator/editor-actions';
 import { EditorActionResult } from './editor-actions/editor-action-event';
-import { EditorControls } from './components/editor-controls/editor-controls';
-import EditorCursor from './components/editor-cursor/editor-cursor';
-import EditorPlayerControls from './components/editor-player-controls/editor-player-controls';
-import AlphaTabViewport from './components/alphatab-viewport/alphatab-viewport';
+import { EditorControls } from './editor-skeleton/editor-controls/editor-controls';
+import EditorCursor from './editor-skeleton/editor-cursor/editor-cursor';
+import EditorPlayerControls from './editor-skeleton/editor-player-controls/editor-player-controls';
+import AlphaTabViewport from './editor-skeleton/alphatab-viewport/alphatab-viewport';
 import { ColorModeContext } from './editor/color-mode-context';
-import EditorLeftMenu from './components/editor-left-menu';
+import EditorLeftMenu from './editor-skeleton/editor-left-menu';
 import {
   AlphaTabApi,
   Chord,

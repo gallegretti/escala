@@ -10,7 +10,7 @@ import DialogTempo from '@dialogs/dialog-tempo/dialog-tempo';
 import DialogShortcuts from '@dialogs/dialog-shortcuts/dialog-shortcuts';
 import KeyboardGlyph from '@glyphs/document/keyboard';
 import { ScoreInfo } from '../../editor-actions/actions/set-score-info/score-info';
-import { BendType } from '../../editor/bend-type';
+import { BendType } from '../../alphatab-types/bend-type';
 import { ColorModeContext } from '../../editor/color-mode-context';
 import DynamicsSection from '../../editor-sections/dynamics';
 import DurationSetion from '../../editor-sections/duration';

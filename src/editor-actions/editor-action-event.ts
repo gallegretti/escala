@@ -1,9 +1,9 @@
 import { ScoreInfo } from './actions/set-score-info/score-info';
-import { BendType } from '../editor/bend-type';
+import { BendType } from '../alphatab-types/bend-type';
 import {
   AccentuationType, Bar, Beat, Chord, Duration, DynamicValue, HarmonicType, Note, PickStroke, Score, Track,
 } from '../alphatab-types/alphatab-types';
-import { BendState } from '../components/editor-controls/editor-controls';
+import { BendState } from '../editor-skeleton/editor-controls/editor-controls';
 import TrackInfo from './actions/edit-track/track-info';
 
 export interface EditorActionAddNote {

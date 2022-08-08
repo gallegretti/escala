@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable max-classes-per-file */
-import { BendState } from '../components/editor-controls/editor-controls';
+import { BendState } from '../editor-skeleton/editor-controls/editor-controls';
 
 class Note extends alphaTab.model.Note {
   /**
@@ -27,7 +27,7 @@ class NoteBounds extends alphaTab.rendering.NoteBounds {}
 class ScoreRenderer extends alphaTab.rendering.ScoreRenderer {}
 class Chord extends alphaTab.model.Chord {}
 
-// Horrible hack so the enum type is corrent
+// Horrible hack so the enum type is correct
 type Duration = (typeof alphaTab.model.Duration.Whole | typeof alphaTab.model.Duration.Half | typeof alphaTab.model.Duration.Quarter | typeof alphaTab.model.Duration.Eighth | typeof alphaTab.model.Duration.Sixteenth | typeof alphaTab.model.Duration.ThirtySecond | typeof alphaTab.model.Duration.SixtyFourth | typeof alphaTab.model.Duration.OneHundredTwentyEighth | typeof alphaTab.model.Duration.TwoHundredFiftySixth | typeof alphaTab.model.Duration.DoubleWhole | typeof alphaTab.model.Duration.QuadrupleWhole);
 type PickStroke = (typeof alphaTab.model.PickStroke.None | typeof alphaTab.model.PickStroke.Up | typeof alphaTab.model.PickStroke.Down);
 type AccentuationType = (typeof alphaTab.model.AccentuationType.Heavy | typeof alphaTab.model.AccentuationType.None | typeof alphaTab.model.AccentuationType.Normal);

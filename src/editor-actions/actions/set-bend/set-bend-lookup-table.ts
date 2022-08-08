@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
-import { BendState } from '../../../components/editor-controls/editor-controls';
-import { BendType } from '../../../editor/bend-type';
+import { BendState } from '../../../editor-skeleton/editor-controls/editor-controls';
+import { BendType } from '../../../alphatab-types/bend-type';
 import { BendPoint, Note } from '../../../alphatab-types/alphatab-types';
 
 const mapping: Record<string, () => BendPoint[]> = {

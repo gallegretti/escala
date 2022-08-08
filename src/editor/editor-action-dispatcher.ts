@@ -9,7 +9,7 @@ import {
   Note,
   Track,
 } from '../alphatab-types/alphatab-types';
-import { BendState } from '../components/editor-controls/editor-controls';
+import { BendState } from '../editor-skeleton/editor-controls/editor-controls';
 import TrackInfo from '../editor-actions/actions/edit-track/track-info';
 import { ScoreInfo } from '../editor-actions/actions/set-score-info/score-info';
 import { EditorActionEvent, EditorActionResult } from '../editor-actions/editor-action-event';

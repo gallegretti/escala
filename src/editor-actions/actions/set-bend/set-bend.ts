@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionSetBend } from '../../editor-action-event';
 import EditorActionInterface from '../editor-action.interface';
 import { getBendPoints, getBendState } from './set-bend-lookup-table';
-import { BendState } from '../../../components/editor-controls/editor-controls';
+import { BendState } from '../../../editor-skeleton/editor-controls/editor-controls';
 import { Note } from '../../../alphatab-types/alphatab-types';
 
 class SetBendAction extends EditorActionInterface<EditorActionSetBend> {
