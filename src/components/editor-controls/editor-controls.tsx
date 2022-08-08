@@ -7,6 +7,8 @@ import useDialog from '@hooks/use-dialog';
 import DialogText from '@dialogs/dialog-text/dialog-text';
 import DialogScoreInfo from '@dialogs/dialog-score-info/dialog-score-info';
 import DialogTempo from '@dialogs/dialog-tempo/dialog-tempo';
+import DialogShortcuts from '@dialogs/dialog-shortcuts/dialog-shortcuts';
+import KeyboardGlyph from '@glyphs/document/keyboard';
 import { ScoreInfo } from '../../editor-actions/actions/set-score-info/score-info';
 import { BendType } from '../../editor/bend-type';
 import { ColorModeContext } from '../../editor/color-mode-context';
@@ -73,6 +75,12 @@ export default function EditorControls(props: EditorControlsProps) {
     isDialogOpen: isChordDialogOpen,
   } = useDialog();
 
+  const {
+    openDialog: openShortcutsDialog,
+    closeDialog: closeShortcutsDialog,
+    isDialogOpen: isShortcutsDialogOpen,
+  } = useDialog();
+
   const saveNewText = (newText: string) => {
     props.actionDispatcher.setText(newText);
     closeTextDialog();
@@ -136,6 +144,10 @@ export default function EditorControls(props: EditorControlsProps) {
           onSave={saveNewScoreInfo}
         />
       )}
+      <DialogShortcuts
+        isOpen={isShortcutsDialogOpen}
+        onClose={closeShortcutsDialog}
+      />
       <DialogChord
         isOpen={isChordDialogOpen}
         chord={props.editorScoreState.currentChord}
@@ -145,6 +157,7 @@ export default function EditorControls(props: EditorControlsProps) {
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
+        paddingRight: '10px',
         alignItems: 'center',
         backgroundColor,
         borderBottom: `1px solid ${borderColor}`,
@@ -157,7 +170,8 @@ export default function EditorControls(props: EditorControlsProps) {
           <Tab label="Duration" />
           <Tab label="Dynamics" />
         </Tabs>
-        <div style={{ backgroundColor }}>
+        <div style={{ backgroundColor, display: 'flex', gap: '10px' }}>
+          <KeyboardGlyph disabled={false} selected={false} onClick={() => { openShortcutsDialog(); }} />
           <DarkModeGlyph disabled={false} selected={false} onClick={() => { colorMode.toggleColorMode(); }} />
         </div>
       </div>
