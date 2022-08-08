@@ -105,6 +105,7 @@ export default function App() {
       const moved = selectedNoteController.moveNextBeat();
       if (!moved) {
         editorActionDispatcher.addBeat();
+        selectedNoteController.moveNextBeat();
       }
     }
     if (UIeventData.type === 'move-cursor-left' && selectedNoteController.hasSelectedSlot()) {
