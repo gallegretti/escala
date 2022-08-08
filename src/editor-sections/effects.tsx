@@ -67,16 +67,6 @@ export default function EffectsSection(props: EffectsSectionProps) {
         selected={props.editorScoreState.currentSelectedNoteIsGhost ?? false}
         onClick={() => props.actionDispatcher.setGhostNote(!props.editorScoreState.currentSelectedNoteIsGhost)}
       />
-      <AccentuatedNoteGlyph
-        disabled={!props.editorScoreState.hasSelectedNote}
-        selected={props.editorScoreState.currentSelectedNoteAccentuation === alphaTab.model.AccentuationType.Normal}
-        onClick={() => setAccentuation(alphaTab.model.AccentuationType.Normal)}
-      />
-      <HeavyAccentuatedNoteGlyph
-        disabled={!props.editorScoreState.hasSelectedNote}
-        selected={props.editorScoreState.currentSelectedNoteAccentuation === alphaTab.model.AccentuationType.Heavy}
-        onClick={() => setAccentuation(alphaTab.model.AccentuationType.Heavy)}
-      />
       <DeadNoteGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
         selected={props.editorScoreState.currentSelectedNoteDead ?? false}
@@ -92,13 +82,23 @@ export default function EffectsSection(props: EffectsSectionProps) {
         selected={props.editorScoreState.isVibrato ?? false}
         onClick={() => props.actionDispatcher.setVibratoNote(!props.editorScoreState.isVibrato)}
       />
-      <SectionDivider />
       <HarmonicButton
         disabled={!props.editorScoreState.hasSelectedNote}
         currentHarmonicType={props.editorScoreState.currentSelectedNoteHarmonicType ?? 0}
         setHarmonicType={props.actionDispatcher.setHarmonicType}
         isPopperOpen={openPopper === 'harmonic'}
         setPopperOpen={() => updateOpenPopper('harmonic')}
+      />
+      <SectionDivider />
+      <AccentuatedNoteGlyph
+        disabled={!props.editorScoreState.hasSelectedNote}
+        selected={props.editorScoreState.currentSelectedNoteAccentuation === alphaTab.model.AccentuationType.Normal}
+        onClick={() => setAccentuation(alphaTab.model.AccentuationType.Normal)}
+      />
+      <HeavyAccentuatedNoteGlyph
+        disabled={!props.editorScoreState.hasSelectedNote}
+        selected={props.editorScoreState.currentSelectedNoteAccentuation === alphaTab.model.AccentuationType.Heavy}
+        onClick={() => setAccentuation(alphaTab.model.AccentuationType.Heavy)}
       />
       <SectionDivider />
       <PreBendButton
