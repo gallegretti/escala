@@ -84,6 +84,11 @@ export default function DialogTrack(props: DialogTrackProps) {
             style={{ width: '100px' }}
             label="Capo"
             type="number"
+            InputProps={{
+              inputProps: {
+                min: 0,
+              },
+            }}
             value={capo}
             onChange={onCapoChange}
           />
