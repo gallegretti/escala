@@ -59,6 +59,10 @@ export default class EditorScoreState {
     return this.selectedNote?.isPalmMute ?? false;
   }
 
+  get isCurrentSelectedNoteLetRing(): boolean {
+    return this.selectedNote?.isLetRing ?? false;
+  }
+
   get isCurrentSelectedNoteTie(): boolean {
     return this.selectedNote?.isTieOrigin ?? false;
   }

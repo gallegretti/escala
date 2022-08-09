@@ -113,6 +113,15 @@ export interface EditorActionSetPalmMute {
   }
 }
 
+export interface EditorActionSetLetRing {
+  type: 'set-let-ring',
+  data: {
+    note: Note,
+    isLetRing: boolean,
+    previousLetRing?: boolean,
+  }
+}
+
 export interface EditorActionSetDeadNote {
   type: 'set-dead-note',
   data: {
@@ -263,6 +272,7 @@ export type EditorActionEvent
   | EditorActionSetGhostNote
   | EditorActionSetHammer
   | EditorActionSetHarmonic
+  | EditorActionSetLetRing
   | EditorActionSetOpenRepeat
   | EditorActionSetPalmMute
   | EditorActionSetPickStroke

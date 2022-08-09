@@ -162,12 +162,20 @@ class EditorActionDispatcher {
     this.dispatchAction({ type: 'set-bend', data: { ...bend, note } });
   };
 
-  togglePalmMute = () => {
+  setPalmMute = (isPalmMute: boolean) => {
     const note = this.selectedNote();
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-palm-mute', data: { note, isPalmMute: !note.isPalmMute } });
+    this.dispatchAction({ type: 'set-palm-mute', data: { note, isPalmMute } });
+  };
+
+  setLetRing = (isLetRing: boolean) => {
+    const note = this.selectedNote();
+    if (!note) {
+      return;
+    }
+    this.dispatchAction({ type: 'set-let-ring', data: { note, isLetRing } });
   };
 
   newTrack = (params: TrackInfo) => {

@@ -8,6 +8,7 @@ import TapNoteGlyph from '@glyphs/effects/tap-note';
 import VibratoNoteGlyph from '@glyphs/effects/vibratro';
 import HammerPullNoteGlyph from '@glyphs/effects/hammer-pull';
 import SlideNoteGlyph from '@glyphs/effects/slide';
+import LetRingGlyph from '@glyphs/effects/let-ring';
 import HarmonicButton from '@editor-section-part/harmonic-button';
 import PreBendButton from '@editor-section-part/bends/pre-bend-button';
 import BendButton from '@editor-section-part/bends/bend-button';
@@ -60,7 +61,12 @@ export default function EffectsSection(props: EffectsSectionProps) {
       <PalmMuteGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
         selected={props.editorScoreState.isCurrentSelectedNotePalmMute ?? false}
-        onClick={() => props.actionDispatcher.togglePalmMute()}
+        onClick={() => props.actionDispatcher.setPalmMute(!props.editorScoreState.isCurrentSelectedNotePalmMute)}
+      />
+      <LetRingGlyph
+        disabled={!props.editorScoreState.hasSelectedNote}
+        selected={props.editorScoreState.isCurrentSelectedNoteLetRing ?? false}
+        onClick={() => props.actionDispatcher.setLetRing(!props.editorScoreState.isCurrentSelectedNoteLetRing)}
       />
       <GhostNoteGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
