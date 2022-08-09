@@ -100,7 +100,7 @@ export default class EditorScoreState {
   }
 
   get currentChord(): Chord | null {
-    return this.selectedNote?.beat.chord ?? null;
+    return this.selectedBeat?.chord ?? null;
   }
 
   get currentSelectedNoteDead(): boolean | null {
