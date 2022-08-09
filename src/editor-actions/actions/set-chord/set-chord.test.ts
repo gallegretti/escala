@@ -43,11 +43,12 @@ describe('set-chord', () => {
       };
       const result = setChordAction.do(event);
       expect(result.requiresRerender).toBe(true);
+      expect(result.requiresMidiUpdate).toBe(true);
       expect(beat.voice.bar.staff.addChord).toBeCalledWith('Am', event.data.value);
       expect(beat.addNote).toBeCalledTimes(5); // Am chord has 5 played notes
     });
 
-    test('should not add or remove any note if there`s already at least one note on the beat', () => {
+    test('should not add or remove any note if there\'s already at least one note on the beat', () => {
       const beat = mock<Beat>({
         notes: [
           mock<Note>({}), // One note on the beat
@@ -72,9 +73,34 @@ describe('set-chord', () => {
       };
       const result = setChordAction.do(event);
       expect(result.requiresRerender).toBe(true);
+      // Since the notes are not modified, midi update is not required
+      expect(result.requiresMidiUpdate).toBe(false);
       expect(beat.voice.bar.staff.addChord).toBeCalledWith('Am', event.data.value);
       expect(beat.removeNote).not.toBeCalled();
       expect(beat.addNote).not.toBeCalled();
+    });
+  });
+
+  describe('undo', () => {
+    test('should remove the chordId from the beat', () => {
+      const beat = mock<Beat>({
+        notes: [
+        ],
+        addNote: jest.fn(),
+        finish: jest.fn(),
+      });
+      const event: EditorActionSetChord = {
+        type: 'set-chord',
+        data: {
+          beat,
+          value: chordAm,
+          previousValue: null,
+        },
+      };
+      const result = setChordAction.undo(event);
+      // Since the notes are not removed, midi update is not required
+      expect(result.requiresMidiUpdate).toBe(false);
+      expect(result.requiresRerender).toBe(true);
     });
   });
 });
