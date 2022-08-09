@@ -7,6 +7,7 @@ import {
   HarmonicType,
   Note,
   PickStroke,
+  VibratoType,
 } from '../alphatab-types/alphatab-types';
 import { BendState } from '../editor-skeleton/editor-controls/editor-controls';
 import { getBendState } from '../editor-actions/actions/set-bend/set-bend-lookup-table';
@@ -73,6 +74,10 @@ export default class EditorScoreState {
 
   get isVibrato(): boolean {
     return this.selectedNote?.vibrato !== 0 ?? false;
+  }
+
+  get vibrato(): VibratoType | null {
+    return this.selectedNote?.vibrato ?? null;
   }
 
   get currentSelectedBeatDuration(): Duration | null {

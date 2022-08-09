@@ -8,6 +8,7 @@ import {
   HarmonicType,
   Note,
   Track,
+  VibratoType,
 } from '../alphatab-types/alphatab-types';
 import { BendState } from '../editor-skeleton/editor-controls/editor-controls';
 import TrackInfo from '../editor-actions/actions/edit-track/track-info';
@@ -138,12 +139,12 @@ class EditorActionDispatcher {
     this.dispatchAction({ type: 'set-tie', data: { note, tie: value } });
   };
 
-  setVibratoNote = (value: boolean) => {
+  setVibratoNote = (vibrato: VibratoType) => {
     const note = this.selectedNote();
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-vibrato', data: { note, isVibrato: value } });
+    this.dispatchAction({ type: 'set-vibrato', data: { note, vibrato } });
   };
 
   setText = (text: string) => {

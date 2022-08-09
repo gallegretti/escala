@@ -86,7 +86,8 @@ export default function EffectsSection(props: EffectsSectionProps) {
       <VibratoNoteGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
         selected={props.editorScoreState.isVibrato ?? false}
-        onClick={() => props.actionDispatcher.setVibratoNote(!props.editorScoreState.isVibrato)}
+        onClick={() => props.actionDispatcher.setVibratoNote(props.editorScoreState.isVibrato
+          ? alphaTab.model.VibratoType.None : alphaTab.model.VibratoType.Slight)}
       />
       <HarmonicButton
         disabled={!props.editorScoreState.hasSelectedNote}
