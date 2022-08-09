@@ -10,9 +10,9 @@ import { StyledPopper } from './styled-popper';
 
 interface ChordButtonProps {
   disabled: boolean;
-  selected: boolean;
+  currentChord: Chord | null;
   setChord: () => void;
-  useChord: (arg: Chord) => void;
+  useChord: (arg: Chord | null) => void;
   chords: Chord[];
 }
 
@@ -36,12 +36,20 @@ export default function ChordButton(props: ChordButtonProps) {
     props.setChord();
   };
 
+  const useChord = (chord: Chord) => {
+    if (props.currentChord?.name === chord.name) {
+      props.useChord(null);
+    } else {
+      props.useChord(chord);
+    }
+  };
+
   return (
     <div style={{ display: 'flex' }}>
       <ChordGlyph
         id="chord"
         disabled={props.disabled}
-        selected={props.selected}
+        selected={props.currentChord !== null}
         onClick={clickChord}
       />
       {props.chords.length > 0
@@ -50,7 +58,7 @@ export default function ChordButton(props: ChordButtonProps) {
         {props.chords.map((chord) => (
           <div
             key={chord.name}
-            onClick={() => props.useChord(chord)}
+            onClick={() => useChord(chord)}
             style={{
               cursor: 'pointer',
               color: theme.palette.text.primary,

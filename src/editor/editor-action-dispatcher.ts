@@ -249,10 +249,10 @@ class EditorActionDispatcher {
     }
   };
 
-  setChord = (chord: Chord) => {
+  setChord = (chord: Chord | null) => {
     const currentBeat = this.selectedNoteController.getSelectedSlot()?.beat;
     if (currentBeat) {
-      this.dispatchAction({ type: 'set-chord', data: { beat: currentBeat, chord } });
+      this.dispatchAction({ type: 'set-chord', data: { beat: currentBeat, value: chord } });
     }
   };
 

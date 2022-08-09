@@ -38,12 +38,12 @@ describe('set-chord', () => {
         type: 'set-chord',
         data: {
           beat,
-          chord: chordAm,
+          value: chordAm,
         },
       };
       const result = setChordAction.do(event);
       expect(result.requiresRerender).toBe(true);
-      expect(beat.voice.bar.staff.addChord).toBeCalledWith('Am', event.data.chord);
+      expect(beat.voice.bar.staff.addChord).toBeCalledWith('Am', event.data.value);
       expect(beat.addNote).toBeCalledTimes(5); // Am chord has 5 played notes
     });
 
@@ -67,12 +67,12 @@ describe('set-chord', () => {
         type: 'set-chord',
         data: {
           beat,
-          chord: chordAm,
+          value: chordAm,
         },
       };
       const result = setChordAction.do(event);
       expect(result.requiresRerender).toBe(true);
-      expect(beat.voice.bar.staff.addChord).toBeCalledWith('Am', event.data.chord);
+      expect(beat.voice.bar.staff.addChord).toBeCalledWith('Am', event.data.value);
       expect(beat.removeNote).not.toBeCalled();
       expect(beat.addNote).not.toBeCalled();
     });

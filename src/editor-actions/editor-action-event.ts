@@ -255,7 +255,8 @@ export interface EditorActionSetChord {
   type: 'set-chord',
   data: {
     beat: Beat;
-    chord?: Chord;
+    value: Chord | null;
+    previousValue?: Chord | null;
   }
 }
 

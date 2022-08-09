@@ -54,7 +54,7 @@ export default function BeatSection(props: BeatSectionProps) {
       <SectionDivider />
       <ChordButton
         disabled={isDisabled}
-        selected={props.editorScoreState.currentChord !== null}
+        currentChord={props.editorScoreState.currentChord}
         chords={props.chords}
         setChord={props.setChord}
         useChord={props.useChord}

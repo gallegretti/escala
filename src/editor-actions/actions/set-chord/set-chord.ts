@@ -1,10 +1,11 @@
 import { EditorActionResult, EditorActionSetChord } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithUndo from '../editor-action-with-undo';
 
-class SetChordAction extends EditorActionInterface<EditorActionSetChord> {
+class SetChordAction extends EditorActionWithUndo<EditorActionSetChord> {
   do(action: EditorActionSetChord): EditorActionResult {
-    const { beat, chord } = action.data;
+    const { beat, value: chord } = action.data;
     // If there's nothing on the current beat, create the notes. Otherwise don't modify them.
+    action.data.previousValue = beat.chord;
     if (chord) {
       const chordId = chord.name;
       beat.voice.bar.staff.addChord(chordId, chord);
@@ -21,23 +22,15 @@ class SetChordAction extends EditorActionInterface<EditorActionSetChord> {
         });
         beat.finish(null as any, new Map<string, unknown>());
       }
+    } else {
+      // TODO: If the notes were added by the action, the undo should remove them
+      beat.chordId = null;
+      beat.finish(null as any, new Map<string, unknown>());
     }
     return {
       requiresRerender: true,
       requiresMidiUpdate: true,
     };
-  }
-
-  undo(action: EditorActionSetChord): EditorActionResult {
-    // TODO:
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
-  }
-
-  canUndo(): boolean {
-    return true;
   }
 }
 
