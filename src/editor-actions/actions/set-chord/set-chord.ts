@@ -35,6 +35,10 @@ class SetChordAction extends EditorActionInterface<EditorActionSetChord> {
       requiresMidiUpdate: true,
     };
   }
+
+  canUndo(): boolean {
+    return true;
+  }
 }
 
 export default new SetChordAction();
