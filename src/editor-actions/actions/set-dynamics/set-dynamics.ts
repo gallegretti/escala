@@ -14,11 +14,20 @@ class SetDynamicAction extends EditorActionInterface<EditorActionSetDynamics> {
   }
 
   undo(action: EditorActionSetDynamics): EditorActionResult {
-    action.data.beat.dynamics = action.data.dynamics!;
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
+    const { previousDynamics, beat } = action.data;
+    if (previousDynamics === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
+    }
+    return this.do({
+      type: action.type,
+      data: {
+        dynamics: previousDynamics,
+        beat,
+      },
+    });
   }
 }
 

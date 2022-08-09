@@ -28,19 +28,20 @@ class SetHammerAction extends EditorActionInterface<EditorActionSetHammer> {
   }
 
   undo(action: EditorActionSetHammer): EditorActionResult {
-    if (action.data.previousHammerOrPull !== undefined) {
-      return this.do({
-        type: action.type,
-        data: {
-          hammerOrPull: action.data.previousHammerOrPull,
-          note: action.data.note,
-        },
-      });
+    const { previousHammerOrPull, note } = action.data;
+    if (previousHammerOrPull === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
     }
-    return {
-      requiresRerender: false,
-      requiresMidiUpdate: false,
-    };
+    return this.do({
+      type: action.type,
+      data: {
+        hammerOrPull: previousHammerOrPull,
+        note,
+      },
+    });
   }
 }
 

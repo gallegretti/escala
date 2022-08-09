@@ -28,19 +28,20 @@ class SetTieAction extends EditorActionInterface<EditorActionSetTie> {
   }
 
   undo(action: EditorActionSetTie): EditorActionResult {
-    if (action.data.previousTie !== undefined) {
-      return this.do({
-        type: action.type,
-        data: {
-          tie: action.data.previousTie,
-          note: action.data.note,
-        },
-      });
+    const { previousTie, note } = action.data;
+    if (previousTie === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
     }
-    return {
-      requiresRerender: false,
-      requiresMidiUpdate: false,
-    };
+    return this.do({
+      type: action.type,
+      data: {
+        tie: previousTie,
+        note,
+      },
+    });
   }
 }
 

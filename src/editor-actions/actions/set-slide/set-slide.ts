@@ -28,19 +28,20 @@ class SetSlideAction extends EditorActionInterface<EditorActionSetSlide> {
   }
 
   undo(action: EditorActionSetSlide): EditorActionResult {
-    if (action.data.previousSlide !== undefined) {
-      return this.do({
-        type: action.type,
-        data: {
-          slide: action.data.previousSlide,
-          note: action.data.note,
-        },
-      });
+    const { previousSlide, note } = action.data;
+    if (previousSlide === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
     }
-    return {
-      requiresRerender: false,
-      requiresMidiUpdate: false,
-    };
+    return this.do({
+      type: action.type,
+      data: {
+        slide: previousSlide,
+        note,
+      },
+    });
   }
 }
 

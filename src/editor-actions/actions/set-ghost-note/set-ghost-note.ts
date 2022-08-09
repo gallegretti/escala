@@ -14,11 +14,19 @@ class SetGhostNoteAction extends EditorActionInterface<EditorActionSetGhostNote>
 
   undo(action: EditorActionSetGhostNote): EditorActionResult {
     const { note, previousGhost } = action.data;
-    note.isGhost = previousGhost!;
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
+    if (previousGhost === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
+    }
+    return this.do({
+      type: action.type,
+      data: {
+        isGhost: previousGhost,
+        note,
+      },
+    });
   }
 }
 

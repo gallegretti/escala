@@ -14,7 +14,8 @@ class SetOpenRepeatAction extends EditorActionInterface<EditorActionSetOpenRepea
   }
 
   undo(action: EditorActionSetOpenRepeat): EditorActionResult {
-    if (action.data.previousOpenRepeat === undefined) {
+    const { previousOpenRepeat, beat } = action.data;
+    if (previousOpenRepeat === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -23,8 +24,8 @@ class SetOpenRepeatAction extends EditorActionInterface<EditorActionSetOpenRepea
     return this.do({
       type: action.type,
       data: {
-        beat: action.data.beat,
-        openRepeat: action.data.previousOpenRepeat,
+        beat,
+        openRepeat: previousOpenRepeat,
       },
     });
   }

@@ -14,11 +14,20 @@ class SetDurationAction extends EditorActionInterface<EditorActionSetDuration> {
   }
 
   undo(action: EditorActionSetDuration): EditorActionResult {
-    action.data.beat.duration = action.data.previousDuration!;
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
+    const { previousDuration, beat } = action.data;
+    if (previousDuration === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
+    }
+    return this.do({
+      type: action.type,
+      data: {
+        duration: previousDuration,
+        beat,
+      },
+    });
   }
 }
 

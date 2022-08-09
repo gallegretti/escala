@@ -14,11 +14,19 @@ class SetAccentuationAction extends EditorActionInterface<EditorActionSetAccentu
 
   undo(action: EditorActionSetAccentuation): EditorActionResult {
     const { note, previousAccentuation } = action.data;
-    note.accentuated = previousAccentuation!;
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
+    if (previousAccentuation === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
+    }
+    return this.do({
+      type: action.type,
+      data: {
+        accentuation: previousAccentuation,
+        note,
+      },
+    });
   }
 }
 

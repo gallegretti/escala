@@ -6,6 +6,7 @@ class SetLetRingNoteAction extends EditorActionInterface<EditorActionSetLetRing>
     const { note, isLetRing } = action.data;
     action.data.previousLetRing = note.isLetRing;
     note.isLetRing = isLetRing;
+    note.beat.finish(null as any, {} as any);
     return {
       requiresRerender: true,
       requiresMidiUpdate: true,
@@ -14,11 +15,19 @@ class SetLetRingNoteAction extends EditorActionInterface<EditorActionSetLetRing>
 
   undo(action: EditorActionSetLetRing): EditorActionResult {
     const { note, previousLetRing } = action.data;
-    note.isLetRing = previousLetRing!;
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
+    if (previousLetRing === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
+    }
+    return this.do({
+      type: action.type,
+      data: {
+        isLetRing: previousLetRing,
+        note,
+      },
+    });
   }
 }
 

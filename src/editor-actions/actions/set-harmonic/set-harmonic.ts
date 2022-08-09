@@ -14,11 +14,19 @@ class SetHarmonicAction extends EditorActionInterface<EditorActionSetHarmonic> {
 
   undo(action: EditorActionSetHarmonic): EditorActionResult {
     const { note, previousHarmonic } = action.data;
-    note.harmonicType = previousHarmonic!;
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
+    if (previousHarmonic === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
+    }
+    return this.do({
+      type: action.type,
+      data: {
+        harmonic: previousHarmonic,
+        note,
+      },
+    });
   }
 }
 

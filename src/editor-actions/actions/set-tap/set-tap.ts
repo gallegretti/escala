@@ -4,6 +4,7 @@ import EditorActionInterface from '../editor-action.interface';
 class SetTapAction extends EditorActionInterface<EditorActionSetTap> {
   do(action: EditorActionSetTap): EditorActionResult {
     const { note, isLeftHandTap } = action.data;
+    action.data.previousIsLeftHalpTap = note.isLeftHandTapped;
     note.isLeftHandTapped = isLeftHandTap;
     return {
       requiresRerender: true,
@@ -13,11 +14,19 @@ class SetTapAction extends EditorActionInterface<EditorActionSetTap> {
 
   undo(action: EditorActionSetTap): EditorActionResult {
     const { note, previousIsLeftHalpTap } = action.data;
-    note.isLeftHandTapped = previousIsLeftHalpTap!;
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
+    if (previousIsLeftHalpTap === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
+    }
+    return this.do({
+      type: action.type,
+      data: {
+        isLeftHandTap: previousIsLeftHalpTap,
+        note,
+      },
+    });
   }
 }
 

@@ -14,11 +14,19 @@ class SetDeadNoteAction extends EditorActionInterface<EditorActionSetDeadNote> {
 
   undo(action: EditorActionSetDeadNote): EditorActionResult {
     const { note, previousDeadNote } = action.data;
-    note.isDead = previousDeadNote!;
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
+    if (previousDeadNote === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
+    }
+    return this.do({
+      type: action.type,
+      data: {
+        isDeadNote: previousDeadNote,
+        note,
+      },
+    });
   }
 }
 

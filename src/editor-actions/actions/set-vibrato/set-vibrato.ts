@@ -4,7 +4,8 @@ import EditorActionInterface from '../editor-action.interface';
 class SetVibratoAction extends EditorActionInterface<EditorActionSetVibrato> {
   do(action: EditorActionSetVibrato): EditorActionResult {
     const { note, isVibrato } = action.data;
-    note.vibrato = isVibrato ? 1 : 0;
+    action.data.previousIsVibrato = note.vibrato !== alphaTab.model.VibratoType.None;
+    note.vibrato = isVibrato ? alphaTab.model.VibratoType.Slight : alphaTab.model.VibratoType.None;
     return {
       requiresRerender: true,
       requiresMidiUpdate: true,
@@ -13,11 +14,19 @@ class SetVibratoAction extends EditorActionInterface<EditorActionSetVibrato> {
 
   undo(action: EditorActionSetVibrato): EditorActionResult {
     const { note, previousIsVibrato } = action.data;
-    note.vibrato = previousIsVibrato! ? 1 : 0;
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
+    if (previousIsVibrato === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
+    }
+    return this.do({
+      type: action.type,
+      data: {
+        isVibrato: previousIsVibrato,
+        note,
+      },
+    });
   }
 }
 

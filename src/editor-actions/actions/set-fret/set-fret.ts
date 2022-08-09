@@ -14,11 +14,20 @@ class SetFretAction extends EditorActionInterface<EditorActionSetFret> {
   }
 
   undo(action: EditorActionSetFret): EditorActionResult {
-    action.data.note.fret = action.data.previousFret!;
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
+    const { previousFret, note } = action.data;
+    if (previousFret === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
+    }
+    return this.do({
+      type: action.type,
+      data: {
+        fret: previousFret,
+        note,
+      },
+    });
   }
 }
 

@@ -14,11 +14,19 @@ class SetPalmMuteAction extends EditorActionInterface<EditorActionSetPalmMute> {
 
   undo(action: EditorActionSetPalmMute): EditorActionResult {
     const { note, previousPalmMute } = action.data;
-    note.isPalmMute = previousPalmMute!;
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
+    if (previousPalmMute === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
+    }
+    return this.do({
+      type: action.type,
+      data: {
+        isPalmMute: previousPalmMute,
+        note,
+      },
+    });
   }
 }
 

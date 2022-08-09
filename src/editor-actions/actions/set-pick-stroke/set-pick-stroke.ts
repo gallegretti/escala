@@ -14,11 +14,19 @@ class SetPickStrokeAction extends EditorActionInterface<EditorActionSetPickStrok
 
   undo(action: EditorActionSetPickStroke): EditorActionResult {
     const { beat, previousPickStroke } = action.data;
-    beat.pickStroke = previousPickStroke!;
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
+    if (previousPickStroke === undefined) {
+      return {
+        requiresMidiUpdate: false,
+        requiresRerender: false,
+      };
+    }
+    return this.do({
+      type: action.type,
+      data: {
+        beat,
+        pickStroke: previousPickStroke,
+      },
+    });
   }
 }
 
