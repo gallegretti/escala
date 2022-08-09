@@ -33,7 +33,7 @@ export default function BeatSection(props: BeatSectionProps) {
     <>
       <TextGlyph
         disabled={isDisabled}
-        selected={false}
+        selected={props.editorScoreState.currentSelectedBeatText !== null}
         onClick={() => {
           if (!isDisabled) {
             props.setText();
