@@ -33,7 +33,7 @@ export default function DialogChord(props: DialogChordProps) {
   useEffect(() => {
     setChordName(props.chord?.name ?? '');
     setFirstFret(props.chord?.firstFret ?? 1);
-    setStrings(props.chord?.strings.reverse() ?? stringsInitialState);
+    setStrings(props.chord ? [...props.chord.strings].reverse() : stringsInitialState);
   }, [props.chord]);
 
   const save = () => {
