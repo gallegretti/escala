@@ -10,6 +10,7 @@ import { StyledPopper } from './styled-popper';
 
 interface ChordButtonProps {
   disabled: boolean;
+  selected: boolean;
   setChord: () => void;
   useChord: (arg: Chord) => void;
   chords: Chord[];
@@ -40,7 +41,7 @@ export default function ChordButton(props: ChordButtonProps) {
       <ChordGlyph
         id="chord"
         disabled={props.disabled}
-        selected={false}
+        selected={props.selected}
         onClick={clickChord}
       />
       {props.chords.length > 0
