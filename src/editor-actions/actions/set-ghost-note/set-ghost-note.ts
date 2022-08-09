@@ -3,8 +3,8 @@ import EditorActionInterface from '../editor-action.interface';
 
 class SetGhostNoteAction extends EditorActionInterface<EditorActionSetGhostNote> {
   do(action: EditorActionSetGhostNote): EditorActionResult {
-    const { note, isGhost } = action.data;
-    action.data.previousGhost = note.isGhost;
+    const { note, value: isGhost } = action.data;
+    action.data.previousValue = note.isGhost;
     note.isGhost = isGhost;
     return {
       requiresRerender: true,
@@ -13,8 +13,8 @@ class SetGhostNoteAction extends EditorActionInterface<EditorActionSetGhostNote>
   }
 
   undo(action: EditorActionSetGhostNote): EditorActionResult {
-    const { note, previousGhost } = action.data;
-    if (previousGhost === undefined) {
+    const { note, previousValue } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -23,7 +23,7 @@ class SetGhostNoteAction extends EditorActionInterface<EditorActionSetGhostNote>
     return this.do({
       type: action.type,
       data: {
-        isGhost: previousGhost,
+        value: previousValue,
         note,
       },
     });

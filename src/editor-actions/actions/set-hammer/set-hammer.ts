@@ -3,7 +3,7 @@ import EditorActionInterface from '../editor-action.interface';
 
 class SetHammerAction extends EditorActionInterface<EditorActionSetHammer> {
   do(action: EditorActionSetHammer): EditorActionResult {
-    const { note, hammerOrPull } = action.data;
+    const { note, value: hammerOrPull } = action.data;
     const nextNote = alphaTab.model.Note.findHammerPullDestination(note);
     if (!nextNote) {
       return {
@@ -11,7 +11,7 @@ class SetHammerAction extends EditorActionInterface<EditorActionSetHammer> {
         requiresRerender: false,
       };
     }
-    action.data.previousHammerOrPull = note.isHammerPullOrigin;
+    action.data.previousValue = note.isHammerPullOrigin;
     if (hammerOrPull) {
       note.isHammerPullOrigin = true;
       note.hammerPullDestination = nextNote;
@@ -28,8 +28,8 @@ class SetHammerAction extends EditorActionInterface<EditorActionSetHammer> {
   }
 
   undo(action: EditorActionSetHammer): EditorActionResult {
-    const { previousHammerOrPull, note } = action.data;
-    if (previousHammerOrPull === undefined) {
+    const { previousValue, note } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -38,7 +38,7 @@ class SetHammerAction extends EditorActionInterface<EditorActionSetHammer> {
     return this.do({
       type: action.type,
       data: {
-        hammerOrPull: previousHammerOrPull,
+        value: previousValue,
         note,
       },
     });

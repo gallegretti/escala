@@ -3,8 +3,8 @@ import EditorActionInterface from '../editor-action.interface';
 
 class SetDeadNoteAction extends EditorActionInterface<EditorActionSetDeadNote> {
   do(action: EditorActionSetDeadNote): EditorActionResult {
-    const { note, isDeadNote } = action.data;
-    action.data.previousDeadNote = note.isDead;
+    const { note, value: isDeadNote } = action.data;
+    action.data.previousValue = note.isDead;
     note.isDead = isDeadNote;
     return {
       requiresRerender: true,
@@ -13,8 +13,8 @@ class SetDeadNoteAction extends EditorActionInterface<EditorActionSetDeadNote> {
   }
 
   undo(action: EditorActionSetDeadNote): EditorActionResult {
-    const { note, previousDeadNote } = action.data;
-    if (previousDeadNote === undefined) {
+    const { note, previousValue } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -23,7 +23,7 @@ class SetDeadNoteAction extends EditorActionInterface<EditorActionSetDeadNote> {
     return this.do({
       type: action.type,
       data: {
-        isDeadNote: previousDeadNote,
+        value: previousValue,
         note,
       },
     });

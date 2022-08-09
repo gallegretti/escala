@@ -13,13 +13,13 @@ describe('set-dynamics', () => {
         type: 'set-dynamics',
         data: {
           beat,
-          dynamics: 6,
+          value: 6,
         },
       };
       const result = setDynamicsAction.do(event);
       expect(result.requiresRerender).toBe(true);
       expect(result.requiresMidiUpdate).toBe(true);
-      expect(event.data.previousDynamics).toBe(5);
+      expect(event.data.previousValue).toBe(5);
     });
 
     test('should not request rerender if the dynamics is the same', () => {
@@ -30,7 +30,7 @@ describe('set-dynamics', () => {
         type: 'set-dynamics',
         data: {
           beat,
-          dynamics: 5,
+          value: 5,
         },
       };
       const result = setDynamicsAction.do(event);
@@ -48,14 +48,14 @@ describe('set-dynamics', () => {
         type: 'set-dynamics',
         data: {
           beat,
-          dynamics: 6,
-          previousDynamics: 5,
+          value: 6,
+          previousValue: 5,
         },
       };
       const result = setDynamicsAction.undo(event);
       expect(result.requiresRerender).toBe(true);
       expect(result.requiresMidiUpdate).toBe(true);
-      expect(event.data.previousDynamics).toBe(5);
+      expect(event.data.previousValue).toBe(5);
     });
   });
 });

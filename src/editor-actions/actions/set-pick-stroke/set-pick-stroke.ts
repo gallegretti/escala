@@ -3,8 +3,8 @@ import EditorActionInterface from '../editor-action.interface';
 
 class SetPickStrokeAction extends EditorActionInterface<EditorActionSetPickStroke> {
   do(action: EditorActionSetPickStroke): EditorActionResult {
-    const { beat, pickStroke } = action.data;
-    action.data.previousPickStroke = beat.pickStroke;
+    const { beat, value: pickStroke } = action.data;
+    action.data.previousValue = beat.pickStroke;
     beat.pickStroke = pickStroke;
     return {
       requiresRerender: true,
@@ -13,8 +13,8 @@ class SetPickStrokeAction extends EditorActionInterface<EditorActionSetPickStrok
   }
 
   undo(action: EditorActionSetPickStroke): EditorActionResult {
-    const { beat, previousPickStroke } = action.data;
-    if (previousPickStroke === undefined) {
+    const { beat, previousValue } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -24,7 +24,7 @@ class SetPickStrokeAction extends EditorActionInterface<EditorActionSetPickStrok
       type: action.type,
       data: {
         beat,
-        pickStroke: previousPickStroke,
+        value: previousValue,
       },
     });
   }

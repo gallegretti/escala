@@ -22,7 +22,7 @@ describe('set-hammer', () => {
       const event: EditorActionSetHammer = {
         type: 'set-hammer',
         data: {
-          hammerOrPull: true,
+          value: true,
           note,
         },
       };
@@ -37,7 +37,7 @@ describe('set-hammer', () => {
       const event: EditorActionSetHammer = {
         type: 'set-hammer',
         data: {
-          hammerOrPull: true,
+          value: true,
           note,
         },
       };
@@ -57,7 +57,7 @@ describe('set-hammer', () => {
       const event: EditorActionSetHammer = {
         type: 'set-hammer',
         data: {
-          hammerOrPull: false,
+          value: false,
           note,
         },
       };

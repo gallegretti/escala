@@ -9,7 +9,7 @@ class SetBendAction extends EditorActionInterface<EditorActionSetBend> {
     const {
       note, bend, preBend, release,
     } = action.data;
-    action.data.previousBend = getBendState(note);
+    action.data.previousValue = getBendState(note);
     this.applyBendStateToNote({ preBend, bend, release }, note);
     return {
       requiresRerender: true,
@@ -18,7 +18,7 @@ class SetBendAction extends EditorActionInterface<EditorActionSetBend> {
   }
 
   undo(action: EditorActionSetBend): EditorActionResult {
-    const { note, previousBend } = action.data;
+    const { note, previousValue: previousBend } = action.data;
     if (previousBend === undefined) {
       return {
         requiresMidiUpdate: false,

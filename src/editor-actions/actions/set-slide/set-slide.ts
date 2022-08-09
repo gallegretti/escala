@@ -11,8 +11,8 @@ class SetSlideAction extends EditorActionInterface<EditorActionSetSlide> {
         requiresRerender: false,
       };
     }
-    action.data.previousSlide = note.slideTarget !== null;
-    if (action.data.slide) {
+    action.data.previousValue = note.slideTarget !== null;
+    if (action.data.value) {
       note.slideTarget = nextNote;
       note.slideOutType = 1;
       nextNote.slideOrigin = note;
@@ -28,8 +28,8 @@ class SetSlideAction extends EditorActionInterface<EditorActionSetSlide> {
   }
 
   undo(action: EditorActionSetSlide): EditorActionResult {
-    const { previousSlide, note } = action.data;
-    if (previousSlide === undefined) {
+    const { previousValue, note } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -38,7 +38,7 @@ class SetSlideAction extends EditorActionInterface<EditorActionSetSlide> {
     return this.do({
       type: action.type,
       data: {
-        slide: previousSlide,
+        value: previousValue,
         note,
       },
     });

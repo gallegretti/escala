@@ -22,7 +22,7 @@ describe('set-tie', () => {
       const event: EditorActionSetTie = {
         type: 'set-tie',
         data: {
-          tie: true,
+          value: true,
           note,
         },
       };
@@ -37,7 +37,7 @@ describe('set-tie', () => {
       const event: EditorActionSetTie = {
         type: 'set-tie',
         data: {
-          tie: true,
+          value: true,
           note,
         },
       };
@@ -56,7 +56,7 @@ describe('set-tie', () => {
       const event: EditorActionSetTie = {
         type: 'set-tie',
         data: {
-          tie: false,
+          value: false,
           note,
         },
       };

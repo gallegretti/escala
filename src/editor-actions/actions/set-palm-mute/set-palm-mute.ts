@@ -3,8 +3,8 @@ import EditorActionInterface from '../editor-action.interface';
 
 class SetPalmMuteAction extends EditorActionInterface<EditorActionSetPalmMute> {
   do(action: EditorActionSetPalmMute): EditorActionResult {
-    const { note, isPalmMute } = action.data;
-    action.data.previousPalmMute = note.isPalmMute;
+    const { note, value: isPalmMute } = action.data;
+    action.data.previousValue = note.isPalmMute;
     note.isPalmMute = isPalmMute;
     return {
       requiresRerender: true,
@@ -13,8 +13,8 @@ class SetPalmMuteAction extends EditorActionInterface<EditorActionSetPalmMute> {
   }
 
   undo(action: EditorActionSetPalmMute): EditorActionResult {
-    const { note, previousPalmMute } = action.data;
-    if (previousPalmMute === undefined) {
+    const { note, previousValue } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -23,7 +23,7 @@ class SetPalmMuteAction extends EditorActionInterface<EditorActionSetPalmMute> {
     return this.do({
       type: action.type,
       data: {
-        isPalmMute: previousPalmMute,
+        value: previousValue,
         note,
       },
     });

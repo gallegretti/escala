@@ -13,13 +13,13 @@ describe('set-duration', () => {
         type: 'set-duration',
         data: {
           beat,
-          duration: 8,
+          value: 8,
         },
       };
       const result = setDurationAction.do(event);
       expect(result.requiresRerender).toBe(true);
       expect(result.requiresMidiUpdate).toBe(true);
-      expect(event.data.previousDuration).toBe(1);
+      expect(event.data.previousValue).toBe(1);
       expect(beat.duration).toBe(8);
     });
 
@@ -31,7 +31,7 @@ describe('set-duration', () => {
         type: 'set-duration',
         data: {
           beat,
-          duration: 1,
+          value: 1,
         },
       };
       const result = setDurationAction.do(event);
@@ -49,8 +49,8 @@ describe('set-duration', () => {
         type: 'set-duration',
         data: {
           beat,
-          duration: 8,
-          previousDuration: 1,
+          value: 8,
+          previousValue: 1,
         },
       };
       const result = setDurationAction.undo(event);

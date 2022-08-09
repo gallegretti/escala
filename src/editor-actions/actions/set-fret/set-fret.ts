@@ -3,10 +3,11 @@ import EditorActionInterface from '../editor-action.interface';
 
 class SetFretAction extends EditorActionInterface<EditorActionSetFret> {
   do(action: EditorActionSetFret): EditorActionResult {
-    const didChange = action.data.note.fret !== action.data.fret;
+    const { note, value: fret } = action.data;
+    const didChange = note.fret !== fret;
     // Store previous fret so we can use it on the undo
-    action.data.previousFret = action.data.note.fret;
-    action.data.note.fret = action.data.fret;
+    action.data.previousValue = action.data.note.fret;
+    note.fret = fret;
     return {
       requiresRerender: didChange,
       requiresMidiUpdate: didChange,
@@ -14,8 +15,8 @@ class SetFretAction extends EditorActionInterface<EditorActionSetFret> {
   }
 
   undo(action: EditorActionSetFret): EditorActionResult {
-    const { previousFret, note } = action.data;
-    if (previousFret === undefined) {
+    const { previousValue, note } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -24,7 +25,7 @@ class SetFretAction extends EditorActionInterface<EditorActionSetFret> {
     return this.do({
       type: action.type,
       data: {
-        fret: previousFret,
+        value: previousValue,
         note,
       },
     });

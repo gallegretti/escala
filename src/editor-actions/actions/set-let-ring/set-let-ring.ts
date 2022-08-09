@@ -3,8 +3,8 @@ import EditorActionInterface from '../editor-action.interface';
 
 class SetLetRingNoteAction extends EditorActionInterface<EditorActionSetLetRing> {
   do(action: EditorActionSetLetRing): EditorActionResult {
-    const { note, isLetRing } = action.data;
-    action.data.previousLetRing = note.isLetRing;
+    const { note, value: isLetRing } = action.data;
+    action.data.previousValue = note.isLetRing;
     note.isLetRing = isLetRing;
     note.beat.finish(null as any, {} as any);
     return {
@@ -14,8 +14,8 @@ class SetLetRingNoteAction extends EditorActionInterface<EditorActionSetLetRing>
   }
 
   undo(action: EditorActionSetLetRing): EditorActionResult {
-    const { note, previousLetRing } = action.data;
-    if (previousLetRing === undefined) {
+    const { note, previousValue } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -24,7 +24,7 @@ class SetLetRingNoteAction extends EditorActionInterface<EditorActionSetLetRing>
     return this.do({
       type: action.type,
       data: {
-        isLetRing: previousLetRing,
+        value: previousValue,
         note,
       },
     });

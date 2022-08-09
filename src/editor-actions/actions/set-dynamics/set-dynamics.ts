@@ -3,10 +3,10 @@ import EditorActionInterface from '../editor-action.interface';
 
 class SetDynamicAction extends EditorActionInterface<EditorActionSetDynamics> {
   do(action: EditorActionSetDynamics): EditorActionResult {
-    const didChange = action.data.dynamics !== action.data.beat.dynamics;
+    const didChange = action.data.value !== action.data.beat.dynamics;
     // Store previous data so we can use it on the undo
-    action.data.previousDynamics = action.data.beat.dynamics;
-    action.data.beat.dynamics = action.data.dynamics;
+    action.data.previousValue = action.data.beat.dynamics;
+    action.data.beat.dynamics = action.data.value;
     return {
       requiresRerender: didChange,
       requiresMidiUpdate: didChange,
@@ -14,8 +14,8 @@ class SetDynamicAction extends EditorActionInterface<EditorActionSetDynamics> {
   }
 
   undo(action: EditorActionSetDynamics): EditorActionResult {
-    const { previousDynamics, beat } = action.data;
-    if (previousDynamics === undefined) {
+    const { previousValue, beat } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -24,7 +24,7 @@ class SetDynamicAction extends EditorActionInterface<EditorActionSetDynamics> {
     return this.do({
       type: action.type,
       data: {
-        dynamics: previousDynamics,
+        value: previousValue,
         beat,
       },
     });

@@ -41,7 +41,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-hammer', data: { note, hammerOrPull } });
+    this.dispatchAction({ type: 'set-hammer', data: { note, value: hammerOrPull } });
   };
 
   setSlide = (slide: boolean): void => {
@@ -49,7 +49,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-slide', data: { note, slide } });
+    this.dispatchAction({ type: 'set-slide', data: { note, value: slide } });
   };
 
   setDynamics = (dynamics: DynamicValue): void => {
@@ -57,7 +57,7 @@ class EditorActionDispatcher {
     if (!beat) {
       return;
     }
-    this.dispatchAction({ type: 'set-dynamics', data: { beat, dynamics } });
+    this.dispatchAction({ type: 'set-dynamics', data: { beat, value: dynamics } });
   };
 
   setTempo = (tempo: number): void => {
@@ -72,7 +72,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-ghost-note', data: { note, isGhost } });
+    this.dispatchAction({ type: 'set-ghost-note', data: { note, value: isGhost } });
   };
 
   setAccentuationNote = (accentuation: AccentuationType): void => {
@@ -80,7 +80,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-accentuation', data: { note, accentuation } });
+    this.dispatchAction({ type: 'set-accentuation', data: { note, value: accentuation } });
   };
 
   setPickStroke = (pickStroke: number): void => {
@@ -88,7 +88,7 @@ class EditorActionDispatcher {
     if (!beat) {
       return;
     }
-    this.dispatchAction({ type: 'set-pick-stroke', data: { beat, pickStroke } });
+    this.dispatchAction({ type: 'set-pick-stroke', data: { beat, value: pickStroke } });
   };
 
   setHarmonicType = (harmonicType: HarmonicType): void => {
@@ -96,7 +96,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-harmonic', data: { note, harmonic: harmonicType } });
+    this.dispatchAction({ type: 'set-harmonic', data: { note, value: harmonicType } });
   };
 
   setScoreInfo = (scoreInfo: ScoreInfo) => {
@@ -112,7 +112,7 @@ class EditorActionDispatcher {
     if (!beat) {
       return;
     }
-    this.dispatchAction({ type: 'set-duration', data: { beat, duration } });
+    this.dispatchAction({ type: 'set-duration', data: { beat, value: duration } });
   };
 
   setDeadNote = (value: boolean) => {
@@ -120,7 +120,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-dead-note', data: { note, isDeadNote: value } });
+    this.dispatchAction({ type: 'set-dead-note', data: { note, value: value } });
   };
 
   setTapNote = (value: boolean) => {
@@ -128,7 +128,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-tap', data: { note, isLeftHandTap: value } });
+    this.dispatchAction({ type: 'set-tap', data: { note, value: value } });
   };
 
   setTieNote = (value: boolean) => {
@@ -136,7 +136,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-tie', data: { note, tie: value } });
+    this.dispatchAction({ type: 'set-tie', data: { note, value: value } });
   };
 
   setVibratoNote = (vibrato: VibratoType) => {
@@ -144,7 +144,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-vibrato', data: { note, vibrato } });
+    this.dispatchAction({ type: 'set-vibrato', data: { note, value: vibrato } });
   };
 
   setText = (text: string) => {
@@ -152,7 +152,7 @@ class EditorActionDispatcher {
     if (!beat) {
       return;
     }
-    this.dispatchAction({ type: 'set-text', data: { text, beat } });
+    this.dispatchAction({ type: 'set-text', data: { value: text, beat } });
   };
 
   setBend = (bend: BendState) => {
@@ -168,7 +168,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-palm-mute', data: { note, isPalmMute } });
+    this.dispatchAction({ type: 'set-palm-mute', data: { note, value: isPalmMute } });
   };
 
   setLetRing = (isLetRing: boolean) => {
@@ -176,7 +176,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-let-ring', data: { note, isLetRing } });
+    this.dispatchAction({ type: 'set-let-ring', data: { note, value: isLetRing } });
   };
 
   newTrack = (params: TrackInfo) => {
@@ -191,7 +191,7 @@ class EditorActionDispatcher {
     if (!beat) {
       return;
     }
-    this.dispatchAction({ type: 'set-open-repeat', data: { beat, openRepeat } });
+    this.dispatchAction({ type: 'set-open-repeat', data: { beat, value: openRepeat } });
   };
 
   setCloseRepeat = (numberOfRepetitions: number) => {
@@ -199,7 +199,7 @@ class EditorActionDispatcher {
     if (!beat) {
       return;
     }
-    this.dispatchAction({ type: 'set-close-repeat', data: { beat, numberOfRepetitions } });
+    this.dispatchAction({ type: 'set-close-repeat', data: { beat, value: numberOfRepetitions } });
   };
 
   editTrack = (track: Track, trackInfo: TrackInfo) => {
@@ -215,7 +215,7 @@ class EditorActionDispatcher {
       return;
     }
     if (selectedSlot?.note) {
-      this.dispatchAction({ type: 'set-fret', data: { note: selectedSlot.note, fret } });
+      this.dispatchAction({ type: 'set-fret', data: { note: selectedSlot.note, value: fret } });
     } else {
       const note = new alphaTab.model.Note();
       note.fret = fret;

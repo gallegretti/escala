@@ -9,7 +9,7 @@ describe('set-text', () => {
       const event: EditorActionSetText = {
         type: 'set-text',
         data: {
-          text: 'new text',
+          value: 'new text',
           beat: mock<Beat>({
             text: 'old text',
           }),
@@ -19,7 +19,7 @@ describe('set-text', () => {
       expect(result.requiresRerender).toBe(true);
       expect(result.requiresMidiUpdate).toBe(false);
       expect(event.data.beat.text).toEqual('new text');
-      expect(event.data.previousText).toEqual('old text');
+      expect(event.data.previousValue).toEqual('old text');
     });
   });
 
@@ -28,8 +28,8 @@ describe('set-text', () => {
       const event: EditorActionSetText = {
         type: 'set-text',
         data: {
-          previousText: 'old text',
-          text: 'new text',
+          previousValue: 'old text',
+          value: 'new text',
           beat: mock<Beat>({
             text: 'new text',
           }),

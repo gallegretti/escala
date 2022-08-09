@@ -3,8 +3,8 @@ import EditorActionInterface from '../editor-action.interface';
 
 class SetVibratoAction extends EditorActionInterface<EditorActionSetVibrato> {
   do(action: EditorActionSetVibrato): EditorActionResult {
-    const { note, vibrato } = action.data;
-    action.data.previousVibrato = note.vibrato;
+    const { note, value: vibrato } = action.data;
+    action.data.previousValue = note.vibrato;
     note.vibrato = vibrato;
     return {
       requiresRerender: true,
@@ -13,8 +13,8 @@ class SetVibratoAction extends EditorActionInterface<EditorActionSetVibrato> {
   }
 
   undo(action: EditorActionSetVibrato): EditorActionResult {
-    const { note, previousVibrato } = action.data;
-    if (previousVibrato === undefined) {
+    const { note, previousValue } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -23,7 +23,7 @@ class SetVibratoAction extends EditorActionInterface<EditorActionSetVibrato> {
     return this.do({
       type: action.type,
       data: {
-        vibrato: previousVibrato,
+        value: previousValue,
         note,
       },
     });

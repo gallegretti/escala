@@ -3,10 +3,10 @@ import EditorActionInterface from '../editor-action.interface';
 
 class SetFretAction extends EditorActionInterface<EditorActionSetText> {
   do(action: EditorActionSetText): EditorActionResult {
-    const didChange = action.data.beat.text !== action.data.text;
+    const didChange = action.data.beat.text !== action.data.value;
     // Store previous text so we can use it on the undo
-    action.data.previousText = action.data.beat.text ?? '';
-    action.data.beat.text = action.data.text === '' ? null : action.data.text;
+    action.data.previousValue = action.data.beat.text ?? '';
+    action.data.beat.text = action.data.value === '' ? null : action.data.value;
     return {
       requiresRerender: didChange,
       requiresMidiUpdate: false,
@@ -14,8 +14,8 @@ class SetFretAction extends EditorActionInterface<EditorActionSetText> {
   }
 
   undo(action: EditorActionSetText): EditorActionResult {
-    const { previousText, beat } = action.data;
-    if (previousText === undefined) {
+    const { previousValue, beat } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -24,7 +24,7 @@ class SetFretAction extends EditorActionInterface<EditorActionSetText> {
     return this.do({
       type: action.type,
       data: {
-        text: previousText,
+        value: previousValue,
         beat,
       },
     });

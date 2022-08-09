@@ -9,7 +9,7 @@ describe('set-palm-mute', () => {
       const event: EditorActionSetPalmMute = {
         type: 'set-palm-mute',
         data: {
-          isPalmMute: true,
+          value: true,
           note: mock<Note>({
             isPalmMute: false,
           }),
@@ -26,11 +26,11 @@ describe('set-palm-mute', () => {
       const event: EditorActionSetPalmMute = {
         type: 'set-palm-mute',
         data: {
-          isPalmMute: true,
+          value: true,
           note: mock<Note>({
             isPalmMute: true,
           }),
-          previousPalmMute: false,
+          previousValue: false,
         },
       };
       const result = setPalmMuteAction.undo(event);

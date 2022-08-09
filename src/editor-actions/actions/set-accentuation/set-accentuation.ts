@@ -3,8 +3,8 @@ import EditorActionInterface from '../editor-action.interface';
 
 class SetAccentuationAction extends EditorActionInterface<EditorActionSetAccentuation> {
   do(action: EditorActionSetAccentuation): EditorActionResult {
-    const { note, accentuation } = action.data;
-    action.data.previousAccentuation = note.accentuated;
+    const { note, value: accentuation } = action.data;
+    action.data.previousValue = note.accentuated;
     note.accentuated = accentuation;
     return {
       requiresRerender: true,
@@ -13,8 +13,8 @@ class SetAccentuationAction extends EditorActionInterface<EditorActionSetAccentu
   }
 
   undo(action: EditorActionSetAccentuation): EditorActionResult {
-    const { note, previousAccentuation } = action.data;
-    if (previousAccentuation === undefined) {
+    const { note, previousValue } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -23,7 +23,7 @@ class SetAccentuationAction extends EditorActionInterface<EditorActionSetAccentu
     return this.do({
       type: action.type,
       data: {
-        accentuation: previousAccentuation,
+        value: previousValue,
         note,
       },
     });

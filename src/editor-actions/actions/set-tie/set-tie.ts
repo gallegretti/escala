@@ -3,7 +3,7 @@ import EditorActionInterface from '../editor-action.interface';
 
 class SetTieAction extends EditorActionInterface<EditorActionSetTie> {
   do(action: EditorActionSetTie): EditorActionResult {
-    const { note, tie } = action.data;
+    const { note, value: tie } = action.data;
     const nextNote = alphaTab.model.Note.nextNoteOnSameLine(note);
     if (!nextNote) {
       return {
@@ -11,7 +11,7 @@ class SetTieAction extends EditorActionInterface<EditorActionSetTie> {
         requiresRerender: false,
       };
     }
-    action.data.previousTie = note.isTieOrigin;
+    action.data.previousValue = note.isTieOrigin;
     if (tie) {
       note.tieDestination = nextNote;
       nextNote.tieOrigin = note;
@@ -28,8 +28,8 @@ class SetTieAction extends EditorActionInterface<EditorActionSetTie> {
   }
 
   undo(action: EditorActionSetTie): EditorActionResult {
-    const { previousTie, note } = action.data;
-    if (previousTie === undefined) {
+    const { previousValue, note } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -38,7 +38,7 @@ class SetTieAction extends EditorActionInterface<EditorActionSetTie> {
     return this.do({
       type: action.type,
       data: {
-        tie: previousTie,
+        value: previousValue,
         note,
       },
     });

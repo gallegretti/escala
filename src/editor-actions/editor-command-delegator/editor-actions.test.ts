@@ -8,14 +8,14 @@ describe('editor-actions', () => {
   test('can undo', () => {
     const editorActions = new EditorActions();
     expect(editorActions.canUndo()).toBe(false);
-    editorActions.doAction({ type: 'set-fret', data: { fret: 1, note: mock<Note>() } });
+    editorActions.doAction({ type: 'set-fret', data: { value: 1, note: mock<Note>() } });
     expect(editorActions.canUndo()).toBe(true);
   });
 
   test('can redo', () => {
     const editorActions = new EditorActions();
     expect(editorActions.canRedo()).toBe(false);
-    editorActions.doAction({ type: 'set-fret', data: { fret: 1, note: mock<Note>() } });
+    editorActions.doAction({ type: 'set-fret', data: { value: 1, note: mock<Note>() } });
     expect(editorActions.canRedo()).toBe(false);
     editorActions.undoAction();
     expect(editorActions.canRedo()).toBe(true);
@@ -29,7 +29,7 @@ describe('editor-actions', () => {
 
   test('do, undo and redo should call the correct action methods', () => {
     const mapping = { 'set-fret': { do: jest.fn(), undo: jest.fn(), canUndo: jest.fn().mockReturnValue(true) } };
-    const action: EditorActionEvent = { type: 'set-fret', data: { fret: 1, note: mock<Note>() } };
+    const action: EditorActionEvent = { type: 'set-fret', data: { value: 1, note: mock<Note>() } };
     const editorActions = new EditorActions(mapping);
     editorActions.doAction(action);
     expect(mapping['set-fret'].do).toHaveBeenNthCalledWith(1, action);

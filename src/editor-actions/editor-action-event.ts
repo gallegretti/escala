@@ -42,8 +42,8 @@ export interface EditorActionSetDuration {
   type: 'set-duration',
   data: {
     beat: Beat;
-    duration: Duration;
-    previousDuration?: Duration;
+    value: Duration;
+    previousValue?: Duration;
   }
 }
 
@@ -51,8 +51,8 @@ export interface EditorActionSetDynamics {
   type: 'set-dynamics',
   data: {
     beat: Beat,
-    dynamics: DynamicValue,
-    previousDynamics?: DynamicValue,
+    value: DynamicValue,
+    previousValue?: DynamicValue,
   }
 }
 
@@ -82,8 +82,8 @@ export interface EditorActionSetFret {
   type: 'set-fret',
   data: {
     note: Note,
-    fret: number,
-    previousFret?: number
+    value: number,
+    previousValue?: number
   }
 }
 
@@ -99,8 +99,8 @@ export interface EditorActionSetText {
   type: 'set-text',
   data: {
     beat: Beat,
-    text: string,
-    previousText?: string
+    value: string,
+    previousValue?: string
   }
 }
 
@@ -108,8 +108,8 @@ export interface EditorActionSetPalmMute {
   type: 'set-palm-mute',
   data: {
     note: Note,
-    isPalmMute: boolean,
-    previousPalmMute?: boolean,
+    value: boolean,
+    previousValue?: boolean,
   }
 }
 
@@ -117,8 +117,8 @@ export interface EditorActionSetLetRing {
   type: 'set-let-ring',
   data: {
     note: Note,
-    isLetRing: boolean,
-    previousLetRing?: boolean,
+    value: boolean,
+    previousValue?: boolean,
   }
 }
 
@@ -126,8 +126,8 @@ export interface EditorActionSetDeadNote {
   type: 'set-dead-note',
   data: {
     note: Note,
-    isDeadNote: boolean,
-    previousDeadNote?: boolean,
+    value: boolean,
+    previousValue?: boolean,
   }
 }
 
@@ -135,8 +135,8 @@ export interface EditorActionSetAccentuation {
   type: 'set-accentuation',
   data: {
     note: Note;
-    accentuation: AccentuationType;
-    previousAccentuation?: AccentuationType;
+    value: AccentuationType;
+    previousValue?: AccentuationType;
   }
 }
 
@@ -147,7 +147,7 @@ export interface EditorActionSetBend {
     preBend: BendType,
     bend: BendType,
     release: BendType,
-    previousBend?: BendState,
+    previousValue?: BendState,
   }
 }
 
@@ -155,8 +155,8 @@ export interface EditorActionSetGhostNote {
   type: 'set-ghost-note',
   data: {
     note: Note,
-    isGhost: boolean,
-    previousGhost?: boolean,
+    value: boolean,
+    previousValue?: boolean,
   }
 }
 
@@ -164,8 +164,8 @@ export interface EditorActionSetHarmonic {
   type: 'set-harmonic';
   data: {
     note: Note;
-    harmonic: HarmonicType;
-    previousHarmonic?: HarmonicType;
+    value: HarmonicType;
+    previousValue?: HarmonicType;
   }
 }
 
@@ -173,8 +173,8 @@ export interface EditorActionSetOpenRepeat {
   type: 'set-open-repeat';
   data: {
     beat: Beat;
-    openRepeat: boolean;
-    previousOpenRepeat?: boolean;
+    value: boolean;
+    previousValue?: boolean;
   }
 }
 
@@ -182,8 +182,8 @@ export interface EditorActionSetCloseRepeat {
   type: 'set-close-repeat';
   data: {
     beat: Beat;
-    numberOfRepetitions: number;
-    previousNumberOfRepetitions?: number;
+    value: number;
+    previousValue?: number;
   }
 }
 
@@ -191,8 +191,8 @@ export interface EditorActionSetHammer {
   type: 'set-hammer';
   data: {
     note: Note;
-    hammerOrPull: boolean;
-    previousHammerOrPull?: boolean;
+    value: boolean;
+    previousValue?: boolean;
   }
 }
 
@@ -200,8 +200,8 @@ export interface EditorActionSetTie {
   type: 'set-tie';
   data: {
     note: Note;
-    tie: boolean;
-    previousTie?: boolean;
+    value: boolean;
+    previousValue?: boolean;
   }
 }
 
@@ -209,8 +209,8 @@ export interface EditorActionSetSlide {
   type: 'set-slide';
   data: {
     note: Note;
-    slide: boolean;
-    previousSlide?: boolean;
+    value: boolean;
+    previousValue?: boolean;
   }
 }
 
@@ -218,8 +218,8 @@ export interface EditorActionSetTap {
   type: 'set-tap',
   data: {
     note: Note,
-    isLeftHandTap: boolean,
-    previousIsLeftHalpTap?: boolean,
+    value: boolean,
+    previousValue?: boolean,
   }
 }
 
@@ -227,8 +227,8 @@ export interface EditorActionSetVibrato {
   type: 'set-vibrato',
   data: {
     note: Note,
-    vibrato: VibratoType,
-    previousVibrato?: VibratoType,
+    value: VibratoType,
+    previousValue?: VibratoType,
   }
 }
 
@@ -236,8 +236,8 @@ export interface EditorActionSetPickStroke {
   type: 'set-pick-stroke',
   data: {
     beat: Beat;
-    pickStroke: PickStroke;
-    previousPickStroke?: PickStroke;
+    value: PickStroke;
+    previousValue?: PickStroke;
   }
 }
 

@@ -9,7 +9,7 @@ describe('set-fret', () => {
       const event: EditorActionSetFret = {
         type: 'set-fret',
         data: {
-          fret: 1,
+          value: 1,
           note: mock<Note>({
             fret: 0,
           }),
@@ -18,14 +18,14 @@ describe('set-fret', () => {
       const result = setFretAction.do(event);
       expect(result.requiresRerender).toBe(true);
       expect(event.data.note.fret).toBe(1);
-      expect(event.data.previousFret).toBe(0);
+      expect(event.data.previousValue).toBe(0);
     });
 
     test('should not request rerender if the fret is the same', () => {
       const event: EditorActionSetFret = {
         type: 'set-fret',
         data: {
-          fret: 1,
+          value: 1,
           note: mock<Note>({
             fret: 1,
           }),
@@ -34,7 +34,7 @@ describe('set-fret', () => {
       const result = setFretAction.do(event);
       expect(result.requiresRerender).toBe(false);
       expect(event.data.note.fret).toBe(1);
-      expect(event.data.previousFret).toBe(1);
+      expect(event.data.previousValue).toBe(1);
     });
   });
 
@@ -43,8 +43,8 @@ describe('set-fret', () => {
       const event: EditorActionSetFret = {
         type: 'set-fret',
         data: {
-          fret: 1,
-          previousFret: 0,
+          value: 1,
+          previousValue: 0,
           note: mock<Note>({
             fret: 1,
           }),

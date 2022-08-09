@@ -3,9 +3,9 @@ import EditorActionInterface from '../editor-action.interface';
 
 class SetHarmonicAction extends EditorActionInterface<EditorActionSetHarmonic> {
   do(action: EditorActionSetHarmonic): EditorActionResult {
-    const { note, harmonic } = action.data;
-    action.data.previousHarmonic = note.harmonicValue;
-    note.harmonicType = harmonic;
+    const { note, value: harmonicType } = action.data;
+    action.data.previousValue = note.harmonicValue;
+    note.harmonicType = harmonicType;
     return {
       requiresRerender: true,
       requiresMidiUpdate: true,
@@ -13,8 +13,8 @@ class SetHarmonicAction extends EditorActionInterface<EditorActionSetHarmonic> {
   }
 
   undo(action: EditorActionSetHarmonic): EditorActionResult {
-    const { note, previousHarmonic } = action.data;
-    if (previousHarmonic === undefined) {
+    const { note, previousValue } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -23,7 +23,7 @@ class SetHarmonicAction extends EditorActionInterface<EditorActionSetHarmonic> {
     return this.do({
       type: action.type,
       data: {
-        harmonic: previousHarmonic,
+        value: previousValue,
         note,
       },
     });

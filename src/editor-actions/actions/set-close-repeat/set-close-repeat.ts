@@ -4,8 +4,8 @@ import EditorActionInterface from '../editor-action.interface';
 class SetCloseRepeatAction extends EditorActionInterface<EditorActionSetCloseRepeat> {
   do(action: EditorActionSetCloseRepeat): EditorActionResult {
     const { masterBar } = action.data.beat.voice.bar;
-    action.data.previousNumberOfRepetitions = masterBar.repeatCount;
-    masterBar.repeatCount = action.data.numberOfRepetitions;
+    action.data.previousValue = masterBar.repeatCount;
+    masterBar.repeatCount = action.data.value;
     masterBar.score.rebuildRepeatGroups();
     return {
       requiresRerender: true,
@@ -14,8 +14,8 @@ class SetCloseRepeatAction extends EditorActionInterface<EditorActionSetCloseRep
   }
 
   undo(action: EditorActionSetCloseRepeat): EditorActionResult {
-    const { previousNumberOfRepetitions, beat } = action.data;
-    if (previousNumberOfRepetitions === undefined) {
+    const { previousValue, beat } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -24,7 +24,7 @@ class SetCloseRepeatAction extends EditorActionInterface<EditorActionSetCloseRep
     return this.do({
       type: action.type,
       data: {
-        numberOfRepetitions: previousNumberOfRepetitions,
+        value: previousValue,
         beat,
       },
     });

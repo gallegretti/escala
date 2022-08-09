@@ -4,8 +4,8 @@ import EditorActionInterface from '../editor-action.interface';
 class SetOpenRepeatAction extends EditorActionInterface<EditorActionSetOpenRepeat> {
   do(action: EditorActionSetOpenRepeat): EditorActionResult {
     const { masterBar } = action.data.beat.voice.bar;
-    action.data.previousOpenRepeat = masterBar.isRepeatStart;
-    masterBar.isRepeatStart = action.data.openRepeat;
+    action.data.previousValue = masterBar.isRepeatStart;
+    masterBar.isRepeatStart = action.data.value;
     masterBar.score.rebuildRepeatGroups();
     return {
       requiresRerender: true,
@@ -14,8 +14,8 @@ class SetOpenRepeatAction extends EditorActionInterface<EditorActionSetOpenRepea
   }
 
   undo(action: EditorActionSetOpenRepeat): EditorActionResult {
-    const { previousOpenRepeat, beat } = action.data;
-    if (previousOpenRepeat === undefined) {
+    const { previousValue, beat } = action.data;
+    if (previousValue === undefined) {
       return {
         requiresMidiUpdate: false,
         requiresRerender: false,
@@ -25,7 +25,7 @@ class SetOpenRepeatAction extends EditorActionInterface<EditorActionSetOpenRepea
       type: action.type,
       data: {
         beat,
-        openRepeat: previousOpenRepeat,
+        value: previousValue,
       },
     });
   }
