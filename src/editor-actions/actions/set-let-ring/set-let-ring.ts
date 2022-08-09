@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionSetLetRing } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithUndo from '../editor-action-with-undo';
 
-class SetLetRingNoteAction extends EditorActionInterface<EditorActionSetLetRing> {
+class SetLetRingNoteAction extends EditorActionWithUndo<EditorActionSetLetRing> {
   do(action: EditorActionSetLetRing): EditorActionResult {
     const { note, value: isLetRing } = action.data;
     action.data.previousValue = note.isLetRing;
@@ -11,23 +11,6 @@ class SetLetRingNoteAction extends EditorActionInterface<EditorActionSetLetRing>
       requiresRerender: true,
       requiresMidiUpdate: true,
     };
-  }
-
-  undo(action: EditorActionSetLetRing): EditorActionResult {
-    const { note, previousValue } = action.data;
-    if (previousValue === undefined) {
-      return {
-        requiresMidiUpdate: false,
-        requiresRerender: false,
-      };
-    }
-    return this.do({
-      type: action.type,
-      data: {
-        value: previousValue,
-        note,
-      },
-    });
   }
 }
 

@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionSetSlide } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithUndo from '../editor-action-with-undo';
 
-class SetSlideAction extends EditorActionInterface<EditorActionSetSlide> {
+class SetSlideAction extends EditorActionWithUndo<EditorActionSetSlide> {
   do(action: EditorActionSetSlide): EditorActionResult {
     const { note } = action.data;
     const nextNote = alphaTab.model.Note.nextNoteOnSameLine(note);
@@ -25,23 +25,6 @@ class SetSlideAction extends EditorActionInterface<EditorActionSetSlide> {
       requiresRerender: true,
       requiresMidiUpdate: true,
     };
-  }
-
-  undo(action: EditorActionSetSlide): EditorActionResult {
-    const { previousValue, note } = action.data;
-    if (previousValue === undefined) {
-      return {
-        requiresMidiUpdate: false,
-        requiresRerender: false,
-      };
-    }
-    return this.do({
-      type: action.type,
-      data: {
-        value: previousValue,
-        note,
-      },
-    });
   }
 }
 

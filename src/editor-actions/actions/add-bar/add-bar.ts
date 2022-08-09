@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionEventAddBar } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithoutUndo from '../editor-action-without-undo';
 
-class AddBarAction extends EditorActionInterface<EditorActionEventAddBar> {
+class AddBarAction extends EditorActionWithoutUndo<EditorActionEventAddBar> {
   do(action: EditorActionEventAddBar): EditorActionResult {
     const { currentBar } = action.data;
     // Create new bar
@@ -20,17 +20,6 @@ class AddBarAction extends EditorActionInterface<EditorActionEventAddBar> {
     newBar.voices[1].addBeat(new alphaTab.model.Beat());
     currentBar.staff.addBar(newBar);
     currentBar.finish(null as any, null as any);
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
-  }
-
-  canUndo(): boolean {
-    return false;
-  }
-
-  undo(_: EditorActionEventAddBar): EditorActionResult {
     return {
       requiresRerender: true,
       requiresMidiUpdate: true,

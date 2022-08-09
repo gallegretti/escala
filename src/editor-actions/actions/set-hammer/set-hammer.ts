@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionSetHammer } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithUndo from '../editor-action-with-undo';
 
-class SetHammerAction extends EditorActionInterface<EditorActionSetHammer> {
+class SetHammerAction extends EditorActionWithUndo<EditorActionSetHammer> {
   do(action: EditorActionSetHammer): EditorActionResult {
     const { note, value: hammerOrPull } = action.data;
     const nextNote = alphaTab.model.Note.findHammerPullDestination(note);
@@ -25,23 +25,6 @@ class SetHammerAction extends EditorActionInterface<EditorActionSetHammer> {
       requiresRerender: true,
       requiresMidiUpdate: true,
     };
-  }
-
-  undo(action: EditorActionSetHammer): EditorActionResult {
-    const { previousValue, note } = action.data;
-    if (previousValue === undefined) {
-      return {
-        requiresMidiUpdate: false,
-        requiresRerender: false,
-      };
-    }
-    return this.do({
-      type: action.type,
-      data: {
-        value: previousValue,
-        note,
-      },
-    });
   }
 }
 

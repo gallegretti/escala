@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionSetTie } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithUndo from '../editor-action-with-undo';
 
-class SetTieAction extends EditorActionInterface<EditorActionSetTie> {
+class SetTieAction extends EditorActionWithUndo<EditorActionSetTie> {
   do(action: EditorActionSetTie): EditorActionResult {
     const { note, value: tie } = action.data;
     const nextNote = alphaTab.model.Note.nextNoteOnSameLine(note);
@@ -25,23 +25,6 @@ class SetTieAction extends EditorActionInterface<EditorActionSetTie> {
       requiresRerender: true,
       requiresMidiUpdate: true,
     };
-  }
-
-  undo(action: EditorActionSetTie): EditorActionResult {
-    const { previousValue, note } = action.data;
-    if (previousValue === undefined) {
-      return {
-        requiresMidiUpdate: false,
-        requiresRerender: false,
-      };
-    }
-    return this.do({
-      type: action.type,
-      data: {
-        value: previousValue,
-        note,
-      },
-    });
   }
 }
 

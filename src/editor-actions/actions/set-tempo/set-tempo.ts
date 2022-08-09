@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionSetTempo } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithoutUndo from '../editor-action-without-undo';
 
-class SetTempoAction extends EditorActionInterface<EditorActionSetTempo> {
+class SetTempoAction extends EditorActionWithoutUndo<EditorActionSetTempo> {
   do(action: EditorActionSetTempo): EditorActionResult {
     const { tempo, score } = action.data;
     score.tempo = tempo;
@@ -14,17 +14,6 @@ class SetTempoAction extends EditorActionInterface<EditorActionSetTempo> {
       requiresRerender: true,
       requiresMidiUpdate: true,
     };
-  }
-
-  undo(action: EditorActionSetTempo): EditorActionResult {
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
-  }
-
-  canUndo(): boolean {
-    return false;
   }
 }
 

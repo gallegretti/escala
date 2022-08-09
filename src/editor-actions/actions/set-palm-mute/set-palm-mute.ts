@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionSetPalmMute } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithUndo from '../editor-action-with-undo';
 
-class SetPalmMuteAction extends EditorActionInterface<EditorActionSetPalmMute> {
+class SetPalmMuteAction extends EditorActionWithUndo<EditorActionSetPalmMute> {
   do(action: EditorActionSetPalmMute): EditorActionResult {
     const { note, value: isPalmMute } = action.data;
     action.data.previousValue = note.isPalmMute;
@@ -10,23 +10,6 @@ class SetPalmMuteAction extends EditorActionInterface<EditorActionSetPalmMute> {
       requiresRerender: true,
       requiresMidiUpdate: true,
     };
-  }
-
-  undo(action: EditorActionSetPalmMute): EditorActionResult {
-    const { note, previousValue } = action.data;
-    if (previousValue === undefined) {
-      return {
-        requiresMidiUpdate: false,
-        requiresRerender: false,
-      };
-    }
-    return this.do({
-      type: action.type,
-      data: {
-        value: previousValue,
-        note,
-      },
-    });
   }
 }
 

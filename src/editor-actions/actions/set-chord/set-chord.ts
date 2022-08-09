@@ -29,6 +29,7 @@ class SetChordAction extends EditorActionInterface<EditorActionSetChord> {
   }
 
   undo(action: EditorActionSetChord): EditorActionResult {
+    // TODO:
     return {
       requiresRerender: true,
       requiresMidiUpdate: true,

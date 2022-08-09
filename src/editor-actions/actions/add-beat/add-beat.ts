@@ -38,6 +38,10 @@ class AddBeatAction extends EditorActionInterface<EditorActionEventAddBeat> {
       requiresMidiUpdate: true,
     };
   }
+
+  canUndo(): boolean {
+    return true;
+  }
 }
 
 export default new AddBeatAction();

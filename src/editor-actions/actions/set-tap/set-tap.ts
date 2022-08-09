@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionSetTap } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithUndo from '../editor-action-with-undo';
 
-class SetTapAction extends EditorActionInterface<EditorActionSetTap> {
+class SetTapAction extends EditorActionWithUndo<EditorActionSetTap> {
   do(action: EditorActionSetTap): EditorActionResult {
     const { note, value: isLeftHandTap } = action.data;
     action.data.previousValue = note.isLeftHandTapped;
@@ -10,23 +10,6 @@ class SetTapAction extends EditorActionInterface<EditorActionSetTap> {
       requiresRerender: true,
       requiresMidiUpdate: true,
     };
-  }
-
-  undo(action: EditorActionSetTap): EditorActionResult {
-    const { note, previousValue } = action.data;
-    if (previousValue === undefined) {
-      return {
-        requiresMidiUpdate: false,
-        requiresRerender: false,
-      };
-    }
-    return this.do({
-      type: action.type,
-      data: {
-        value: previousValue,
-        note,
-      },
-    });
   }
 }
 

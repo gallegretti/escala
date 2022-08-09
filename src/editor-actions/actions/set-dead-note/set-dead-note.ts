@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionSetDeadNote } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithUndo from '../editor-action-with-undo';
 
-class SetDeadNoteAction extends EditorActionInterface<EditorActionSetDeadNote> {
+class SetDeadNoteAction extends EditorActionWithUndo<EditorActionSetDeadNote> {
   do(action: EditorActionSetDeadNote): EditorActionResult {
     const { note, value: isDeadNote } = action.data;
     action.data.previousValue = note.isDead;
@@ -10,23 +10,6 @@ class SetDeadNoteAction extends EditorActionInterface<EditorActionSetDeadNote> {
       requiresRerender: true,
       requiresMidiUpdate: true,
     };
-  }
-
-  undo(action: EditorActionSetDeadNote): EditorActionResult {
-    const { note, previousValue } = action.data;
-    if (previousValue === undefined) {
-      return {
-        requiresMidiUpdate: false,
-        requiresRerender: false,
-      };
-    }
-    return this.do({
-      type: action.type,
-      data: {
-        value: previousValue,
-        note,
-      },
-    });
   }
 }
 

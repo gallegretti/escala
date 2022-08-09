@@ -37,6 +37,10 @@ class RemoveNoteAction extends EditorActionInterface<EditorActionEventRemoveNote
       requiresMidiUpdate: true,
     };
   }
+
+  canUndo(): boolean {
+    return true;
+  }
 }
 
 export default new RemoveNoteAction();

@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionSetCloseRepeat } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithUndo from '../editor-action-with-undo';
 
-class SetCloseRepeatAction extends EditorActionInterface<EditorActionSetCloseRepeat> {
+class SetCloseRepeatAction extends EditorActionWithUndo<EditorActionSetCloseRepeat> {
   do(action: EditorActionSetCloseRepeat): EditorActionResult {
     const { masterBar } = action.data.beat.voice.bar;
     action.data.previousValue = masterBar.repeatCount;
@@ -11,23 +11,6 @@ class SetCloseRepeatAction extends EditorActionInterface<EditorActionSetCloseRep
       requiresRerender: true,
       requiresMidiUpdate: true,
     };
-  }
-
-  undo(action: EditorActionSetCloseRepeat): EditorActionResult {
-    const { previousValue, beat } = action.data;
-    if (previousValue === undefined) {
-      return {
-        requiresMidiUpdate: false,
-        requiresRerender: false,
-      };
-    }
-    return this.do({
-      type: action.type,
-      data: {
-        value: previousValue,
-        beat,
-      },
-    });
   }
 }
 

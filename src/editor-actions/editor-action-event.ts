@@ -1,10 +1,22 @@
 import { ScoreInfo } from './actions/set-score-info/score-info';
-import { BendType } from '../alphatab-types/bend-type';
 import {
   AccentuationType, Bar, Beat, Chord, Duration, DynamicValue, HarmonicType, Note, PickStroke, Score, Track, VibratoType,
 } from '../alphatab-types/alphatab-types';
 import { BendState } from '../editor-skeleton/editor-controls/editor-controls';
 import TrackInfo from './actions/edit-track/track-info';
+
+export interface EditorActionUndoable {
+  type: string;
+  data: {
+    value: any;
+    previousValue?: any;
+  } & Record<string, any>
+}
+
+export interface EditorActionNotUndoable {
+  type: string;
+  data: Record<string, any>;
+}
 
 export interface EditorActionAddNote {
   type: 'add-note',
@@ -144,9 +156,7 @@ export interface EditorActionSetBend {
   type: 'set-bend',
   data: {
     note: Note,
-    preBend: BendType,
-    bend: BendType,
-    release: BendType,
+    value: BendState,
     previousValue?: BendState,
   }
 }

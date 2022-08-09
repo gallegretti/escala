@@ -160,7 +160,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-bend', data: { ...bend, note } });
+    this.dispatchAction({ type: 'set-bend', data: { value: bend, note } });
   };
 
   setPalmMute = (isPalmMute: boolean) => {

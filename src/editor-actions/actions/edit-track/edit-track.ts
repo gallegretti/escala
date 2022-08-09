@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionEditTrack } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithoutUndo from '../editor-action-without-undo';
 
-class EditTrackAction extends EditorActionInterface<EditorActionEditTrack> {
+class EditTrackAction extends EditorActionWithoutUndo<EditorActionEditTrack> {
   do(action: EditorActionEditTrack): EditorActionResult {
     const { track, trackInfo } = action.data;
     track.name = trackInfo.name;
@@ -14,17 +14,6 @@ class EditTrackAction extends EditorActionInterface<EditorActionEditTrack> {
       requiresRerender: true,
       requiresMidiUpdate: true,
     };
-  }
-
-  undo(action: EditorActionEditTrack): EditorActionResult {
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
-  }
-
-  canUndo(): boolean {
-    return false;
   }
 }
 

@@ -29,6 +29,10 @@ class AddNoteAction extends EditorActionInterface<EditorActionAddNote> {
       requiresMidiUpdate: true,
     };
   }
+
+  canUndo(): boolean {
+    return true;
+  }
 }
 
 export default new AddNoteAction();

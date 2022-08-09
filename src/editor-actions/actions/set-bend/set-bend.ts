@@ -1,39 +1,20 @@
 import { EditorActionResult, EditorActionSetBend } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
 import { getBendPoints, getBendState } from './set-bend-lookup-table';
 import { BendState } from '../../../editor-skeleton/editor-controls/editor-controls';
 import { Note } from '../../../alphatab-types/alphatab-types';
+import EditorActionWithUndo from '../editor-action-with-undo';
 
-class SetBendAction extends EditorActionInterface<EditorActionSetBend> {
+class SetBendAction extends EditorActionWithUndo<EditorActionSetBend> {
   do(action: EditorActionSetBend): EditorActionResult {
     const {
-      note, bend, preBend, release,
+      note, value,
     } = action.data;
     action.data.previousValue = getBendState(note);
-    this.applyBendStateToNote({ preBend, bend, release }, note);
+    this.applyBendStateToNote({ preBend: value.preBend, bend: value.bend, release: value.release }, note);
     return {
       requiresRerender: true,
       requiresMidiUpdate: true,
     };
-  }
-
-  undo(action: EditorActionSetBend): EditorActionResult {
-    const { note, previousValue: previousBend } = action.data;
-    if (previousBend === undefined) {
-      return {
-        requiresMidiUpdate: false,
-        requiresRerender: false,
-      };
-    }
-    return this.do({
-      type: action.type,
-      data: {
-        bend: previousBend.bend,
-        preBend: previousBend.preBend,
-        release: previousBend.release,
-        note,
-      },
-    });
   }
 
   applyBendStateToNote(bendState: BendState, note: Note) {

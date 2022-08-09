@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionSetDuration } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithUndo from '../editor-action-with-undo';
 
-class SetDurationAction extends EditorActionInterface<EditorActionSetDuration> {
+class SetDurationAction extends EditorActionWithUndo<EditorActionSetDuration> {
   do(action: EditorActionSetDuration): EditorActionResult {
     const didChange = action.data.value !== action.data.beat.duration;
     // Store previous data so we can use it on the undo
@@ -11,23 +11,6 @@ class SetDurationAction extends EditorActionInterface<EditorActionSetDuration> {
       requiresRerender: didChange,
       requiresMidiUpdate: didChange,
     };
-  }
-
-  undo(action: EditorActionSetDuration): EditorActionResult {
-    const { previousValue, beat } = action.data;
-    if (previousValue === undefined) {
-      return {
-        requiresMidiUpdate: false,
-        requiresRerender: false,
-      };
-    }
-    return this.do({
-      type: action.type,
-      data: {
-        value: previousValue,
-        beat,
-      },
-    });
   }
 }
 

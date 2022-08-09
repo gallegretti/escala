@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionSetScoreInfo } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithoutUndo from '../editor-action-without-undo';
 
-class SetScoreInfoAction extends EditorActionInterface<EditorActionSetScoreInfo> {
+class SetScoreInfoAction extends EditorActionWithoutUndo<EditorActionSetScoreInfo> {
   do(action: EditorActionSetScoreInfo): EditorActionResult {
     const { score, scoreInfo } = action.data;
     score.title = scoreInfo.title;
@@ -15,18 +15,6 @@ class SetScoreInfoAction extends EditorActionInterface<EditorActionSetScoreInfo>
       requiresRerender: true,
       requiresMidiUpdate: false,
     };
-  }
-
-  undo(action: EditorActionSetScoreInfo): EditorActionResult {
-    // Can not undo
-    return {
-      requiresRerender: false,
-      requiresMidiUpdate: false,
-    };
-  }
-
-  canUndo() {
-    return false;
   }
 }
 

@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionAddTrack } from '../../editor-action-event';
-import EditorActionInterface from '../editor-action.interface';
+import EditorActionWithoutUndo from '../editor-action-without-undo';
 
-class AddTrackAction extends EditorActionInterface<EditorActionAddTrack> {
+class AddTrackAction extends EditorActionWithoutUndo<EditorActionAddTrack> {
   do(action: EditorActionAddTrack): EditorActionResult {
     const { trackInfo: track, score } = action.data;
     const trackModel = new alphaTab.model.Track();
@@ -14,17 +14,6 @@ class AddTrackAction extends EditorActionInterface<EditorActionAddTrack> {
       requiresRerender: false,
       requiresMidiUpdate: false,
     };
-  }
-
-  undo(action: EditorActionAddTrack): EditorActionResult {
-    return {
-      requiresRerender: true,
-      requiresMidiUpdate: true,
-    };
-  }
-
-  canUndo(): boolean {
-    return false;
   }
 }
 
