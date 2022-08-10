@@ -28,6 +28,7 @@ module.exports = {
     '@typescript-eslint',
   ],
   rules: {
+    semi: 'off',
     'import/no-unresolved': 'off',
     'import/extensions': 'off',
     'no-useless-constructor': 'off',

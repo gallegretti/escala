@@ -7,7 +7,7 @@ import SemiHarmonicGlyph from '@glyphs/effects/harmonic/semi-harmonic';
 import FeedbackHarmonicGlyph from '@glyphs/effects/harmonic/feedback-harmonic';
 import GenericHarmonicGlyph from '@glyphs/effects/harmonic/generic-harmonic';
 import useAnchorElem from '@hooks/use-anchor-element';
-import { StyledPopper } from './styled-popper';
+import StyledPopper from './styled-popper';
 
 interface HarmonicPartProps {
   disabled: boolean;

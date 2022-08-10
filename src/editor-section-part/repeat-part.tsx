@@ -4,7 +4,7 @@ import OpenRepeatGlyph from '@glyphs/beat/open-repeat';
 import ExpandMoreGlyph from '@glyphs/generic/expand-more';
 import { Input } from '@mui/material';
 import useAnchorElem from '@hooks/use-anchor-element';
-import { StyledPopper } from './styled-popper';
+import StyledPopper from './styled-popper';
 import EditorScoreState from '../editor/editor-score-state';
 import EditorActionDispatcher from '../editor/editor-action-dispatcher';
 

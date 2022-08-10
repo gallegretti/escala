@@ -6,7 +6,7 @@ import ChordGlyph from '@glyphs/beat/chord';
 import ExpandMoreGlyph from '@glyphs/generic/expand-more';
 import useAnchorElem from '@hooks/use-anchor-element';
 import { Chord } from '../alphatab-types/alphatab-types';
-import { StyledPopper } from './styled-popper';
+import StyledPopper from './styled-popper';
 
 interface ChordSectionProps {
   disabled: boolean;

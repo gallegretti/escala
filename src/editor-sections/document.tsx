@@ -10,7 +10,7 @@ import MidGlyph from '@glyphs/document/download/mid';
 import NewGlyph from '@glyphs/document/new';
 import TempoGlyph from '@glyphs/document/tempo';
 import useAnchorElem from '@hooks/use-anchor-element';
-import { StyledPopper } from '@editor-section-part/styled-popper';
+import StyledPopper from '@editor-section-part/styled-popper';
 import SectionDivider from './section-divider';
 
 interface DocumentSectionProps {
@@ -54,7 +54,7 @@ export default function DocumentSection(props: DocumentSectionProps) {
             }
           }}
         />
-        <OpenGlyph id="open" disabled={false} selected={false} onClick={() => { }} />
+        <OpenGlyph id="open" disabled={false} selected={false} onClick={() => { /* Handled by the input element */ }} />
       </label>
       <SectionDivider />
       <InfoGlyph id="info" disabled={false} selected={false} onClick={props.openScoreInfo} />

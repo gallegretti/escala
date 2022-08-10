@@ -21,7 +21,8 @@ export default function GuitarProGlyph(props: BaseGlyphProps) {
       >
         <text
           fill={color}
-          style={{ transform: 'translate(0px, 18px)', fontFamily: glyphAsciFontfamily, fontSize: '15px' }}>
+          style={{ transform: 'translate(0px, 18px)', fontFamily: glyphAsciFontfamily, fontSize: '15px' }}
+        >
           .gp
         </text>
       </svg>

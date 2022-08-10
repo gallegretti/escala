@@ -13,13 +13,13 @@ import PreBendButton from '@editor-section-part/bends/pre-bend-button';
 import BendPart from '@editor-section-part/bends/bend-part';
 import ReleaseBendButton from '@editor-section-part/bends/release-button';
 import SlidePart from '@editor-section-part/slide-part';
+import StaccatoGlyph from '@glyphs/effects/staccato';
 import SectionDivider from './section-divider';
 import { BendState } from '../editor-skeleton/editor-controls/editor-controls';
 import { BendType } from '../alphatab-types/bend-type';
 import { AccentuationType } from '../alphatab-types/alphatab-types';
 import EditorScoreState from '../editor/editor-score-state';
 import EditorActionDispatcher from '../editor/editor-action-dispatcher';
-import StaccatoGlyph from '@glyphs/effects/staccato';
 
 interface EffectsSectionProps {
   editorScoreState: EditorScoreState;

@@ -11,4 +11,4 @@ const StyledPopper = styled(Popper)(({ theme }) => ({
   boxShadow: `0 4px 2px -2px ${theme.palette.mode === 'dark' ? '#312f2f' : '#e6e6e6'}`,
 }));
 
-export { StyledPopper };
+export default StyledPopper;

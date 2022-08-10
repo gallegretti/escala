@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip } from '@mui/material';
 import { DynamicGlyphProps } from '@glyphs/dynamics/dynamic';
-import { genericDurationFontSize } from '@glyphs/duration/generic-duration';
+import genericDurationFontSize from '@glyphs/duration/generic-duration';
 import { useGlyphColor } from '../glyphColor';
 import baseSvgStyle from '../glyphBaseSvgStyle';
 

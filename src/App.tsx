@@ -21,7 +21,7 @@ import {
   ScoreRenderer,
   Track,
 } from './alphatab-types/alphatab-types';
-import { DialogContext } from './editor/dialog-context';
+import DialogContext from './editor/dialog-context';
 import EditorActionDispatcher from './editor/editor-action-dispatcher';
 import EditorScoreState from './editor/editor-score-state';
 

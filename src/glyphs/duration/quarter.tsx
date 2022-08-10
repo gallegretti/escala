@@ -3,7 +3,7 @@ import { Tooltip } from '@mui/material';
 import { DurationGlyphProps } from './duration';
 import { useGlyphColor } from '../glyphColor';
 import baseSvgStyle from '../glyphBaseSvgStyle';
-import { genericDurationFontSize } from './generic-duration';
+import genericDurationFontSize from './generic-duration';
 
 export default function QuarterGlyph(props: DurationGlyphProps) {
   const color = useGlyphColor(props);

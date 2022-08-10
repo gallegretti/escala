@@ -2,7 +2,7 @@ import React from 'react';
 import { Tooltip } from '@mui/material';
 import { DurationGlyphProps } from './duration';
 import { useGlyphColor } from '../glyphColor';
-import { genericDurationFontSize } from './generic-duration';
+import genericDurationFontSize from './generic-duration';
 import baseSvgStyle from '../glyphBaseSvgStyle';
 
 export default function Tie(props: DurationGlyphProps) {

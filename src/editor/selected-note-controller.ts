@@ -1,5 +1,9 @@
 import {
-  Beat, Bounds, Note, NoteBounds, ScoreRenderer,
+  Beat,
+  Bounds,
+  Note,
+  NoteBounds,
+  ScoreRenderer,
 } from '../alphatab-types/alphatab-types';
 
 interface NoteSlotData {

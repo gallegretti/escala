@@ -2,7 +2,7 @@ import React from 'react';
 import { BaseGlyphProps } from '@glyphs/glyphBaseProps';
 import useAnchorElem from '@hooks/use-anchor-element';
 import { BendType } from '../../alphatab-types/bend-type';
-import { StyledPopper } from '../styled-popper';
+import StyledPopper from '../styled-popper';
 
 interface GenericBendButtonProps {
   currentBendType: BendType;

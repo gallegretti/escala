@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const DialogContext = React.createContext({
+const DialogContext = React.createContext({
   hasDialog: false,
   /**
      * Tracks if there's an open dialog in the app
@@ -8,3 +8,5 @@ export const DialogContext = React.createContext({
      */
   setHasDialog: (v: boolean) => {},
 });
+
+export default DialogContext;
