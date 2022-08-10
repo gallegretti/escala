@@ -11,7 +11,7 @@ export default function SlideOutNoteGlyph(props: DynamicGlyphProps) {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="20px"
-        width="28px"
+        width="24px"
         onClick={props.onClick}
         style={baseSvgStyle(props)}
       >
