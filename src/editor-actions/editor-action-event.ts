@@ -1,6 +1,19 @@
 import { ScoreInfo } from './actions/set-score-info/score-info';
 import {
-  AccentuationType, Bar, Beat, Chord, Duration, DynamicValue, HarmonicType, Note, PickStroke, Score, Track, VibratoType,
+  AccentuationType,
+  Bar,
+  Beat,
+  Chord,
+  Duration,
+  DynamicValue,
+  HarmonicType,
+  Note,
+  PickStroke,
+  Score,
+  SlideInType,
+  SlideOutType,
+  Track,
+  VibratoType,
 } from '../alphatab-types/alphatab-types';
 import { BendState } from '../editor-skeleton/editor-controls/editor-controls';
 import TrackInfo from './actions/edit-track/track-info';
@@ -224,6 +237,24 @@ export interface EditorActionSetSlide {
   }
 }
 
+export interface EditorActionSetSlideIn {
+  type: 'set-slide-in';
+  data: {
+    note: Note;
+    value: SlideInType;
+    previousValue?: SlideInType;
+  }
+}
+
+export interface EditorActionSetSlideOut {
+  type: 'set-slide-out';
+  data: {
+    note: Note;
+    value: SlideOutType;
+    previousValue?: SlideOutType;
+  }
+}
+
 export interface EditorActionSetTap {
   type: 'set-tap',
   data: {
@@ -289,6 +320,8 @@ export type EditorActionEvent
   | EditorActionSetPickStroke
   | EditorActionSetScoreInfo
   | EditorActionSetSlide
+  | EditorActionSetSlideIn
+  | EditorActionSetSlideOut
   | EditorActionSetTap
   | EditorActionSetTempo
   | EditorActionSetText

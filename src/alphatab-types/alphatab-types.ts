@@ -33,36 +33,38 @@ type PickStroke = (typeof alphaTab.model.PickStroke.None | typeof alphaTab.model
 type AccentuationType = (typeof alphaTab.model.AccentuationType.Heavy | typeof alphaTab.model.AccentuationType.None | typeof alphaTab.model.AccentuationType.Normal);
 type HarmonicType = (typeof alphaTab.model.HarmonicType.None | typeof alphaTab.model.HarmonicType.Natural | typeof alphaTab.model.HarmonicType.Artificial | typeof alphaTab.model.HarmonicType.Pinch | typeof alphaTab.model.HarmonicType.Tap | typeof alphaTab.model.HarmonicType.Semi | typeof alphaTab.model.HarmonicType.Feedback);
 type DynamicValue = (typeof alphaTab.model.DynamicValue.PPP | typeof alphaTab.model.DynamicValue.PP | typeof alphaTab.model.DynamicValue.P | typeof alphaTab.model.DynamicValue.MP | typeof alphaTab.model.DynamicValue.MF | typeof alphaTab.model.DynamicValue.F | typeof alphaTab.model.DynamicValue.FF | typeof alphaTab.model.DynamicValue.FFF);
-type SlideOutType = (typeof alphaTab.model.SlideOutType.None | typeof alphaTab.model.SlideOutType.Shift | typeof alphaTab.model.SlideOutType.Legato | typeof alphaTab.model.SlideOutType.OutUp | typeof alphaTab.model.SlideOutType.OutDown | typeof alphaTab.model.SlideOutType.PickSlideDown | typeof alphaTab.model.SlideOutType.PickSlideUp);
 type VibratoType = (typeof alphaTab.model.VibratoType.None | typeof alphaTab.model.VibratoType.Slight | typeof alphaTab.model.VibratoType.Wide);
+type SlideInType = (typeof alphaTab.model.SlideInType.None | typeof alphaTab.model.SlideInType.IntoFromBelow | typeof alphaTab.model.SlideInType.IntoFromAbove);
+type SlideOutType = (typeof alphaTab.model.SlideOutType.None | typeof alphaTab.model.SlideOutType.Shift | typeof alphaTab.model.SlideOutType.Legato | typeof alphaTab.model.SlideOutType.OutUp | typeof alphaTab.model.SlideOutType.OutDown | typeof alphaTab.model.SlideOutType.PickSlideDown | typeof alphaTab.model.SlideOutType.PickSlideUp);
 
 type BendType = typeof alphaTab.model.BendType;
 
 type Staff = typeof alphaTab.model.Staff;
 
 export type {
+  AccentuationType,
   AlphaTabApi,
-  Note,
-  Staff,
-  Beat,
   Bar,
-  Tuning,
-  Voice,
-  Chord,
+  Beat,
   BendPoint,
-  Score,
+  BendType,
+  Bounds,
+  Chord,
   Duration,
   DynamicValue,
-  PickStroke,
   HarmonicType,
-  BendType,
-  AccentuationType,
-  Track,
-  Bounds,
+  Note,
   NoteBounds,
-  SlideOutType,
-  VibratoType,
-  ScoreRenderer,
-  RenderFinishedEventArgs,
+  PickStroke,
   PlayerStateChangedEventArgs,
+  RenderFinishedEventArgs,
+  Score,
+  ScoreRenderer,
+  SlideInType,
+  SlideOutType,
+  Staff,
+  Track,
+  Tuning,
+  VibratoType,
+  Voice,
 };

@@ -14,11 +14,11 @@ class SetSlideAction extends EditorActionWithUndo<EditorActionSetSlide> {
     action.data.previousValue = note.slideTarget !== null;
     if (action.data.value) {
       note.slideTarget = nextNote;
-      note.slideOutType = 1;
+      note.slideOutType = alphaTab.model.SlideOutType.Shift;
       nextNote.slideOrigin = note;
     } else {
       note.slideTarget = null;
-      note.slideOutType = 0;
+      note.slideOutType = alphaTab.model.SlideOutType.None;
       nextNote.slideOrigin = null;
     }
     return {

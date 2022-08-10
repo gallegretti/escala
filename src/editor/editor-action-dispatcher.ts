@@ -7,6 +7,8 @@ import {
   DynamicValue,
   HarmonicType,
   Note,
+  SlideInType,
+  SlideOutType,
   Track,
   VibratoType,
 } from '../alphatab-types/alphatab-types';
@@ -52,8 +54,24 @@ class EditorActionDispatcher {
     this.dispatchAction({ type: 'set-slide', data: { note, value: slide } });
   };
 
+  setSlideIn = (slide: SlideInType): void => {
+    const note = this.selectedNote();
+    if (!note) {
+      return;
+    }
+    this.dispatchAction({ type: 'set-slide-in', data: { note, value: slide } });
+  };
+
+  setSlideOut = (slide: SlideOutType): void => {
+    const note = this.selectedNote();
+    if (!note) {
+      return;
+    }
+    this.dispatchAction({ type: 'set-slide-out', data: { note, value: slide } });
+  };
+
   setDynamics = (dynamics: DynamicValue): void => {
-    const beat = this.selectedNoteController?.getSelectedSlot()?.beat;
+    const beat = this.selectedBeat();
     if (!beat) {
       return;
     }
@@ -120,7 +138,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-dead-note', data: { note, value: value } });
+    this.dispatchAction({ type: 'set-dead-note', data: { note, value } });
   };
 
   setTapNote = (value: boolean) => {
@@ -128,7 +146,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-tap', data: { note, value: value } });
+    this.dispatchAction({ type: 'set-tap', data: { note, value } });
   };
 
   setTieNote = (value: boolean) => {
@@ -136,7 +154,7 @@ class EditorActionDispatcher {
     if (!note) {
       return;
     }
-    this.dispatchAction({ type: 'set-tie', data: { note, value: value } });
+    this.dispatchAction({ type: 'set-tie', data: { note, value } });
   };
 
   setVibratoNote = (vibrato: VibratoType) => {
@@ -148,7 +166,7 @@ class EditorActionDispatcher {
   };
 
   setText = (text: string) => {
-    const beat = this.selectedNoteController.getSelectedSlot()?.beat;
+    const beat = this.selectedBeat();
     if (!beat) {
       return;
     }
@@ -237,7 +255,7 @@ class EditorActionDispatcher {
   };
 
   addBeat = () => {
-    const currentBeat = this.selectedNoteController.getSelectedSlot()?.beat;
+    const currentBeat = this.selectedBeat();
     if (currentBeat) {
       if (currentBeat.voice.beats.length === currentBeat.voice.bar.masterBar.timeSignatureNumerator) {
         const currentBar = currentBeat.voice.bar;
@@ -250,7 +268,7 @@ class EditorActionDispatcher {
   };
 
   setChord = (chord: Chord | null) => {
-    const currentBeat = this.selectedNoteController.getSelectedSlot()?.beat;
+    const currentBeat = this.selectedBeat();
     if (currentBeat) {
       this.dispatchAction({ type: 'set-chord', data: { beat: currentBeat, value: chord } });
     }

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Tooltip } from '@mui/material';
-import { DynamicGlyphProps } from '../dynamics/dynamic';
-import { useGlyphColor } from '../glyphColor';
-import baseSvgStyle from '../glyphBaseSvgStyle';
+import { DynamicGlyphProps } from '../../dynamics/dynamic';
+import { useGlyphColor } from '../../glyphColor';
+import baseSvgStyle from '../../glyphBaseSvgStyle';
 
 export default function SlideNoteGlyph(props: DynamicGlyphProps) {
   const color = useGlyphColor(props);
@@ -15,7 +15,7 @@ export default function SlideNoteGlyph(props: DynamicGlyphProps) {
         onClick={props.onClick}
         style={baseSvgStyle(props)}
       >
-        <path d="M 0 20 L 15 1 L 16 2 L 1 21 Z Z" fill={color} style={{ stroke: 'none' }} />
+        <path d="M 0 15 L 20 0 Z Z" fill={color} strokeWidth="1" stroke={color} />
       </svg>
     </Tooltip>
   );

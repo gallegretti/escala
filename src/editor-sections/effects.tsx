@@ -7,7 +7,6 @@ import DeadNoteGlyph from '@glyphs/effects/dead-note';
 import TapNoteGlyph from '@glyphs/effects/tap-note';
 import VibratoNoteGlyph from '@glyphs/effects/vibratro';
 import HammerPullNoteGlyph from '@glyphs/effects/hammer-pull';
-import SlideNoteGlyph from '@glyphs/effects/slide';
 import LetRingGlyph from '@glyphs/effects/let-ring';
 import HarmonicButton from '@editor-section-part/harmonic-button';
 import PreBendButton from '@editor-section-part/bends/pre-bend-button';
@@ -19,6 +18,7 @@ import { BendType } from '../alphatab-types/bend-type';
 import { AccentuationType } from '../alphatab-types/alphatab-types';
 import EditorScoreState from '../editor/editor-score-state';
 import EditorActionDispatcher from '../editor/editor-action-dispatcher';
+import SlidePart from '@editor-section-part/slide-part';
 
 interface EffectsSectionProps {
   editorScoreState: EditorScoreState;
@@ -96,6 +96,11 @@ export default function EffectsSection(props: EffectsSectionProps) {
         isPopperOpen={openPopper === 'harmonic'}
         setPopperOpen={() => updateOpenPopper('harmonic')}
       />
+      <HammerPullNoteGlyph
+        disabled={!props.editorScoreState.hasSelectedNote}
+        onClick={() => { props.actionDispatcher.setHammer(!props.editorScoreState.currentSelectedNoteHammerOrPull); }}
+        selected={props.editorScoreState.currentSelectedNoteHammerOrPull ?? false}
+      />
       <SectionDivider />
       <AccentuatedNoteGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
@@ -130,15 +135,9 @@ export default function EffectsSection(props: EffectsSectionProps) {
         setPopperOpen={() => updateOpenPopper('release')}
       />
       <SectionDivider />
-      <HammerPullNoteGlyph
-        disabled={!props.editorScoreState.hasSelectedNote}
-        onClick={() => { props.actionDispatcher.setHammer(!props.editorScoreState.currentSelectedNoteHammerOrPull); }}
-        selected={props.editorScoreState.currentSelectedNoteHammerOrPull ?? false}
-      />
-      <SlideNoteGlyph
-        disabled={!props.editorScoreState.hasSelectedNote}
-        onClick={() => { props.actionDispatcher.setSlide(!props.editorScoreState.currentSelectedNoteSlide); }}
-        selected={props.editorScoreState.currentSelectedNoteSlide ?? false}
+      <SlidePart
+        actionDispatcher={props.actionDispatcher}
+        editorScoreState={props.editorScoreState}
       />
     </>
   );

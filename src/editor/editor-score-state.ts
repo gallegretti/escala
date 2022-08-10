@@ -7,6 +7,8 @@ import {
   HarmonicType,
   Note,
   PickStroke,
+  SlideInType,
+  SlideOutType,
   VibratoType,
 } from '../alphatab-types/alphatab-types';
 import { BendState } from '../editor-skeleton/editor-controls/editor-controls';
@@ -117,7 +119,15 @@ export default class EditorScoreState {
   }
 
   get currentSelectedNoteSlide(): boolean | null {
-    return (this.selectedNote?.slideOutType ?? 0) > 0;
+    return this.selectedNote?.slideTarget !== null;
+  }
+
+  get currentSlideIn(): SlideInType | null {
+    return this.selectedNote?.slideInType ?? null;
+  }
+
+  get currentSlideOut(): SlideOutType | null {
+    return this.selectedNote?.slideOutType ?? null;
   }
 
   get currentSelectedBend(): BendState | null {
