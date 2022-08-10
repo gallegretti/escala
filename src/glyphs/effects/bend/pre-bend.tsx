@@ -11,7 +11,7 @@ export default function PreBendGlyph(props: BaseGlyphProps) {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="30px"
-        width="16px"
+        width="10px"
         onClick={props.onClick}
         style={baseSvgStyle({ disabled: props.disabled })}
       >

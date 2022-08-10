@@ -5,7 +5,7 @@ import HalfBendGlyph from '@glyphs/effects/bend/half-bend';
 import { BendType } from '../../alphatab-types/bend-type';
 import GenericBendButton from './generic-bend-button';
 
-interface BendButtonProps {
+interface BendPartProps {
   bend: BendType;
   setBend: (bendType: BendType) => void;
   disabled: boolean;
@@ -13,7 +13,7 @@ interface BendButtonProps {
   setPopperOpen: () => void;
 }
 
-export default function BendButton(props: BendButtonProps) {
+export default function BendPart(props: BendPartProps) {
   return (
     <GenericBendButton
       currentBendType={props.bend}

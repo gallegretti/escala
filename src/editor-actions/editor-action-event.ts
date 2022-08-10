@@ -264,6 +264,15 @@ export interface EditorActionSetTap {
   }
 }
 
+export interface EditorActionSetStaccato {
+  type: 'set-staccato',
+  data: {
+    note: Note,
+    value: boolean,
+    previousValue?: boolean,
+  }
+}
+
 export interface EditorActionSetVibrato {
   type: 'set-vibrato',
   data: {
@@ -322,6 +331,7 @@ export type EditorActionEvent
   | EditorActionSetSlide
   | EditorActionSetSlideIn
   | EditorActionSetSlideOut
+  | EditorActionSetStaccato
   | EditorActionSetTap
   | EditorActionSetTempo
   | EditorActionSetText

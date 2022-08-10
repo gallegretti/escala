@@ -9,7 +9,7 @@ import GenericHarmonicGlyph from '@glyphs/effects/harmonic/generic-harmonic';
 import useAnchorElem from '@hooks/use-anchor-element';
 import { StyledPopper } from './styled-popper';
 
-interface HarmonicButtonProps {
+interface HarmonicPartProps {
   disabled: boolean;
   currentHarmonicType: number;
   setHarmonicType: (harmonicType: number) => void;
@@ -38,7 +38,7 @@ function harmonicTypeToString(type: number) {
   }
 }
 
-export default function HarmonicButton(props: HarmonicButtonProps) {
+export default function HarmonicPart(props: HarmonicPartProps) {
   const [anchorElem, setAnchorElement] = useAnchorElem();
 
   const onClick = (e: any) => {

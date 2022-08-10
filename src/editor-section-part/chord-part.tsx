@@ -8,7 +8,7 @@ import useAnchorElem from '@hooks/use-anchor-element';
 import { Chord } from '../alphatab-types/alphatab-types';
 import { StyledPopper } from './styled-popper';
 
-interface ChordButtonProps {
+interface ChordSectionProps {
   disabled: boolean;
   currentChord: Chord | null;
   setChord: () => void;
@@ -16,7 +16,7 @@ interface ChordButtonProps {
   chords: Chord[];
 }
 
-export default function ChordButton(props: ChordButtonProps) {
+export default function ChordSection(props: ChordSectionProps) {
   const [isPopperOpen, setIsPopperOpen] = useState(false);
   const [anchorElem, setAnchorElement] = useAnchorElem();
   const theme = useTheme();

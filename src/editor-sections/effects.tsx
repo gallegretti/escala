@@ -8,17 +8,18 @@ import TapNoteGlyph from '@glyphs/effects/tap-note';
 import VibratoNoteGlyph from '@glyphs/effects/vibratro';
 import HammerPullNoteGlyph from '@glyphs/effects/hammer-pull';
 import LetRingGlyph from '@glyphs/effects/let-ring';
-import HarmonicButton from '@editor-section-part/harmonic-button';
+import HarmonicPart from '@editor-section-part/harmonic-part';
 import PreBendButton from '@editor-section-part/bends/pre-bend-button';
-import BendButton from '@editor-section-part/bends/bend-button';
+import BendPart from '@editor-section-part/bends/bend-part';
 import ReleaseBendButton from '@editor-section-part/bends/release-button';
+import SlidePart from '@editor-section-part/slide-part';
 import SectionDivider from './section-divider';
 import { BendState } from '../editor-skeleton/editor-controls/editor-controls';
 import { BendType } from '../alphatab-types/bend-type';
 import { AccentuationType } from '../alphatab-types/alphatab-types';
 import EditorScoreState from '../editor/editor-score-state';
 import EditorActionDispatcher from '../editor/editor-action-dispatcher';
-import SlidePart from '@editor-section-part/slide-part';
+import StaccatoGlyph from '@glyphs/effects/staccato';
 
 interface EffectsSectionProps {
   editorScoreState: EditorScoreState;
@@ -89,7 +90,7 @@ export default function EffectsSection(props: EffectsSectionProps) {
         onClick={() => props.actionDispatcher.setVibratoNote(props.editorScoreState.isVibrato
           ? alphaTab.model.VibratoType.None : alphaTab.model.VibratoType.Slight)}
       />
-      <HarmonicButton
+      <HarmonicPart
         disabled={!props.editorScoreState.hasSelectedNote}
         currentHarmonicType={props.editorScoreState.currentSelectedNoteHarmonicType ?? 0}
         setHarmonicType={props.actionDispatcher.setHarmonicType}
@@ -120,7 +121,7 @@ export default function EffectsSection(props: EffectsSectionProps) {
         isPopperOpen={openPopper === 'pre-bend'}
         setPopperOpen={() => updateOpenPopper('pre-bend')}
       />
-      <BendButton
+      <BendPart
         disabled={!props.editorScoreState.hasSelectedNote}
         bend={props.editorScoreState.currentSelectedBend?.bend ?? null}
         setBend={(bendType) => { setBend('bend', bendType); }}
@@ -138,6 +139,12 @@ export default function EffectsSection(props: EffectsSectionProps) {
       <SlidePart
         actionDispatcher={props.actionDispatcher}
         editorScoreState={props.editorScoreState}
+      />
+      <SectionDivider />
+      <StaccatoGlyph
+        disabled={!props.editorScoreState.hasSelectedNote}
+        selected={props.editorScoreState.isCurrentSelectedNoteStaccato}
+        onClick={() => props.actionDispatcher.setStaccato(!props.editorScoreState.isCurrentSelectedNoteStaccato)}
       />
     </>
   );

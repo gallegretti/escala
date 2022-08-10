@@ -62,6 +62,10 @@ export default class EditorScoreState {
     return this.selectedNote?.isPalmMute ?? false;
   }
 
+  get isCurrentSelectedNoteStaccato(): boolean {
+    return this.selectedNote?.isStaccato ?? false;
+  }
+
   get isCurrentSelectedNoteLetRing(): boolean {
     return this.selectedNote?.isLetRing ?? false;
   }

@@ -2,7 +2,7 @@ import React from 'react';
 import TextGlyph from '@glyphs/beat/text';
 import UpstrokeGlyph from '@glyphs/beat/upstroke';
 import DownStrokeGlyph from '@glyphs/beat/downstroke';
-import ChordButton from '@editor-section-part/chord-button';
+import ChordSection from '@editor-section-part/chord-part';
 import RepeatPart from '@editor-section-part/repeat-part';
 import { Chord, PickStroke } from '../alphatab-types/alphatab-types';
 import EditorScoreState from '../editor/editor-score-state';
@@ -14,7 +14,7 @@ interface BeatSectionProps {
   actionDispatcher: EditorActionDispatcher;
   setText: () => void;
   setChord: () => void;
-  useChord: (arg: Chord) => void;
+  useChord: (arg: Chord | null) => void;
   chords: Chord[];
 }
 
@@ -52,7 +52,7 @@ export default function BeatSection(props: BeatSectionProps) {
         onClick={() => setPickStroke(alphaTab.model.PickStroke.Down)}
       />
       <SectionDivider />
-      <ChordButton
+      <ChordSection
         disabled={isDisabled}
         currentChord={props.editorScoreState.currentChord}
         chords={props.chords}

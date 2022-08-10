@@ -70,6 +70,14 @@ class EditorActionDispatcher {
     this.dispatchAction({ type: 'set-slide-out', data: { note, value: slide } });
   };
 
+  setStaccato = (staccato: boolean): void => {
+    const note = this.selectedNote();
+    if (!note) {
+      return;
+    }
+    this.dispatchAction({ type: 'set-staccato', data: { note, value: staccato } });
+  };
+
   setDynamics = (dynamics: DynamicValue): void => {
     const beat = this.selectedBeat();
     if (!beat) {

@@ -26,6 +26,7 @@ import setScoreInfo from '../actions/set-score-info/set-score-info';
 import setSlideAction from '../actions/set-slide/set-slide';
 import setSlideInAction from '../actions/set-sllide-in/set-slide-in';
 import setSlideOutAction from '../actions/set-slide-out/set-slide-out';
+import setStaccatoAction from '../actions/set-staccato/set-staccato';
 import setTapAction from '../actions/set-tap/set-tap';
 import setTempoAction from '../actions/set-tempo/set-tempo';
 import setTextAction from '../actions/set-text/set-text';
@@ -58,6 +59,7 @@ const mapping: Record<string, EditorActionInterface<EditorActionEvent>> = {
   'set-slide-in': setSlideInAction,
   'set-slide-out': setSlideOutAction,
   'set-slide': setSlideAction,
+  'set-staccato': setStaccatoAction,
   'set-tap': setTapAction,
   'set-tempo': setTempoAction,
   'set-text': setTextAction,
