@@ -10,14 +10,14 @@ class SetBendAction extends EditorActionWithUndo<EditorActionSetBend> {
       note, value,
     } = action.data;
     action.data.previousValue = getBendState(note);
-    this.applyBendStateToNote({ preBend: value.preBend, bend: value.bend, release: value.release }, note);
+    this.applyBendStateToNote(value, note);
     return {
       requiresRerender: true,
       requiresMidiUpdate: true,
     };
   }
 
-  applyBendStateToNote(bendState: BendState, note: Note) {
+  private applyBendStateToNote(bendState: BendState, note: Note) {
     note.bendState = bendState;
     const newBendPoints = getBendPoints(bendState);
     if (newBendPoints.length > 0) {
