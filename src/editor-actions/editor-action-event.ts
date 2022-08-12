@@ -32,15 +32,15 @@ export interface EditorActionNotUndoable {
 }
 
 export interface EditorActionAddNote {
-  type: 'add-note',
+  type: 'add-note';
   data: {
-    beat: Beat,
-    note: Note,
+    beat: Beat;
+    note: Note;
   }
 }
 
 export interface EditorActionAddTrack {
-  type: 'add-track',
+  type: 'add-track';
   data: {
     score: Score;
     trackInfo: TrackInfo;
@@ -48,7 +48,7 @@ export interface EditorActionAddTrack {
 }
 
 export interface EditorActionEditTrack {
-  type: 'edit-track',
+  type: 'edit-track';
   data: {
     track: Track;
     trackInfo: TrackInfo;
@@ -56,7 +56,7 @@ export interface EditorActionEditTrack {
 }
 
 export interface EditorActionSetTempo {
-  type: 'set-tempo',
+  type: 'set-tempo';
   data: {
     score: Score;
     tempo: number;
@@ -64,7 +64,7 @@ export interface EditorActionSetTempo {
 }
 
 export interface EditorActionSetDuration {
-  type: 'set-duration',
+  type: 'set-duration';
   data: {
     beat: Beat;
     value: Duration;
@@ -73,91 +73,91 @@ export interface EditorActionSetDuration {
 }
 
 export interface EditorActionSetDynamics {
-  type: 'set-dynamics',
+  type: 'set-dynamics';
   data: {
-    beat: Beat,
-    value: DynamicValue,
-    previousValue?: DynamicValue,
+    beat: Beat;
+    value: DynamicValue;
+    previousValue?: DynamicValue;
   }
 }
 
 export interface EditorActionEventAddBeat {
-  type: 'add-beat',
+  type: 'add-beat';
   data: {
-    currentBeat: Beat,
-    newBeat: Beat,
+    currentBeat: Beat;
+    newBeat: Beat;
   }
 }
 
 export interface EditorActionEventAddBar {
-  type: 'add-bar',
+  type: 'add-bar';
   data: {
-    currentBar: Bar,
+    currentBar: Bar;
   }
 }
 
 export interface EditorActionEventRemoveNote {
-  type: 'remove-note',
+  type: 'remove-note';
   data: {
-    note: Note
+    note: Note;
   }
 }
 
 export interface EditorActionSetFret {
-  type: 'set-fret',
+  type: 'set-fret';
   data: {
-    note: Note,
-    value: number,
-    previousValue?: number
+    note: Note;
+    value: number;
+    previousValue?: number;
   }
 }
 
 export interface EditorActionSetScoreInfo {
-  type: 'set-score-info',
+  type: 'set-score-info';
   data: {
-    score: Score,
-    scoreInfo: ScoreInfo,
+    score: Score;
+    scoreInfo: ScoreInfo;
   }
 }
 
 export interface EditorActionSetText {
-  type: 'set-text',
+  type: 'set-text';
   data: {
-    beat: Beat,
-    value: string,
-    previousValue?: string
+    beat: Beat;
+    value: string;
+    previousValue?: string;
   }
 }
 
 export interface EditorActionSetPalmMute {
-  type: 'set-palm-mute',
+  type: 'set-palm-mute';
   data: {
-    note: Note,
-    value: boolean,
-    previousValue?: boolean,
+    note: Note;
+    value: boolean;
+    previousValue?: boolean;
   }
 }
 
 export interface EditorActionSetLetRing {
-  type: 'set-let-ring',
+  type: 'set-let-ring';
   data: {
-    note: Note,
-    value: boolean,
-    previousValue?: boolean,
+    note: Note;
+    value: boolean;
+    previousValue?: boolean;
   }
 }
 
 export interface EditorActionSetDeadNote {
-  type: 'set-dead-note',
+  type: 'set-dead-note';
   data: {
-    note: Note,
-    value: boolean,
-    previousValue?: boolean,
+    note: Note;
+    value: boolean;
+    previousValue?: boolean;
   }
 }
 
 export interface EditorActionSetAccentuation {
-  type: 'set-accentuation',
+  type: 'set-accentuation';
   data: {
     note: Note;
     value: AccentuationType;
@@ -166,20 +166,20 @@ export interface EditorActionSetAccentuation {
 }
 
 export interface EditorActionSetBend {
-  type: 'set-bend',
+  type: 'set-bend';
   data: {
-    note: Note,
-    value: BendState,
-    previousValue?: BendState,
+    note: Note;
+    value: BendState;
+    previousValue?: BendState;
   }
 }
 
 export interface EditorActionSetGhostNote {
-  type: 'set-ghost-note',
+  type: 'set-ghost-note';
   data: {
-    note: Note,
-    value: boolean,
-    previousValue?: boolean,
+    note: Note;
+    value: boolean;
+    previousValue?: boolean;
   }
 }
 
@@ -256,34 +256,34 @@ export interface EditorActionSetSlideOut {
 }
 
 export interface EditorActionSetTap {
-  type: 'set-tap',
+  type: 'set-tap';
   data: {
-    note: Note,
-    value: boolean,
-    previousValue?: boolean,
+    note: Note;
+    value: boolean;
+    previousValue?: boolean;
   }
 }
 
 export interface EditorActionSetStaccato {
-  type: 'set-staccato',
+  type: 'set-staccato';
   data: {
-    note: Note,
-    value: boolean,
-    previousValue?: boolean,
+    note: Note;
+    value: boolean;
+    previousValue?: boolean;
   }
 }
 
 export interface EditorActionSetVibrato {
-  type: 'set-vibrato',
+  type: 'set-vibrato';
   data: {
-    note: Note,
-    value: VibratoType,
-    previousValue?: VibratoType,
+    note: Note;
+    value: VibratoType;
+    previousValue?: VibratoType;
   }
 }
 
 export interface EditorActionSetPickStroke {
-  type: 'set-pick-stroke',
+  type: 'set-pick-stroke';
   data: {
     beat: Beat;
     value: PickStroke;
@@ -292,7 +292,7 @@ export interface EditorActionSetPickStroke {
 }
 
 export interface EditorActionSetChord {
-  type: 'set-chord',
+  type: 'set-chord';
   data: {
     beat: Beat;
     value: Chord | null;

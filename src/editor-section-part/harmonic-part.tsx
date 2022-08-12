@@ -8,13 +8,15 @@ import FeedbackHarmonicGlyph from '@glyphs/effects/harmonic/feedback-harmonic';
 import GenericHarmonicGlyph from '@glyphs/effects/harmonic/generic-harmonic';
 import useAnchorElem from '@hooks/use-anchor-element';
 import StyledPopper from './styled-popper';
+import EditorScoreState from '../editor/editor-score-state';
+import EditorActionDispatcher from '../editor/editor-action-dispatcher';
 
 interface HarmonicPartProps {
-  disabled: boolean;
+  editorScoreState: EditorScoreState;
+  actionDispatcher: EditorActionDispatcher;
   currentHarmonicType: number;
-  setHarmonicType: (harmonicType: number) => void;
-  isPopperOpen: boolean;
-  setPopperOpen: () => void;
+  openPopper: string | null;
+  updateOpenPopper: (popper: string) => void;
 }
 
 function harmonicTypeToString(type: number) {
@@ -43,8 +45,10 @@ export default function HarmonicPart(props: HarmonicPartProps) {
 
   const onClick = (e: any) => {
     setAnchorElement(e);
-    props.setPopperOpen();
+    props.updateOpenPopper('harmonic');
   };
+
+  const disabled = !props.editorScoreState.hasSelectedNote;
 
   const popperModifiers = [
     {
@@ -55,11 +59,13 @@ export default function HarmonicPart(props: HarmonicPartProps) {
     },
   ];
 
+  const isPopperOpen = props.openPopper === 'harmonic';
+
   const setHarmonic = (harmonic: number) => {
     if (props.currentHarmonicType === harmonic) {
-      props.setHarmonicType(alphaTab.model.HarmonicType.None);
+      props.actionDispatcher.setHarmonicType(alphaTab.model.HarmonicType.None);
     } else {
-      props.setHarmonicType(harmonic);
+      props.actionDispatcher.setHarmonicType(harmonic);
     }
   };
 
@@ -67,43 +73,43 @@ export default function HarmonicPart(props: HarmonicPartProps) {
     <div>
       <GenericHarmonicGlyph
         title="Harmonics"
-        hideTooltip={props.isPopperOpen}
+        hideTooltip={isPopperOpen}
         selected={props.currentHarmonicType !== 0}
-        disabled={props.disabled}
+        disabled={disabled}
         onClick={onClick}
       >
         {harmonicTypeToString(props.currentHarmonicType)}
       </GenericHarmonicGlyph>
-      {props.isPopperOpen && anchorElem
+      {isPopperOpen && anchorElem
         && (
-          <StyledPopper modifiers={popperModifiers} open={props.isPopperOpen} anchorEl={anchorElem} disablePortal>
+          <StyledPopper modifiers={popperModifiers} open={isPopperOpen} anchorEl={anchorElem} disablePortal>
             <NaturalHarmonicGlyph
-              disabled={props.disabled}
+              disabled={disabled}
               selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Natural}
               onClick={() => setHarmonic(alphaTab.model.HarmonicType.Natural)}
             />
             <ArtificialHarmonicGlyph
-              disabled={props.disabled}
+              disabled={disabled}
               selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Artificial}
               onClick={() => setHarmonic(alphaTab.model.HarmonicType.Artificial)}
             />
             <PinchHarmonicGlyph
-              disabled={props.disabled}
+              disabled={disabled}
               selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Pinch}
               onClick={() => setHarmonic(alphaTab.model.HarmonicType.Pinch)}
             />
             <TapHarmonicGlyph
-              disabled={props.disabled}
+              disabled={disabled}
               selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Tap}
               onClick={() => setHarmonic(alphaTab.model.HarmonicType.Tap)}
             />
             <SemiHarmonicGlyph
-              disabled={props.disabled}
+              disabled={disabled}
               selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Semi}
               onClick={() => setHarmonic(alphaTab.model.HarmonicType.Semi)}
             />
             <FeedbackHarmonicGlyph
-              disabled={props.disabled}
+              disabled={disabled}
               selected={props.currentHarmonicType === alphaTab.model.HarmonicType.Feedback}
               onClick={() => setHarmonic(alphaTab.model.HarmonicType.Feedback)}
             />
