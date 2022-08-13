@@ -264,6 +264,7 @@ export default function App() {
                     newFile={newFile}
                     open={openFile}
                     score={score()}
+                    selectedTrackIndex={selectedTrackIndex}
                     currentAvailableChords={currentAvailableChords()}
                     editorScoreState={editorScoreState}
                     actionDispatcher={editorActionDispatcher}

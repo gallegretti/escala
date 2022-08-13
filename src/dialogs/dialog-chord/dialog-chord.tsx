@@ -13,27 +13,33 @@ interface DialogChordProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (chord: Chord) => void;
+  numberOfStrings: number;
   chord: Chord | null;
 }
 
 const fretNotPlayed = -1;
+const numberOfFrets = 6;
+
+function makeStringsInitialState(numberOfStrings: number): number[] {
+  return Array(numberOfStrings).fill(fretNotPlayed);
+}
 
 export default function DialogChord(props: DialogChordProps) {
-  const numberOfStrings = 6;
-  const numberOfFrets = 6;
-  const stringsInitialState = Array(numberOfStrings).fill(fretNotPlayed);
-
   const [firstFret, setFirstFret] = useState<number>(1);
   const [chordName, setChordName] = useState<string>(props.chord?.name ?? '');
-  const [strings, setStrings] = useState<number[]>(stringsInitialState);
+  const [strings, setStrings] = useState<number[]>(makeStringsInitialState(props.numberOfStrings));
   const updateChordName = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setChordName(event.target.value);
   };
 
   useEffect(() => {
+    setStrings(makeStringsInitialState(props.numberOfStrings));
+  }, [props.numberOfStrings]);
+
+  useEffect(() => {
     setChordName(props.chord?.name ?? '');
     setFirstFret(props.chord?.firstFret ?? 1);
-    setStrings(props.chord ? [...props.chord.strings].reverse() : stringsInitialState);
+    setStrings(props.chord ? [...props.chord.strings].reverse() : makeStringsInitialState(props.numberOfStrings));
   }, [props.chord]);
 
   const save = () => {
@@ -71,7 +77,7 @@ export default function DialogChord(props: DialogChordProps) {
             firstFret={firstFret}
             setFirstFret={setFirstFret}
             numberOfFrets={numberOfFrets}
-            numberOfStrings={numberOfStrings}
+            numberOfStrings={props.numberOfStrings}
             setStrings={setStrings}
             strings={strings}
           />

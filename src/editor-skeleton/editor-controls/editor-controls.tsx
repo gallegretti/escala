@@ -38,6 +38,7 @@ interface EditorControlsProps {
   canUndo: boolean,
   canRedo: boolean,
   // Selection state
+  selectedTrackIndex: number,
   currentAvailableChords: Chord[],
   score: Score | null,
   // Others
@@ -115,6 +116,8 @@ export default function EditorControls(props: EditorControlsProps) {
     boxShadow: `0 4px 2px -2px ${theme.palette.mode === 'dark' ? '#312f2f' : '#e6e6e6'}`,
   }));
 
+  const numberOfStrings = props.score?.tracks[props.selectedTrackIndex]?.staves[0]?.stringTuning.tunings.length ?? 6;
+
   const theme = useTheme();
 
   const backgroundColor = theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100];
@@ -151,6 +154,7 @@ export default function EditorControls(props: EditorControlsProps) {
       <DialogChord
         isOpen={isChordDialogOpen}
         chord={props.editorScoreState.currentChord}
+        numberOfStrings={numberOfStrings}
         onClose={closeChordDialog}
         onSave={saveChord}
       />
