@@ -22,7 +22,12 @@ export default function ChordFirstFretInput(props: { firstFret: number, setFirst
   }), [props.firstFret]);
 
   const firstFretChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    props.setFirstFret(Number.parseInt(e.target.value, 10));
+    const newFret = Number.parseInt(e.target.value, 10);
+    if (Number.isNaN(newFret) || newFret < 0) {
+      props.setFirstFret(0)
+    } else {
+      props.setFirstFret(Number.parseInt(e.target.value, 10));
+    }
   };
 
   return (
