@@ -12,7 +12,7 @@ type AccentuationPartProps = {
 
 export default function AccentuationPart(props: AccentuationPartProps) {
   const setAccentuation = (accentuation: AccentuationType) => {
-    if (props.editorScoreState.currentSelectedNoteAccentuation === accentuation) {
+    if (props.editorScoreState.selectionNoteAccentuation === accentuation) {
       props.actionDispatcher.setAccentuationNote(alphaTab.model.AccentuationType.None);
     } else {
       props.actionDispatcher.setAccentuationNote(accentuation);
@@ -23,12 +23,12 @@ export default function AccentuationPart(props: AccentuationPartProps) {
     <>
       <AccentuatedNoteGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
-        selected={props.editorScoreState.currentSelectedNoteAccentuation === alphaTab.model.AccentuationType.Normal}
+        selected={props.editorScoreState.selectionNoteAccentuation === alphaTab.model.AccentuationType.Normal}
         onClick={() => setAccentuation(alphaTab.model.AccentuationType.Normal)}
       />
       <HeavyAccentuatedNoteGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
-        selected={props.editorScoreState.currentSelectedNoteAccentuation === alphaTab.model.AccentuationType.Heavy}
+        selected={props.editorScoreState.selectionNoteAccentuation === alphaTab.model.AccentuationType.Heavy}
         onClick={() => setAccentuation(alphaTab.model.AccentuationType.Heavy)}
       />
     </>

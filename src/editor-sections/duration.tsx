@@ -21,44 +21,44 @@ export default function DurationSetion({ actionDispatcher, editorScoreState }: D
     <>
       <WholeGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.Whole}
+        selected={editorScoreState.selectionBeatDuration === alphaTab.model.Duration.Whole}
         onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.Whole)}
       />
       <HalfGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.Half}
+        selected={editorScoreState.selectionBeatDuration === alphaTab.model.Duration.Half}
         onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.Half)}
       />
       <QuarterGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.Quarter}
+        selected={editorScoreState.selectionBeatDuration === alphaTab.model.Duration.Quarter}
         onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.Quarter)}
       />
       <EighthGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.Eighth}
+        selected={editorScoreState.selectionBeatDuration === alphaTab.model.Duration.Eighth}
         onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.Eighth)}
       />
       <SixTeenthGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.Sixteenth}
+        selected={editorScoreState.selectionBeatDuration === alphaTab.model.Duration.Sixteenth}
         onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.Sixteenth)}
       />
       <ThirtySecondGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.ThirtySecond}
+        selected={editorScoreState.selectionBeatDuration === alphaTab.model.Duration.ThirtySecond}
         onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.ThirtySecond)}
       />
       <SixtyFourGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDuration === alphaTab.model.Duration.SixtyFourth}
+        selected={editorScoreState.selectionBeatDuration === alphaTab.model.Duration.SixtyFourth}
         onClick={() => actionDispatcher.setDuration(alphaTab.model.Duration.SixtyFourth)}
       />
       <SectionDivider />
       <Tie
         disabled={!editorScoreState.hasSelectedNote}
-        onClick={() => actionDispatcher.setTieNote(!editorScoreState.isCurrentSelectedNoteTie)}
-        selected={editorScoreState.isCurrentSelectedNoteTie}
+        onClick={() => actionDispatcher.setTieNote(!editorScoreState.selectionIsTie)}
+        selected={editorScoreState.selectionIsTie}
       />
     </>
   );

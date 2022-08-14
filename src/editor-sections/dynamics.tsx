@@ -20,42 +20,42 @@ export default function DynamicsSection({ actionDispatcher, editorScoreState }: 
     <>
       <PianoPianissimoGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.PPP}
+        selected={editorScoreState.selectionBeatDynamics === alphaTab.model.DynamicValue.PPP}
         onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.PPP)}
       />
       <PianissimoGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.PP}
+        selected={editorScoreState.selectionBeatDynamics === alphaTab.model.DynamicValue.PP}
         onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.PP)}
       />
       <PianoGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.P}
+        selected={editorScoreState.selectionBeatDynamics === alphaTab.model.DynamicValue.P}
         onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.P)}
       />
       <MezzoPianoGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.MP}
+        selected={editorScoreState.selectionBeatDynamics === alphaTab.model.DynamicValue.MP}
         onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.MP)}
       />
       <MezzoForteGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.MF}
+        selected={editorScoreState.selectionBeatDynamics === alphaTab.model.DynamicValue.MF}
         onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.MF)}
       />
       <ForteGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.F}
+        selected={editorScoreState.selectionBeatDynamics === alphaTab.model.DynamicValue.F}
         onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.F)}
       />
       <FortissimoGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.FF}
+        selected={editorScoreState.selectionBeatDynamics === alphaTab.model.DynamicValue.FF}
         onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.FF)}
       />
       <ForteFortissimoGlyph
         disabled={!editorScoreState.hasSelectedNote}
-        selected={editorScoreState.currentSelectedBeatDynamics === alphaTab.model.DynamicValue.FFF}
+        selected={editorScoreState.selectionBeatDynamics === alphaTab.model.DynamicValue.FFF}
         onClick={() => actionDispatcher.setDynamics(alphaTab.model.DynamicValue.FFF)}
       />
     </>

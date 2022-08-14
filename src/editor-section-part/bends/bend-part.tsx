@@ -16,17 +16,17 @@ type BendSectionPartProps = {
 
 export default function BendPart(props: BendSectionPartProps) {
   const setBend = (newBend: keyof BendState, bendType: BendType) => {
-    if (props.editorScoreState.currentSelectedBend === null) {
+    if (props.editorScoreState.selectiondBend === null) {
       return;
     }
-    if (props.editorScoreState.currentSelectedBend[newBend] === bendType) {
+    if (props.editorScoreState.selectiondBend[newBend] === bendType) {
       props.actionDispatcher.setBend({
-        ...props.editorScoreState.currentSelectedBend,
+        ...props.editorScoreState.selectiondBend,
         [newBend]: null,
       });
     } else {
       props.actionDispatcher.setBend({
-        ...props.editorScoreState.currentSelectedBend,
+        ...props.editorScoreState.selectiondBend,
         [newBend]: bendType,
       });
     }
@@ -36,21 +36,21 @@ export default function BendPart(props: BendSectionPartProps) {
     <>
       <PreBendButton
         disabled={!props.editorScoreState.hasSelectedNote}
-        preBend={props.editorScoreState.currentSelectedBend?.preBend ?? null}
+        preBend={props.editorScoreState.selectiondBend?.preBend ?? null}
         setPreBend={(bendType) => { setBend('preBend', bendType); }}
         isPopperOpen={props.openPopper === 'pre-bend'}
         setPopperOpen={() => props.updateOpenPopper('pre-bend')}
       />
       <BendButton
         disabled={!props.editorScoreState.hasSelectedNote}
-        bend={props.editorScoreState.currentSelectedBend?.bend ?? null}
+        bend={props.editorScoreState.selectiondBend?.bend ?? null}
         setBend={(bendType) => { setBend('bend', bendType); }}
         isPopperOpen={props.openPopper === 'bend'}
         setPopperOpen={() => props.updateOpenPopper('bend')}
       />
       <ReleaseBendButton
         disabled={!props.editorScoreState.hasSelectedNote}
-        release={props.editorScoreState.currentSelectedBend?.release ?? null}
+        release={props.editorScoreState.selectiondBend?.release ?? null}
         setRelease={(bendType) => { setBend('release', bendType); }}
         isPopperOpen={props.openPopper === 'release'}
         setPopperOpen={() => props.updateOpenPopper('release')}

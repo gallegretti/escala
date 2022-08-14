@@ -20,7 +20,7 @@ interface BeatSectionProps {
 
 export default function BeatSection(props: BeatSectionProps) {
   const setPickStroke = (newPickStroke: PickStroke) => {
-    if (props.editorScoreState.currentSelectedBeatPickStroke === newPickStroke) {
+    if (props.editorScoreState.selectionBeatPickStroke === newPickStroke) {
       props.actionDispatcher.setPickStroke(alphaTab.model.PickStroke.None);
     } else {
       props.actionDispatcher.setPickStroke(newPickStroke);
@@ -33,7 +33,7 @@ export default function BeatSection(props: BeatSectionProps) {
     <>
       <TextGlyph
         disabled={isDisabled}
-        selected={props.editorScoreState.currentSelectedBeatText !== null}
+        selected={props.editorScoreState.selectionText !== null}
         onClick={() => {
           if (!isDisabled) {
             props.setText();
@@ -43,18 +43,18 @@ export default function BeatSection(props: BeatSectionProps) {
       <SectionDivider />
       <UpstrokeGlyph
         disabled={isDisabled}
-        selected={props.editorScoreState.currentSelectedBeatPickStroke === alphaTab.model.PickStroke.Up}
+        selected={props.editorScoreState.selectionBeatPickStroke === alphaTab.model.PickStroke.Up}
         onClick={() => setPickStroke(alphaTab.model.PickStroke.Up)}
       />
       <DownStrokeGlyph
         disabled={isDisabled}
-        selected={props.editorScoreState.currentSelectedBeatPickStroke === alphaTab.model.PickStroke.Down}
+        selected={props.editorScoreState.selectionBeatPickStroke === alphaTab.model.PickStroke.Down}
         onClick={() => setPickStroke(alphaTab.model.PickStroke.Down)}
       />
       <SectionDivider />
       <ChordSection
         disabled={isDisabled}
-        currentChord={props.editorScoreState.currentChord}
+        currentChord={props.editorScoreState.selectionChord}
         chords={props.chords}
         setChord={props.setChord}
         useChord={props.useChord}

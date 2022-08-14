@@ -31,46 +31,46 @@ export default function EffectsSection(props: EffectsSectionProps) {
     <>
       <PalmMuteGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
-        selected={props.editorScoreState.isCurrentSelectedNotePalmMute ?? false}
-        onClick={() => props.actionDispatcher.setPalmMute(!props.editorScoreState.isCurrentSelectedNotePalmMute)}
+        selected={props.editorScoreState.selectionIsPalmMute ?? false}
+        onClick={() => props.actionDispatcher.setPalmMute(!props.editorScoreState.selectionIsPalmMute)}
       />
       <LetRingGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
-        selected={props.editorScoreState.isCurrentSelectedNoteLetRing ?? false}
-        onClick={() => props.actionDispatcher.setLetRing(!props.editorScoreState.isCurrentSelectedNoteLetRing)}
+        selected={props.editorScoreState.selectionIsLetRing ?? false}
+        onClick={() => props.actionDispatcher.setLetRing(!props.editorScoreState.selectionIsLetRing)}
       />
       <GhostNoteGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
-        selected={props.editorScoreState.currentSelectedNoteIsGhost ?? false}
-        onClick={() => props.actionDispatcher.setGhostNote(!props.editorScoreState.currentSelectedNoteIsGhost)}
+        selected={props.editorScoreState.selectionNoteIsGhost ?? false}
+        onClick={() => props.actionDispatcher.setGhostNote(!props.editorScoreState.selectionNoteIsGhost)}
       />
       <DeadNoteGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
-        selected={props.editorScoreState.currentSelectedNoteDead ?? false}
-        onClick={() => props.actionDispatcher.setDeadNote(!props.editorScoreState.currentSelectedNoteDead)}
+        selected={props.editorScoreState.selectionNoteDead ?? false}
+        onClick={() => props.actionDispatcher.setDeadNote(!props.editorScoreState.selectionNoteDead)}
       />
       <TapNoteGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
-        selected={props.editorScoreState.isLeftHandTapNote ?? false}
-        onClick={() => props.actionDispatcher.setTapNote(!props.editorScoreState.isLeftHandTapNote)}
+        selected={props.editorScoreState.selectionIsLeftHandTap ?? false}
+        onClick={() => props.actionDispatcher.setTapNote(!props.editorScoreState.selectionIsLeftHandTap)}
       />
       <VibratoNoteGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
-        selected={props.editorScoreState.isVibrato ?? false}
-        onClick={() => props.actionDispatcher.setVibratoNote(props.editorScoreState.isVibrato
+        selected={props.editorScoreState.selectionIsVibrato ?? false}
+        onClick={() => props.actionDispatcher.setVibratoNote(props.editorScoreState.selectionIsVibrato
           ? alphaTab.model.VibratoType.None : alphaTab.model.VibratoType.Slight)}
       />
       <HarmonicPart
         actionDispatcher={props.actionDispatcher}
         editorScoreState={props.editorScoreState}
-        currentHarmonicType={props.editorScoreState.currentSelectedNoteHarmonicType ?? 0}
+        currentHarmonicType={props.editorScoreState.selectionNoteHarmonicType ?? 0}
         openPopper={openPopper}
         updateOpenPopper={updateOpenPopper}
       />
       <HammerPullNoteGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
-        onClick={() => { props.actionDispatcher.setHammer(!props.editorScoreState.currentSelectedNoteHammerOrPull); }}
-        selected={props.editorScoreState.currentSelectedNoteHammerOrPull ?? false}
+        onClick={() => { props.actionDispatcher.setHammer(!props.editorScoreState.selectionNoteHammerOrPull); }}
+        selected={props.editorScoreState.selectionNoteHammerOrPull ?? false}
       />
       <SectionDivider />
       <AccentuationPart
@@ -92,8 +92,8 @@ export default function EffectsSection(props: EffectsSectionProps) {
       <SectionDivider />
       <StaccatoGlyph
         disabled={!props.editorScoreState.hasSelectedNote}
-        selected={props.editorScoreState.isCurrentSelectedNoteStaccato}
-        onClick={() => props.actionDispatcher.setStaccato(!props.editorScoreState.isCurrentSelectedNoteStaccato)}
+        selected={props.editorScoreState.selectionIsStaccato}
+        onClick={() => props.actionDispatcher.setStaccato(!props.editorScoreState.selectionIsStaccato)}
       />
     </>
   );

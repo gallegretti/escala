@@ -12,8 +12,8 @@ type SlidePartProps = {
 
 export default function SlidePart(props: SlidePartProps) {
   const setSlideOut = () => {
-    if (props.editorScoreState.currentSlideOut === null
-      || props.editorScoreState.currentSlideOut === alphaTab.model.SlideOutType.None) {
+    if (props.editorScoreState.selectionSlideOut === null
+      || props.editorScoreState.selectionSlideOut === alphaTab.model.SlideOutType.None) {
       props.actionDispatcher.setSlideOut(alphaTab.model.SlideOutType.OutUp);
     } else {
       props.actionDispatcher.setSlideOut(alphaTab.model.SlideOutType.None);
@@ -21,8 +21,8 @@ export default function SlidePart(props: SlidePartProps) {
   };
 
   const setSlideIn = () => {
-    if (props.editorScoreState.currentSlideIn === null
-      || props.editorScoreState.currentSlideIn === alphaTab.model.SlideInType.None) {
+    if (props.editorScoreState.selectionSlideIn === null
+      || props.editorScoreState.selectionSlideIn === alphaTab.model.SlideInType.None) {
       props.actionDispatcher.setSlideIn(alphaTab.model.SlideInType.IntoFromBelow);
     } else {
       props.actionDispatcher.setSlideIn(alphaTab.model.SlideInType.None);
@@ -30,16 +30,16 @@ export default function SlidePart(props: SlidePartProps) {
   };
 
   const setSlide = () => {
-    props.actionDispatcher.setSlide(!props.editorScoreState.currentSelectedNoteSlide);
+    props.actionDispatcher.setSlide(!props.editorScoreState.selectionNoteSlide);
   };
 
-  const slideIn = props.editorScoreState.currentSlideIn !== null
-    && props.editorScoreState.currentSlideIn !== alphaTab.model.SlideInType.None;
+  const slideIn = props.editorScoreState.selectionSlideIn !== null
+    && props.editorScoreState.selectionSlideIn !== alphaTab.model.SlideInType.None;
 
-  const slideOut = props.editorScoreState.currentSlideOut !== null
-    && props.editorScoreState.currentSlideOut !== alphaTab.model.SlideOutType.None;
+  const slideOut = props.editorScoreState.selectionSlideOut !== null
+    && props.editorScoreState.selectionSlideOut !== alphaTab.model.SlideOutType.None;
 
-  const slide = props.editorScoreState.currentSelectedNoteSlide ?? false;
+  const slide = props.editorScoreState.selectionNoteSlide ?? false;
 
   return (
     <>

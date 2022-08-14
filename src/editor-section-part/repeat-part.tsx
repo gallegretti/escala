@@ -16,14 +16,14 @@ interface RepeatPartProps {
 export default function RepeatPart(props: RepeatPartProps) {
   const [anchorElem, setAnchorElem] = useAnchorElem();
 
-  const hasCloseRepeat = props.editorScoreState.numberOfRepetitions > 0;
+  const hasCloseRepeat = props.editorScoreState.selectionNumberOfRepetitions > 0;
   const isDisabled = !props.editorScoreState.hasSelectedBeat;
   return (
     <>
       <OpenRepeatGlyph
-        selected={props.editorScoreState.isOpenRepeat}
+        selected={props.editorScoreState.selectionIsOpenRepeat}
         disabled={isDisabled}
-        onClick={() => props.actionDispatcher.setOpenRepeat(!props.editorScoreState.isOpenRepeat)}
+        onClick={() => props.actionDispatcher.setOpenRepeat(!props.editorScoreState.selectionIsOpenRepeat)}
       />
       <CloseRepeatGlyph
         selected={hasCloseRepeat}
@@ -64,7 +64,7 @@ export default function RepeatPart(props: RepeatPartProps) {
             <Input
               type="number"
               title="Number of repetitions"
-              value={props.editorScoreState.numberOfRepetitions}
+              value={props.editorScoreState.selectionNumberOfRepetitions}
               onChange={(e) => {
                 props.actionDispatcher.setCloseRepeat(Number.parseInt(e.target.value, 10));
               }}

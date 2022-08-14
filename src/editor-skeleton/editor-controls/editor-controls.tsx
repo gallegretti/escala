@@ -127,7 +127,7 @@ export default function EditorControls(props: EditorControlsProps) {
     <div>
       <DialogText
         isOpen={isTextDialogOpen}
-        currentText={props.editorScoreState.currentSelectedBeatText}
+        currentText={props.editorScoreState.selectionText}
         onClose={closeTextDialog}
         onSave={saveNewText}
       />
@@ -153,7 +153,7 @@ export default function EditorControls(props: EditorControlsProps) {
       />
       <DialogChord
         isOpen={isChordDialogOpen}
-        chord={props.editorScoreState.currentChord}
+        chord={props.editorScoreState.selectionChord}
         numberOfStrings={numberOfStrings}
         onClose={closeChordDialog}
         onSave={saveChord}

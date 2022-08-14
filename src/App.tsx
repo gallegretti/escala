@@ -282,7 +282,7 @@ export default function App() {
                 >
                   <EditorCursor
                     hasDialogOpen={hasDialog}
-                    fret={editorScoreState.currentFret}
+                    fret={editorScoreState.selectionFret}
                     setFret={editorActionDispatcher.setFret}
                     bounds={selectedNoteController?.getNoteBounds()}
                   />
