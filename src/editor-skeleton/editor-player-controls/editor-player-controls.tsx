@@ -21,6 +21,7 @@ const EditorPlayerControlsDiv = styled('div')(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  height: '65px',
   backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100],
 }));
 

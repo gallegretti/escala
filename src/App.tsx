@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './App.css';
 import {
   createTheme, ThemeProvider, PaletteMode, styled,
 } from '@mui/material';
@@ -44,6 +43,29 @@ const Body = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[900] : 'inherit',
   height: '100vh',
 }));
+
+const AppContainer = styled('div')({
+  height: 'calc(100vh - 2px)',
+  margin: '0 auto',
+  border: '1px solid rgba(0, 0, 0, 0.12)',
+  display: 'flex',
+  flexDirection: 'column',
+  overflow: 'hidden',
+  position: 'relative',
+});
+
+const AppContent = styled('div')({
+  position: 'relative',
+  overflow: 'hidden',
+  flex: '1 1 auto',
+});
+
+const AppEditorControls = styled('div')({
+  position: 'absolute',
+  left: '90px',
+  right: 0,
+  zIndex: 999,
+})
 
 export default function App() {
   const forceUpdate = useForceUpdate();
@@ -250,8 +272,8 @@ export default function App() {
       <DialogContext.Provider value={hasDialogContext}>
         <ThemeProvider theme={theme}>
           <Body>
-            <div className="app-container">
-              <div className="app-content">
+            <AppContainer>
+              <AppContent>
                 <EditorLeftMenu
                   score={api?.score}
                   onNewTrack={editorActionDispatcher.newTrack}
@@ -259,7 +281,7 @@ export default function App() {
                   selectedTrackIndex={selectedTrackIndex}
                   selectTrack={selectTrack}
                 />
-                <div className="app-editor-controls">
+                <AppEditorControls>
                   <EditorControls
                     newFile={newFile}
                     open={openFile}
@@ -274,7 +296,7 @@ export default function App() {
                     canRedo={editorActions.canRedo()}
                     canUndo={editorActions.canUndo()}
                   />
-                </div>
+                </AppEditorControls>
                 <AlphaTabViewport
                   apiReady={setupWithApi}
                   renderFinished={onAlphatabRenderFinished}
@@ -287,7 +309,7 @@ export default function App() {
                     bounds={selectedNoteController?.getNoteBounds()}
                   />
                 </AlphaTabViewport>
-              </div>
+              </AppContent>
               <EditorPlayerControls
                 onSpeedChange={setSpeed}
                 onVolumeChange={setVolume}
@@ -298,7 +320,7 @@ export default function App() {
                 isMetronome={api?.metronomeVolume !== 0}
                 isPlaying={api?.playerState === 1}
               />
-            </div>
+            </AppContainer>
           </Body>
         </ThemeProvider>
       </DialogContext.Provider>

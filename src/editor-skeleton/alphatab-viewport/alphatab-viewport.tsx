@@ -10,6 +10,30 @@ interface AlphaTabViewportProps {
 }
 
 const AlphaTabContainer = styled('div')`
+  overflow-y: auto;
+  position: absolute;
+  top: 96px;
+  left: 90px;
+  right: 0;
+  bottom: 0;
+  padding-right: 20px;
+
+  /* These elements are created by AlphaTab */
+  .at-cursor-bar {
+    /* Defines the color of the bar background when a bar is played */
+    background: rgba(255, 242, 0, 0.25);
+  }
+
+  .at-selection div {
+    /* Defines the color of the selection background */
+    background: rgba(64, 64, 255, 0.2);
+  }
+
+  .at-cursor-beat {
+    /* Defines the beat cursor */
+    background: rgba(64, 64, 255, 0.75);
+    width: 3px;
+  }
   ${(props) => (props.theme.palette.mode === 'dark' ? `
   fill: white;
   background-color: black;

@@ -11,6 +11,7 @@ export default function EditorPlayerSpeedComponent(props: EditorPlayerSpeedProps
   return (
     <Select
       label="Speed"
+      size="small"
       value={props.speed}
       onChange={(event) => props.onChangeSpeed(event.target.value as number)}
     >
