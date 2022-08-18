@@ -1,3 +1,3 @@
-const genericDurationFontSize = '26px';
+const genericDurationFontSize = '24px';
 
 export default genericDurationFontSize;

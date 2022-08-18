@@ -18,7 +18,7 @@ export default function StaccatoGlyph(props: DynamicGlyphProps) {
       >
         <path d="M7,6 L7,24" stroke={color} strokeWidth="0.96" style={{ fill: 'none' }} />
         <text fill={color} style={{ transform: 'translate(0px, 24px)', fontSize: genericDurationFontSize }}></text>
-        <circle cx="4" cy="30" r="2" stroke="black" strokeWidth="1" fill={color} />
+        <circle cx="4" cy="30" r="2" strokeWidth="1" fill={color} />
       </svg>
     </Tooltip>
   );

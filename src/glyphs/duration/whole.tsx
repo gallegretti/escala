@@ -16,7 +16,12 @@ export default function WholeGlyph(props: DurationGlyphProps) {
         width="12px"
         style={baseSvgStyle(props)}
       >
-        <text fill={color} style={{ transform: 'translate(0px, 29px)', fontSize: genericDurationFontSize }}></text>
+        <text fill={color} style={{ transform: 'translate(0px, 29px)', fontSize: genericDurationFontSize }}>
+          {
+            // https://w3c.github.io/smufl/latest/tables/individual-notes.html
+            '\uE1D2'
+          }
+        </text>
       </svg>
     </Tooltip>
   );

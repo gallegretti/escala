@@ -23,7 +23,7 @@ export default function ChordGlyph(props: DynamicGlyphProps) {
         >
           {
             // https://w3c.github.io/smufl/latest/tables/chord-diagrams.html
-            '\uE854'
+            '\uE857'
           }
         </text>
       </svg>
