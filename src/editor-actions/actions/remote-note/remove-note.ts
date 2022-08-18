@@ -13,6 +13,16 @@ class RemoveNoteAction extends EditorActionInterface<EditorActionEventRemoveNote
       note.hammerPullDestination.hammerPullOrigin = null;
       note.hammerPullDestination = null;
     }
+    if (note.slideOrigin) {
+      note.slideOrigin.slideTarget = null;
+      note.slideOrigin.slideOutType = alphaTab.model.SlideOutType.None;
+      note.slideOrigin = null;
+    }
+    if (note.slideTarget) {
+      note.slideTarget.slideOrigin = null;
+      note.slideOutType = alphaTab.model.SlideOutType.None;
+      note.slideTarget = null;
+    }
     note.beat.removeNote(note);
     return {
       requiresRerender: true,
