@@ -26,7 +26,7 @@ function VolumeOff(props: DynamicGlyphProps) {
 
 export default function VolumeGlyph(props: DynamicGlyphProps) {
   if (props.selected) {
-    return VolumeOff(props);
+    return VolumeOn(props);
   }
-  return VolumeOn(props);
+  return VolumeOff(props);
 }
