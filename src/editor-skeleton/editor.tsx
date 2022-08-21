@@ -84,7 +84,7 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
     setApi(newApi);
     // eslint-disable-next-line no-new
     new EventEmitter(newApi.renderer as ScoreRenderer, onEditorUIEvent);
-    selectedNoteController = new SelectedNoteController();
+    selectedNoteController = new SelectedNoteController(null);
     editorActionDispatcher.api = newApi;
     editorActionDispatcher.onResult = handlerActionResult;
     editorActionDispatcher.selectedNoteController = selectedNoteController;
@@ -209,6 +209,8 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
     api?.renderTracks([track]);
     setSelectedTrackIndex(track.index);
     const lineCount = track.staves[0]?.standardNotationLineCount;
+    // Update selection
+    selectedNoteController.setSelectedSlot(null);
     if (lineCount) {
       selectedNoteController.setNumberOfStrings(lineCount);
     }
