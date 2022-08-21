@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 export interface BaseGlyphProps {
     id?: string;
@@ -7,5 +7,6 @@ export interface BaseGlyphProps {
     onClick: (event?: any) => void;
     children?: React.ReactNode;
     hideTooltip?: boolean;
+    extraSvgStyles?: CSSProperties;
     ref?: any;
 }

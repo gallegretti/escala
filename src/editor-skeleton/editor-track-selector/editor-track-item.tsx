@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ExpandMoreGlyph from '@glyphs/generic/expand-more';
 import {
   Collapse,
@@ -6,7 +6,6 @@ import {
   ListItemButton,
   ListItemText,
   styled,
-  useThemeProps,
 } from '@mui/material';
 import EditGlyph from '@glyphs/generic/edit';
 import DeleteGlyph from '@glyphs/generic/delete';
@@ -48,13 +47,14 @@ export default function EditorTrackItem({
           </ListItemStyled>
           <ExpandMoreGlyph
             onClick={() => { onExpand(!isExpanded) }}
+            extraSvgStyles={{ flexShrink: 0 }}
             selected={false}
             disabled={false}
           />
         </ListItemButton>
       </ListItem>
       <Collapse in={isExpanded}>
-        <div style={{ paddingLeft: '10px' }}>
+        <div style={{ paddingLeft: '16px', display: 'flex', gap: '10px' }}>
           <EditGlyph disabled={false} selected={false} onClick={onEdit} />
           <DeleteGlyph disabled={false} selected={false} onClick={onRemove} />
         </div>
