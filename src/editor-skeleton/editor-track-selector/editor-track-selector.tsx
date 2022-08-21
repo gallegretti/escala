@@ -1,48 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  List, ListItem, ListItemButton, ListItemText, styled,
+  List,
 } from '@mui/material';
 import { Track } from '../../alphatab-types/alphatab-types';
+import EditorTrackItem from './editor-track-item';
 
 interface EditorTrackSelectorProps {
   tracks: Track[];
   selectedTrackIndex: number;
   onTrackSelected: (track: Track) => void;
+  onTrackEdit: (track: Track) => void;
   // eslint-disable-next-line react/no-unused-prop-types
   onNewTrack: () => void;
 }
 
-const ListItemStyled = styled(ListItemText)(({ theme }) => ({
-  color: theme.palette.mode === 'dark' ? 'white' : 'black',
-}));
-
 export default function EditorTrackSelector(props: EditorTrackSelectorProps) {
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
   return (
     <List style={{ width: '100%' }} disablePadding>
       {props.tracks.map((track, i) => (
-        <ListItem
-          selected={props.selectedTrackIndex === i}
+        <EditorTrackItem
+          isExpanded={i === expandedIndex}
+          onExpand={(v) => { setExpandedIndex(v ? i : null) }}
           key={track.index}
-          onClick={() => props.onTrackSelected(track)}
-          disablePadding
-        >
-          <ListItemButton>
-            <ListItemStyled>
-              {track.shortName || track.name || 'Unamed'}
-            </ListItemStyled>
-          </ListItemButton>
-        </ListItem>
-      ))}
-      {/*
-      <ListItem onClick={() => props.onNewTrack()} style={{ display: 'flex', justifyContent: 'center' }}>
-        <svg xmlns="http://www.w3.org/2000/svg" height="48" width="48" style={baseSvgStyle({ disabled: false })}>
-        <path
-          fill={useGlyphColor({ disabled: false, selected: false })}
-          d="M22.5 38V25.5H10V22.5H22.5V10H25.5V22.5H38V25.5H25.5V38Z"
+          track={track}
+          isSelected={props.selectedTrackIndex === i}
+          onSelect={() => { props.onTrackSelected(props.tracks[i]) }}
+          onEdit={() => props.onTrackEdit(track)}
         />
-        </svg>
-      </ListItem>
-      */}
+      ))}
     </List>
   );
 }

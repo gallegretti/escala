@@ -54,7 +54,7 @@ const AppContent = styled('div')({
 
 const AppEditorControls = styled('div')({
   position: 'absolute',
-  left: '90px',
+  left: '120px',
   right: 0,
   zIndex: 999,
 })
@@ -244,7 +244,7 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
     <AppContainer>
       <AppContent>
         <EditorLeftMenu
-          score={api?.score ?? null}
+          tracks={api?.score?.tracks ?? null}
           onNewTrack={editorActionDispatcher.newTrack}
           onTrackEdit={editorActionDispatcher.editTrack}
           selectedTrackIndex={selectedTrackIndex}

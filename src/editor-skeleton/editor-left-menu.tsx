@@ -11,7 +11,7 @@ const SideMenuDiv = styled('div')(({ theme }) => ({
   top: 0,
   left: 0,
   bottom: 0,
-  width: '90px',
+  width: '120px',
   display: 'flex',
   alignContent: 'stretch',
   zIndex: '1001',
@@ -23,13 +23,13 @@ const SideMenuDiv = styled('div')(({ theme }) => ({
 interface EditorLeftMenuProps {
   onNewTrack: (params: TrackInfo) => void;
   onTrackEdit: (track: Track, params: TrackInfo) => void;
-  score: Score | null;
+  tracks: Track[] | null;
   selectedTrackIndex: number;
   selectTrack: (track: Track) => void;
 }
 
 export default function EditorLeftMenu({
-  score, selectedTrackIndex, selectTrack, onNewTrack, onTrackEdit,
+  tracks, selectedTrackIndex, selectTrack, onNewTrack, onTrackEdit,
 }: EditorLeftMenuProps) {
   const {
     closeDialog,
@@ -38,30 +38,40 @@ export default function EditorLeftMenu({
   } = useDialog();
 
   const onSave = (params: TrackInfo) => {
-    onTrackEdit(score?.tracks[selectedTrackIndex]!, params);
+    if (tracks) {
+      onTrackEdit(tracks[selectedTrackIndex], params);
+    }
     closeDialog();
   };
 
   const onSelectTrack = (track: Track) => {
-    openDialog();
+    // openDialog();
+    selectTrack(track);
   };
+
+  const onEditTrack = (track: Track) => {
+    openDialog();
+  }
 
   return (
     <>
-      <DialogTrack
-        isOpen={isDialogOpen}
-        onClose={closeDialog}
-        currentTrack={score?.tracks[selectedTrackIndex]}
-        onSave={onSave}
-      />
+      {tracks && (
+        <DialogTrack
+          isOpen={isDialogOpen}
+          onClose={closeDialog}
+          currentTrack={tracks[selectedTrackIndex]}
+          onSave={onSave}
+        />
+      )}
       <SideMenuDiv>
-        {score?.tracks
+        {tracks
           && (
             <EditorTrackSelector
               onNewTrack={openDialog}
               selectedTrackIndex={selectedTrackIndex}
               onTrackSelected={onSelectTrack}
-              tracks={score?.tracks}
+              onTrackEdit={onEditTrack}
+              tracks={tracks}
             />
           )}
       </SideMenuDiv>
