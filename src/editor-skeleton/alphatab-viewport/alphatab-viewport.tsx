@@ -65,16 +65,8 @@ export default function AlphaTabViewport(props: AlphaTabViewportProps) {
         includeNoteBounds: true,
         logLevel: 2,
       },
-      display: {
-        resources: {
-          // staffLineColor: '#FFFFFF',
-        },
-      },
     };
     const newApi = new alphaTab.AlphaTabApi(main!, settings);
-    if (props.apiReady) {
-      props.apiReady(newApi);
-    }
     // Setup observables
     if (props.playerStateChanged) {
       newApi.playerStateChanged.on(props.playerStateChanged);
@@ -82,8 +74,10 @@ export default function AlphaTabViewport(props: AlphaTabViewportProps) {
     if (props.renderFinished) {
       newApi.renderFinished.on(props.renderFinished);
     }
+    if (props.apiReady) {
+      props.apiReady(newApi);
+    }
     return function cleanup() {
-      newApi.destroy();
       // Remove observables
       if (props.playerStateChanged) {
         newApi.playerStateChanged.off(props.playerStateChanged);
@@ -91,12 +85,13 @@ export default function AlphaTabViewport(props: AlphaTabViewportProps) {
       if (props.renderFinished) {
         newApi.renderFinished.off(props.renderFinished);
       }
+      newApi.destroy();
     };
   }, []);
 
   return (
-    <AlphaTabContainer className="app-viewport">
-      <div id="alphaTab" className="at-main">
+    <AlphaTabContainer>
+      <div id="alphaTab">
         {props.children}
       </div>
     </AlphaTabContainer>
