@@ -10,6 +10,7 @@ interface EditorTrackSelectorProps {
   selectedTrackIndex: number;
   onTrackSelected: (track: Track) => void;
   onTrackEdit: (track: Track) => void;
+  onTrackRemove: (track: Track) => void;
   // eslint-disable-next-line react/no-unused-prop-types
   onNewTrack: () => void;
 }
@@ -28,6 +29,7 @@ export default function EditorTrackSelector(props: EditorTrackSelectorProps) {
           isSelected={props.selectedTrackIndex === i}
           onSelect={() => { props.onTrackSelected(props.tracks[i]) }}
           onEdit={() => props.onTrackEdit(track)}
+          onRemove={() => props.onTrackRemove(track)}
         />
       ))}
     </List>

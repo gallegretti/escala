@@ -22,6 +22,7 @@ const SideMenuDiv = styled('div')(({ theme }) => ({
 
 interface EditorLeftMenuProps {
   onNewTrack: (params: TrackInfo) => void;
+  onRemoveTrack: (track: Track) => void;
   onTrackEdit: (track: Track, params: TrackInfo) => void;
   tracks: Track[] | null;
   selectedTrackIndex: number;
@@ -29,7 +30,7 @@ interface EditorLeftMenuProps {
 }
 
 export default function EditorLeftMenu({
-  tracks, selectedTrackIndex, selectTrack, onNewTrack, onTrackEdit,
+  tracks, selectedTrackIndex, selectTrack, onNewTrack, onTrackEdit, onRemoveTrack,
 }: EditorLeftMenuProps) {
   const {
     closeDialog,
@@ -71,6 +72,7 @@ export default function EditorLeftMenu({
               selectedTrackIndex={selectedTrackIndex}
               onTrackSelected={onSelectTrack}
               onTrackEdit={onEditTrack}
+              onTrackRemove={onRemoveTrack}
               tracks={tracks}
             />
           )}

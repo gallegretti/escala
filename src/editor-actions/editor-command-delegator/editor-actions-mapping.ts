@@ -7,6 +7,7 @@ import addNoteAction from '../actions/add-note/add-note';
 import addTrackAction from '../actions/add-track/add-track';
 import editTrackAction from '../actions/edit-track/edit-track';
 import removeNoteAction from '../actions/remote-note/remove-note';
+import removeTrackAction from '../actions/remove-track/remove-track';
 import setAccentuationAction from '../actions/set-accentuation/set-accentuation';
 import setBendAction from '../actions/set-bend/set-bend';
 import setChordAction from '../actions/set-chord/set-chord';
@@ -40,6 +41,7 @@ const mapping: Record<string, EditorActionInterface<EditorActionEvent>> = {
   'add-track': addTrackAction,
   'edit-track': editTrackAction,
   'remove-note': removeNoteAction,
+  'remove-track': removeTrackAction,
   'set-accentuation': setAccentuationAction,
   'set-bend': setBendAction,
   'set-chord': setChordAction,

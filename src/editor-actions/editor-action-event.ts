@@ -103,6 +103,13 @@ export interface EditorActionEventRemoveNote {
   }
 }
 
+export interface EditorActionEventRemoveTrack {
+  type: 'remove-track';
+  data: {
+    track: Track;
+  }
+}
+
 export interface EditorActionSetFret {
   type: 'set-fret';
   data: {
@@ -312,6 +319,7 @@ export type EditorActionEvent
   | EditorActionEventAddBar
   | EditorActionEventAddBeat
   | EditorActionEventRemoveNote
+  | EditorActionEventRemoveTrack
   | EditorActionSetAccentuation
   | EditorActionSetBend
   | EditorActionSetChord

@@ -202,6 +202,10 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
   };
 
   const selectTrack = (track: Track) => {
+    if (api?.tracks.length === 1 && api.tracks[0].index === track.index) {
+      // Skip re-rendering if selection hasn't changed
+      return;
+    }
     api?.renderTracks([track]);
     setSelectedTrackIndex(track.index);
     const lineCount = track.staves[0]?.standardNotationLineCount;
@@ -247,6 +251,7 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
           tracks={api?.score?.tracks ?? null}
           onNewTrack={editorActionDispatcher.newTrack}
           onTrackEdit={editorActionDispatcher.editTrack}
+          onRemoveTrack={editorActionDispatcher.removeTrack}
           selectedTrackIndex={selectedTrackIndex}
           selectTrack={selectTrack}
         />

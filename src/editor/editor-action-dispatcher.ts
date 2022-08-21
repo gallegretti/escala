@@ -235,6 +235,10 @@ class EditorActionDispatcher {
     this.dispatchAction({ type: 'edit-track', data: { track, trackInfo } });
   };
 
+  removeTrack = (track: Track) => {
+    this.dispatchAction({ type: 'remove-track', data: { track } });
+  }
+
   setFret = (fret: number) => {
     const selectedSlot = this.selectedNoteController.getSelectedSlot();
     if (!selectedSlot) {

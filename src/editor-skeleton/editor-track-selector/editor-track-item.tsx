@@ -9,6 +9,7 @@ import {
   useThemeProps,
 } from '@mui/material';
 import EditGlyph from '@glyphs/generic/edit';
+import DeleteGlyph from '@glyphs/generic/delete';
 import { Track } from '../../alphatab-types/alphatab-types';
 
 const ListItemStyled = styled(ListItemText)(({ theme }) => ({
@@ -21,6 +22,7 @@ type EditorTrackItemProps = {
   onExpand: (v: boolean) => void;
   onSelect: () => void;
   onEdit: () => void;
+  onRemove: () => void;
   track: Track;
 };
 
@@ -31,6 +33,7 @@ export default function EditorTrackItem({
   track,
   isExpanded,
   onExpand,
+  onRemove,
 }: EditorTrackItemProps) {
   return (
     <>
@@ -53,6 +56,7 @@ export default function EditorTrackItem({
       <Collapse in={isExpanded}>
         <div style={{ paddingLeft: '10px' }}>
           <EditGlyph disabled={false} selected={false} onClick={onEdit} />
+          <DeleteGlyph disabled={false} selected={false} onClick={onRemove} />
         </div>
       </Collapse>
     </>
