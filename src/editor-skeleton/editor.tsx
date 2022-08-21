@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import useStateRef from 'react-usestateref';
 import {
   styled,
 } from '@mui/material';
@@ -29,8 +30,6 @@ function useForceUpdate() {
 
 const editorActions: EditorActions = new EditorActions();
 let selectedNoteController!: SelectedNoteController;
-// let editorScoreState = new EditorScoreState(selectedNoteController);
-let api!: AlphaTabApi;
 const editorActionDispatcher = new EditorActionDispatcher(
   editorActions,
   selectedNoteController,
@@ -67,22 +66,25 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
 
   const [editorScoreState, setEditorScoreState] = useState(new EditorScoreState(selectedNoteController));
 
+  const [api, setApi, apiRef] = useStateRef<AlphaTabApi | null>(null);
+
   const handlerActionResult = (result: EditorActionResult) => {
     if (result.requiresRerender) {
-      api.render();
+      apiRef.current?.render();
       setEditorScoreState(new EditorScoreState(selectedNoteController));
     }
     if (result.requiresMidiUpdate) {
-      // loadMidiForScore is a private function.
-      (api as any).loadMidiForScore();
+      // loadMidiForScore is a private function so we cast to any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (apiRef.current as any).loadMidiForScore();
     }
   };
 
   const setupWithApi = (newApi: AlphaTabApi) => {
-    api = newApi;
+    setApi(newApi);
     // eslint-disable-next-line no-new
-    new EventEmitter(api.renderer as ScoreRenderer, onEditorUIEvent);
-    selectedNoteController = new SelectedNoteController(api.renderer as ScoreRenderer);
+    new EventEmitter(newApi.renderer as ScoreRenderer, onEditorUIEvent);
+    selectedNoteController = new SelectedNoteController();
     editorActionDispatcher.api = newApi;
     editorActionDispatcher.onResult = handlerActionResult;
     editorActionDispatcher.selectedNoteController = selectedNoteController;
@@ -158,7 +160,7 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
   };
 
   const playPause = () => {
-    api.playPause();
+    api?.playPause();
     forceUpdate();
   };
 
@@ -182,21 +184,25 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
   };
 
   const print = () => {
-    api.print('', null);
+    api?.print('', null);
   };
 
-  const score = (): Score | null => api?.score;
+  const score = (): Score | null => api?.score ?? null;
 
   const setVolume = (volume: number) => {
-    api.masterVolume = volume;
+    if (api) {
+      api.masterVolume = volume;
+    }
   };
 
   const setSpeed = (speed: number) => {
-    api.playbackSpeed = speed;
+    if (api) {
+      api.playbackSpeed = speed;
+    }
   };
 
   const selectTrack = (track: Track) => {
-    api.renderTracks([track]);
+    api?.renderTracks([track]);
     setSelectedTrackIndex(track.index);
     const lineCount = track.staves[0]?.standardNotationLineCount;
     if (lineCount) {
@@ -207,12 +213,15 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
   const openFile = (file: File) => {
     const fileReader = new FileReader();
     fileReader.onload = (event) => {
-      api.load(event.target?.result, [0]);
+      api?.load(event.target?.result, [0]);
     };
     fileReader.readAsArrayBuffer(file);
   };
 
   const exportGuitarPro = () => {
+    if (!api) {
+      return;
+    }
     const exporter = new alphaTab.exporter.Gp7Exporter();
     const data = exporter.export(api.score!, api.settings);
     const a = document.createElement('a');
@@ -224,18 +233,18 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
   };
 
   const newFile = () => {
-    api.tex('\\title \'New score\' . 3.3.4');
+    api?.tex('\\title \'New score\' . 3.3.4');
   };
 
   const exportMidi = () => {
-    api.downloadMidi();
+    api?.downloadMidi();
   };
 
   return (
     <AppContainer>
       <AppContent>
         <EditorLeftMenu
-          score={api?.score}
+          score={api?.score ?? null}
           onNewTrack={editorActionDispatcher.newTrack}
           onTrackEdit={editorActionDispatcher.editTrack}
           selectedTrackIndex={selectedTrackIndex}
@@ -266,7 +275,7 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
             hasDialogOpen={hasDialog}
             fret={editorScoreState.selectionFret}
             setFret={editorActionDispatcher.setFret}
-            bounds={selectedNoteController?.getNoteBounds()}
+            bounds={selectedNoteController?.getNoteBounds(api?.renderer as ScoreRenderer)}
           />
         </AlphaTabViewport>
       </AppContent>

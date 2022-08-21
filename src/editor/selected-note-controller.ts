@@ -13,11 +13,9 @@ interface NoteSlotData {
 }
 
 class SelectedNoteController {
-  private currentSelectedSlot: NoteSlotData | null = null;
-
   private numberOfStrings = 6;
 
-  constructor(private renderer: ScoreRenderer) {
+  constructor(private currentSelectedSlot: NoteSlotData | null) {
   }
 
   public setNumberOfStrings(numberOfStrings: number) {
@@ -102,9 +100,9 @@ class SelectedNoteController {
     this.currentSelectedSlot = noteSlot;
   }
 
-  public getNoteBounds(): Bounds | undefined {
+  public getNoteBounds(renderer: ScoreRenderer): Bounds | undefined {
     if (this.currentSelectedSlot?.note) {
-      const beats = this.renderer?.boundsLookup?.findBeats(this.currentSelectedSlot.note.beat);
+      const beats = renderer?.boundsLookup?.findBeats(this.currentSelectedSlot.note.beat);
       // [0] is the top staff and [1] is at the bottom
       const noteBounds = beats?.[1]?.notes?.find((it: NoteBounds) => it.note.id === this.currentSelectedSlot?.note?.id);
       const bounds = noteBounds?.noteHeadBounds;
@@ -112,7 +110,7 @@ class SelectedNoteController {
     }
     if (this.currentSelectedSlot) {
       // Same here, use [1] because we only support clicking at the bottom staff
-      const barVisualBounds = this.renderer?.boundsLookup?.findBeats(this.currentSelectedSlot.beat)?.[1]?.visualBounds;
+      const barVisualBounds = renderer?.boundsLookup?.findBeats(this.currentSelectedSlot.beat)?.[1]?.visualBounds;
       if (!barVisualBounds) {
         return undefined;
       }
