@@ -105,10 +105,10 @@ export default function EditorControls(props: EditorControlsProps) {
   const colorMode = React.useContext(ColorModeContext);
 
   const TabContainer = styled('div')(({ theme }) => ({
+    display: 'flex',
     backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100],
     borderTopColor: theme.palette.mode === 'dark' ? theme.palette.grey[900] : '#ede9e9',
     height: '45px',
-    display: currentTab !== 3 ? 'none' : 'flex',
     alignItems: 'center',
     gap: '10px',
     paddingLeft: '10px',
@@ -180,48 +180,55 @@ export default function EditorControls(props: EditorControlsProps) {
         </div>
       </div>
       <div>
-        <TabContainer style={{ display: currentTab !== 0 ? 'none' : 'flex' }}>
-          <DocumentSection
-            newFile={props.newFile}
-            openFile={props.open}
-            canRedo={props.canRedo}
-            canUndo={props.canUndo}
-            exportGuitarPro={props.exportGuitarPro}
-            exportMidi={props.exportMidi}
-            print={props.print}
-            redo={props.actionDispatcher.redo}
-            undo={props.actionDispatcher.undo}
-            openTempoDialog={openTempoDialog}
-            openScoreInfo={openScoreInfoDialog}
-          />
-        </TabContainer>
-        <TabContainer style={{ display: currentTab !== 1 ? 'none' : 'flex' }}>
-          <EffectsSection
-            editorScoreState={props.editorScoreState}
-            actionDispatcher={props.actionDispatcher}
-          />
-        </TabContainer>
-        <TabContainer style={{ display: currentTab !== 2 ? 'none' : 'flex' }}>
-          <BeatSection
-            actionDispatcher={props.actionDispatcher}
-            editorScoreState={props.editorScoreState}
-            setText={openTextDialog}
-            setChord={openChordDialog}
-            useChord={props.actionDispatcher.setChord}
-            chords={props.currentAvailableChords}
-          />
-        </TabContainer>
-        <TabContainer style={{ display: currentTab !== 3 ? 'none' : 'flex' }}>
-          <DurationSetion
-            editorScoreState={props.editorScoreState}
-            actionDispatcher={props.actionDispatcher}
-          />
-        </TabContainer>
-        <TabContainer style={{ display: currentTab !== 4 ? 'none' : 'flex' }}>
-          <DynamicsSection
-            editorScoreState={props.editorScoreState}
-            actionDispatcher={props.actionDispatcher}
-          />
+        <TabContainer>
+          {currentTab === 0
+            && (
+              <DocumentSection
+                newFile={props.newFile}
+                openFile={props.open}
+                canRedo={props.canRedo}
+                canUndo={props.canUndo}
+                exportGuitarPro={props.exportGuitarPro}
+                exportMidi={props.exportMidi}
+                print={props.print}
+                redo={props.actionDispatcher.redo}
+                undo={props.actionDispatcher.undo}
+                openTempoDialog={openTempoDialog}
+                openScoreInfo={openScoreInfoDialog}
+              />
+            )}
+          {currentTab === 1
+            && (
+              <EffectsSection
+                editorScoreState={props.editorScoreState}
+                actionDispatcher={props.actionDispatcher}
+              />
+            )}
+          {currentTab === 2
+            && (
+              <BeatSection
+                actionDispatcher={props.actionDispatcher}
+                editorScoreState={props.editorScoreState}
+                setText={openTextDialog}
+                setChord={openChordDialog}
+                useChord={props.actionDispatcher.setChord}
+                chords={props.currentAvailableChords}
+              />
+            )}
+          {currentTab === 3
+            && (
+              <DurationSetion
+                editorScoreState={props.editorScoreState}
+                actionDispatcher={props.actionDispatcher}
+              />
+            )}
+          {currentTab === 4
+            && (
+              <DynamicsSection
+                editorScoreState={props.editorScoreState}
+                actionDispatcher={props.actionDispatcher}
+              />
+            )}
         </TabContainer>
       </div>
     </div>
