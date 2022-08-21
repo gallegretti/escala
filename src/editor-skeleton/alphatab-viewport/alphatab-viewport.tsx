@@ -83,6 +83,7 @@ export default function AlphaTabViewport(props: AlphaTabViewportProps) {
       newApi.renderFinished.on(props.renderFinished);
     }
     return function cleanup() {
+      newApi.destroy();
       // Remove observables
       if (props.playerStateChanged) {
         newApi.playerStateChanged.off(props.playerStateChanged);
