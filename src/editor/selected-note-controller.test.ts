@@ -1,11 +1,11 @@
 /* eslint-disable no-lone-blocks */
 import { mock } from 'jest-mock-extended';
-import { Beat, Note, ScoreRenderer } from '../alphatab-types/alphatab-types';
+import { Beat, Note } from '../alphatab-types/alphatab-types';
 import SelectedNoteController from './selected-note-controller';
 
 describe('selected-note-controller', () => {
   describe('toggle-note-selection', () => {
-    const selectedNoteController = new SelectedNoteController(mock<ScoreRenderer>());
+    const selectedNoteController = new SelectedNoteController(null);
     const beat = mock<Beat>();
     const note = mock<Note>({
       string: 2,
@@ -28,7 +28,7 @@ describe('selected-note-controller', () => {
 
   describe('move-selected-note-up', () => {
     test('from slot to slot', () => {
-      const selectedNoteController = new SelectedNoteController(mock<ScoreRenderer>());
+      const selectedNoteController = new SelectedNoteController(null);
       const beat = mock<Beat>({
         notes: [],
       });
@@ -45,7 +45,7 @@ describe('selected-note-controller', () => {
     });
 
     test('from slot to note', () => {
-      const selectedNoteController = new SelectedNoteController(mock<ScoreRenderer>());
+      const selectedNoteController = new SelectedNoteController(null);
       const secondStringNote = mock<Note>({
         string: 2,
       });
@@ -65,7 +65,7 @@ describe('selected-note-controller', () => {
     });
 
     test('from note to slot', () => {
-      const selectedNoteController = new SelectedNoteController(mock<ScoreRenderer>());
+      const selectedNoteController = new SelectedNoteController(null);
       const secondStringNote = mock<Note>({
         string: 2,
       });
