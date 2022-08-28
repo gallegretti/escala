@@ -4,6 +4,7 @@ import {
   Chord,
   Duration,
   DynamicValue,
+  Fermata,
   HarmonicType,
   Note,
   PickStroke,
@@ -96,6 +97,10 @@ export default class EditorScoreState {
 
   get selectionBeatPickStroke(): PickStroke | null {
     return this.selectedBeat?.pickStroke ?? null;
+  }
+
+  get selectionFermata(): Fermata | null {
+    return this.selectedBeat?.fermata ?? null;
   }
 
   get selectionNoteIsGhost(): boolean | null {

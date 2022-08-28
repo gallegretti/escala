@@ -6,6 +6,7 @@ import {
   Chord,
   Duration,
   DynamicValue,
+  Fermata,
   HarmonicType,
   Note,
   PickStroke,
@@ -78,6 +79,15 @@ export interface EditorActionSetDynamics {
     beat: Beat;
     value: DynamicValue;
     previousValue?: DynamicValue;
+  }
+}
+
+export interface EditorActionSetFermata {
+  type: 'set-fermata';
+  data: {
+    beat: Beat;
+    value: Fermata | null;
+    previousValue?: Fermata;
   }
 }
 
@@ -327,6 +337,7 @@ export type EditorActionEvent
   | EditorActionSetDeadNote
   | EditorActionSetDuration
   | EditorActionSetDynamics
+  | EditorActionSetFermata
   | EditorActionSetFret
   | EditorActionSetGhostNote
   | EditorActionSetHammer

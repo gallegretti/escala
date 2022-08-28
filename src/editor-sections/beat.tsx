@@ -2,9 +2,10 @@ import React from 'react';
 import TextGlyph from '@glyphs/beat/text';
 import UpstrokeGlyph from '@glyphs/beat/upstroke';
 import DownStrokeGlyph from '@glyphs/beat/downstroke';
+import FermataGlyph from '@glyphs/beat/fermata';
 import ChordSection from '@editor-section-part/chord-part';
 import RepeatPart from '@editor-section-part/repeat-part';
-import { Chord, PickStroke } from '../alphatab-types/alphatab-types';
+import { Chord, Fermata, PickStroke } from '../alphatab-types/alphatab-types';
 import EditorScoreState from '../editor/editor-score-state';
 import EditorActionDispatcher from '../editor/editor-action-dispatcher';
 import SectionDivider from './section-divider';
@@ -27,6 +28,14 @@ export default function BeatSection(props: BeatSectionProps) {
     }
   };
 
+  const setFermata = () => {
+    if (props.editorScoreState.selectionFermata === null) {
+      props.actionDispatcher.setFermata(new alphaTab.model.Fermata())
+    } else {
+      props.actionDispatcher.setFermata(null);
+    }
+  }
+
   const isDisabled = !props.editorScoreState.hasSelectedBeat;
 
   return (
@@ -39,6 +48,12 @@ export default function BeatSection(props: BeatSectionProps) {
             props.setText();
           }
         }}
+      />
+      <SectionDivider />
+      <FermataGlyph
+        disabled={isDisabled}
+        selected={props.editorScoreState.selectionFermata !== null}
+        onClick={setFermata}
       />
       <SectionDivider />
       <UpstrokeGlyph

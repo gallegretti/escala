@@ -5,6 +5,7 @@ import {
   Chord,
   Duration,
   DynamicValue,
+  Fermata,
   HarmonicType,
   Note,
   SlideInType,
@@ -285,6 +286,13 @@ class EditorActionDispatcher {
       this.dispatchAction({ type: 'set-chord', data: { beat: currentBeat, value: chord } });
     }
   };
+
+  setFermata = (fermata: Fermata | null) => {
+    const currentBeat = this.selectedBeat();
+    if (currentBeat) {
+      this.dispatchAction({ type: 'set-fermata', data: { beat: currentBeat, value: fermata } });
+    }
+  }
 
   undo = () => {
     const actionResult = this.actions.undoAction();

@@ -15,6 +15,7 @@ import setCloseRepeatAction from '../actions/set-close-repeat/set-close-repeat';
 import setDeadNoteAction from '../actions/set-dead-note/set-dead-note';
 import setDurationAction from '../actions/set-duration/set-duration';
 import setDynamicAction from '../actions/set-dynamics/set-dynamics';
+import setFermataAction from '../actions/set-fermata/set-fermata';
 import setFretAction from '../actions/set-fret/set-fret';
 import setGhostNoteAction from '../actions/set-ghost-note/set-ghost-note';
 import setHammerAction from '../actions/set-hammer/set-hammer';
@@ -49,6 +50,7 @@ const mapping: Record<string, EditorActionInterface<EditorActionEvent>> = {
   'set-dead-note': setDeadNoteAction,
   'set-duration': setDurationAction,
   'set-dynamics': setDynamicAction,
+  'set-fermata': setFermataAction,
   'set-fret': setFretAction,
   'set-ghost-note': setGhostNoteAction,
   'set-hammer': setHammerAction,

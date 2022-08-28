@@ -26,6 +26,7 @@ class PlayerStateChangedEventArgs extends alphaTab.synth.PlayerStateChangedEvent
 class NoteBounds extends alphaTab.rendering.NoteBounds {}
 class ScoreRenderer extends alphaTab.rendering.ScoreRenderer {}
 class Chord extends alphaTab.model.Chord {}
+class Fermata extends alphaTab.model.Fermata {}
 
 // Horrible hack so the enum type is correct
 type Duration = (typeof alphaTab.model.Duration.Whole | typeof alphaTab.model.Duration.Half | typeof alphaTab.model.Duration.Quarter | typeof alphaTab.model.Duration.Eighth | typeof alphaTab.model.Duration.Sixteenth | typeof alphaTab.model.Duration.ThirtySecond | typeof alphaTab.model.Duration.SixtyFourth | typeof alphaTab.model.Duration.OneHundredTwentyEighth | typeof alphaTab.model.Duration.TwoHundredFiftySixth | typeof alphaTab.model.Duration.DoubleWhole | typeof alphaTab.model.Duration.QuadrupleWhole);
@@ -52,6 +53,7 @@ export type {
   Chord,
   Duration,
   DynamicValue,
+  Fermata,
   HarmonicType,
   Note,
   NoteBounds,
