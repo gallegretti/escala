@@ -3,8 +3,8 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 interface EditorPlayerSpeedProps {
-    onChangeSpeed: (speed: number) => void,
-    speed: number
+  onChangeSpeed: (speed: number) => void,
+  speed: number
 }
 
 export default function EditorPlayerSpeedComponent(props: EditorPlayerSpeedProps) {

@@ -2,7 +2,7 @@ import React from 'react';
 import { styled } from '@mui/material';
 import useDialog from '@hooks/use-dialog';
 import EditorTrackSelector from './editor-track-selector/editor-track-selector';
-import { Score, Track } from '../alphatab-types/alphatab-types';
+import { Track } from '../alphatab-types/alphatab-types';
 import DialogTrack from '../dialogs/dialog-track/dialog-track';
 import TrackInfo from '../editor-actions/actions/edit-track/track-info';
 
@@ -46,7 +46,6 @@ export default function EditorLeftMenu({
   };
 
   const onSelectTrack = (track: Track) => {
-    // openDialog();
     selectTrack(track);
   };
 
