@@ -154,19 +154,29 @@ declare enum FontWeight {
 declare class Font {
     private _css;
     private _cssScale;
-    private _family;
+    private _families;
     private _style;
     private _weight;
     private _size;
     private reset;
     /**
-     * Gets the font family name.
+     * Gets the first font family name.
+     * @deprecated Consider using {@link families} for multi font family support.
      */
     get family(): string;
     /**
-     * Sets the font family name.
+     * Sets the font family list.
+     * @deprecated Consider using {@link families} for multi font family support.
      */
     set family(value: string);
+    /**
+     * Gets the font family name.
+     */
+    get families(): string[];
+    /**
+     * Sets the font family name.
+     */
+    set families(value: string[]);
     /**
      * Gets the font size in pixels.
      */
@@ -201,6 +211,14 @@ declare class Font {
      * @param weight The weight.
      */
     constructor(family: string, size: number, style?: FontStyle, weight?: FontWeight);
+    /**
+     * Initializes a new instance of the {@link Font} class.
+     * @param families The families.
+     * @param size The size.
+     * @param style The style.
+     * @param weight The weight.
+     */
+    static withFamilyList(families: string[], size: number, style?: FontStyle, weight?: FontWeight): Font;
     toCssString(scale?: number): string;
     static fromJson(v: unknown): Font | null;
     static toJson(font: Font): Map<string, unknown>;
@@ -1380,7 +1398,7 @@ declare enum KeySignature {
      */
     FSharp = 6,
     /**
-     * C# (8 sharp)
+     * C# (7 sharp)
      */
     CSharp = 7
 }
@@ -6591,6 +6609,7 @@ declare class ScoreRenderer implements IScoreRenderer {
 
 type index_d$1_RenderFinishedEventArgs = RenderFinishedEventArgs;
 declare const index_d$1_RenderFinishedEventArgs: typeof RenderFinishedEventArgs;
+type index_d$1_IScoreRenderer = IScoreRenderer;
 type index_d$1_ScoreRenderer = ScoreRenderer;
 declare const index_d$1_ScoreRenderer: typeof ScoreRenderer;
 type index_d$1_BarBounds = BarBounds;
@@ -6610,6 +6629,7 @@ declare const index_d$1_StaveGroupBounds: typeof StaveGroupBounds;
 declare namespace index_d$1 {
   export {
     index_d$1_RenderFinishedEventArgs as RenderFinishedEventArgs,
+    index_d$1_IScoreRenderer as IScoreRenderer,
     index_d$1_ScoreRenderer as ScoreRenderer,
     index_d$1_BarBounds as BarBounds,
     index_d$1_BeatBounds as BeatBounds,
@@ -6759,6 +6779,45 @@ declare class AlphaSynth implements IAlphaSynth {
 }
 
 /**
+ * Represents a fixed size circular sample buffer that can be written to and read from.
+ * @csharp_public
+ */
+declare class CircularSampleBuffer {
+    private _buffer;
+    private _writePosition;
+    private _readPosition;
+    /**
+     * Gets the number of samples written to the buffer.
+     */
+    count: number;
+    /**
+     * Initializes a new instance of the {@link CircularSampleBuffer} class.
+     * @param size The size.
+     */
+    constructor(size: number);
+    /**
+     * Clears all samples written to this buffer.
+     */
+    clear(): void;
+    /**
+     * Writes the given samples to this buffer.
+     * @param data The sample array to read from.
+     * @param offset
+     * @param count
+     * @returns
+     */
+    write(data: Float32Array, offset: number, count: number): number;
+    /**
+     * Reads the requested amount of samples from the buffer.
+     * @param data The sample array to store the read elements.
+     * @param offset The offset within the destination buffer to put the items at.
+     * @param count The number of items to read from this buffer.
+     * @returns The number of items actually read from the buffer.
+     */
+    read(data: Float32Array, offset: number, count: number): number;
+}
+
+/**
  * a WebWorker based alphaSynth which uses the given player as output.
  * @target web
  */
@@ -6835,10 +6894,80 @@ declare class AlphaSynthWebWorkerApi implements IAlphaSynth {
     private onOutputReady;
 }
 
+/**
+ * @target web
+ */
+declare abstract class AlphaSynthWebAudioOutputBase implements ISynthOutput {
+    protected static readonly BufferSize: number;
+    protected static readonly PreferredSampleRate: number;
+    protected _context: AudioContext | null;
+    protected _buffer: AudioBuffer | null;
+    protected _source: AudioBufferSourceNode | null;
+    private _resumeHandler?;
+    get sampleRate(): number;
+    activate(resumedCallback?: () => void): void;
+    private patchIosSampleRate;
+    private createAudioContext;
+    open(bufferTimeInMilliseconds: number): void;
+    private registerResumeHandler;
+    private unregisterResumeHandler;
+    play(): void;
+    pause(): void;
+    destroy(): void;
+    abstract addSamples(f: Float32Array): void;
+    abstract resetSamples(): void;
+    readonly ready: IEventEmitter;
+    readonly samplesPlayed: IEventEmitterOfT<number>;
+    readonly sampleRequest: IEventEmitter;
+    protected onSamplesPlayed(numberOfSamples: number): void;
+    protected onSampleRequest(): void;
+    protected onReady(): void;
+}
+
+/**
+ * This class implements a HTML5 Web Audio API based audio output device
+ * for alphaSynth using the legacy ScriptProcessor node.
+ * @target web
+ */
+declare class AlphaSynthScriptProcessorOutput extends AlphaSynthWebAudioOutputBase {
+    private _audioNode;
+    private _circularBuffer;
+    private _bufferCount;
+    private _requestedBufferCount;
+    open(bufferTimeInMilliseconds: number): void;
+    play(): void;
+    pause(): void;
+    addSamples(f: Float32Array): void;
+    resetSamples(): void;
+    private requestBuffers;
+    private _outputBuffer;
+    private generateSound;
+}
+
+/**
+ * This class implements a HTML5 Web Audio API based audio output device
+ * for alphaSynth. It can be controlled via a JS API.
+ * @target web
+ */
+declare class AlphaSynthAudioWorkletOutput extends AlphaSynthWebAudioOutputBase {
+    private _worklet;
+    private _bufferTimeInMilliseconds;
+    open(bufferTimeInMilliseconds: number): void;
+    play(): void;
+    private handleMessage;
+    pause(): void;
+    addSamples(f: Float32Array): void;
+    resetSamples(): void;
+}
+
 type index_d_AlphaSynth = AlphaSynth;
 declare const index_d_AlphaSynth: typeof AlphaSynth;
+type index_d_CircularSampleBuffer = CircularSampleBuffer;
+declare const index_d_CircularSampleBuffer: typeof CircularSampleBuffer;
 type index_d_PlaybackRange = PlaybackRange;
 declare const index_d_PlaybackRange: typeof PlaybackRange;
+type index_d_ISynthOutput = ISynthOutput;
+type index_d_IAlphaSynth = IAlphaSynth;
 type index_d_PlayerState = PlayerState;
 declare const index_d_PlayerState: typeof PlayerState;
 type index_d_PlayerStateChangedEventArgs = PlayerStateChangedEventArgs;
@@ -6847,20 +6976,35 @@ type index_d_PlaybackRangeChangedEventArgs = PlaybackRangeChangedEventArgs;
 declare const index_d_PlaybackRangeChangedEventArgs: typeof PlaybackRangeChangedEventArgs;
 type index_d_PositionChangedEventArgs = PositionChangedEventArgs;
 declare const index_d_PositionChangedEventArgs: typeof PositionChangedEventArgs;
+type index_d_MidiEventsPlayedEventArgs = MidiEventsPlayedEventArgs;
+declare const index_d_MidiEventsPlayedEventArgs: typeof MidiEventsPlayedEventArgs;
 type index_d_ActiveBeatsChangedEventArgs = ActiveBeatsChangedEventArgs;
 declare const index_d_ActiveBeatsChangedEventArgs: typeof ActiveBeatsChangedEventArgs;
 type index_d_AlphaSynthWebWorkerApi = AlphaSynthWebWorkerApi;
 declare const index_d_AlphaSynthWebWorkerApi: typeof AlphaSynthWebWorkerApi;
+type index_d_AlphaSynthWebAudioOutputBase = AlphaSynthWebAudioOutputBase;
+declare const index_d_AlphaSynthWebAudioOutputBase: typeof AlphaSynthWebAudioOutputBase;
+type index_d_AlphaSynthScriptProcessorOutput = AlphaSynthScriptProcessorOutput;
+declare const index_d_AlphaSynthScriptProcessorOutput: typeof AlphaSynthScriptProcessorOutput;
+type index_d_AlphaSynthAudioWorkletOutput = AlphaSynthAudioWorkletOutput;
+declare const index_d_AlphaSynthAudioWorkletOutput: typeof AlphaSynthAudioWorkletOutput;
 declare namespace index_d {
   export {
     index_d_AlphaSynth as AlphaSynth,
+    index_d_CircularSampleBuffer as CircularSampleBuffer,
     index_d_PlaybackRange as PlaybackRange,
+    index_d_ISynthOutput as ISynthOutput,
+    index_d_IAlphaSynth as IAlphaSynth,
     index_d_PlayerState as PlayerState,
     index_d_PlayerStateChangedEventArgs as PlayerStateChangedEventArgs,
     index_d_PlaybackRangeChangedEventArgs as PlaybackRangeChangedEventArgs,
     index_d_PositionChangedEventArgs as PositionChangedEventArgs,
+    index_d_MidiEventsPlayedEventArgs as MidiEventsPlayedEventArgs,
     index_d_ActiveBeatsChangedEventArgs as ActiveBeatsChangedEventArgs,
     index_d_AlphaSynthWebWorkerApi as AlphaSynthWebWorkerApi,
+    index_d_AlphaSynthWebAudioOutputBase as AlphaSynthWebAudioOutputBase,
+    index_d_AlphaSynthScriptProcessorOutput as AlphaSynthScriptProcessorOutput,
+    index_d_AlphaSynthAudioWorkletOutput as AlphaSynthAudioWorkletOutput,
   };
 }
 

@@ -1,5 +1,5 @@
 /**
- * alphaTab v1.3.0-alpha.341 (develop, build 341)
+ * alphaTab v1.3.0-alpha.376 (develop, build 376)
  * 
  * Copyright © 2022, Daniel Kuschny and Contributors, All rights reserved.
  * 
@@ -3639,6 +3639,9 @@ class Beat {
         let index = this.notes.indexOf(note);
         if (index >= 0) {
             this.notes.splice(index, 1);
+            if (note.isStringed) {
+                this.noteStringLookup.delete(note.string);
+            }
         }
     }
     getAutomation(type) {
@@ -4031,6 +4034,73 @@ class Chord {
     }
 }
 
+/**
+ * This public enumeration lists all available key signatures
+ */
+var KeySignature;
+(function (KeySignature) {
+    /**
+     * Cb (7 flats)
+     */
+    KeySignature[KeySignature["Cb"] = -7] = "Cb";
+    /**
+     * Gb (6 flats)
+     */
+    KeySignature[KeySignature["Gb"] = -6] = "Gb";
+    /**
+     * Db (5 flats)
+     */
+    KeySignature[KeySignature["Db"] = -5] = "Db";
+    /**
+     * Ab (4 flats)
+     */
+    KeySignature[KeySignature["Ab"] = -4] = "Ab";
+    /**
+     * Eb (3 flats)
+     */
+    KeySignature[KeySignature["Eb"] = -3] = "Eb";
+    /**
+     * Bb (2 flats)
+     */
+    KeySignature[KeySignature["Bb"] = -2] = "Bb";
+    /**
+     * F (1 flat)
+     */
+    KeySignature[KeySignature["F"] = -1] = "F";
+    /**
+     * C (no signs)
+     */
+    KeySignature[KeySignature["C"] = 0] = "C";
+    /**
+     * G (1 sharp)
+     */
+    KeySignature[KeySignature["G"] = 1] = "G";
+    /**
+     * D (2 sharp)
+     */
+    KeySignature[KeySignature["D"] = 2] = "D";
+    /**
+     * A (3 sharp)
+     */
+    KeySignature[KeySignature["A"] = 3] = "A";
+    /**
+     * E (4 sharp)
+     */
+    KeySignature[KeySignature["E"] = 4] = "E";
+    /**
+     * B (5 sharp)
+     */
+    KeySignature[KeySignature["B"] = 5] = "B";
+    /**
+     * F# (6 sharp)
+     */
+    KeySignature[KeySignature["FSharp"] = 6] = "FSharp";
+    /**
+     * C# (7 sharp)
+     */
+    KeySignature[KeySignature["CSharp"] = 7] = "CSharp";
+})(KeySignature || (KeySignature = {}));
+
 var LyricsState;
 (function (LyricsState) {
     LyricsState[LyricsState["IgnoreSpaces"] = 0] = "IgnoreSpaces";
@@ -4165,73 +4235,6 @@ Lyrics.CharCodeSpace = 32;
 Lyrics.CharCodeBrackedClose = 93;
 Lyrics.CharCodeBrackedOpen = 91;
 Lyrics.CharCodeDash = 45;
-
-/**
- * This public enumeration lists all available key signatures
- */
-var KeySignature;
-(function (KeySignature) {
-    /**
-     * Cb (7 flats)
-     */
-    KeySignature[KeySignature["Cb"] = -7] = "Cb";
-    /**
-     * Gb (6 flats)
-     */
-    KeySignature[KeySignature["Gb"] = -6] = "Gb";
-    /**
-     * Db (5 flats)
-     */
-    KeySignature[KeySignature["Db"] = -5] = "Db";
-    /**
-     * Ab (4 flats)
-     */
-    KeySignature[KeySignature["Ab"] = -4] = "Ab";
-    /**
-     * Eb (3 flats)
-     */
-    KeySignature[KeySignature["Eb"] = -3] = "Eb";
-    /**
-     * Bb (2 flats)
-     */
-    KeySignature[KeySignature["Bb"] = -2] = "Bb";
-    /**
-     * F (1 flat)
-     */
-    KeySignature[KeySignature["F"] = -1] = "F";
-    /**
-     * C (no signs)
-     */
-    KeySignature[KeySignature["C"] = 0] = "C";
-    /**
-     * G (1 sharp)
-     */
-    KeySignature[KeySignature["G"] = 1] = "G";
-    /**
-     * D (2 sharp)
-     */
-    KeySignature[KeySignature["D"] = 2] = "D";
-    /**
-     * A (3 sharp)
-     */
-    KeySignature[KeySignature["A"] = 3] = "A";
-    /**
-     * E (4 sharp)
-     */
-    KeySignature[KeySignature["E"] = 4] = "E";
-    /**
-     * B (5 sharp)
-     */
-    KeySignature[KeySignature["B"] = 5] = "B";
-    /**
-     * F# (6 sharp)
-     */
-    KeySignature[KeySignature["FSharp"] = 6] = "FSharp";
-    /**
-     * C# (8 sharp)
-     */
-    KeySignature[KeySignature["CSharp"] = 7] = "CSharp";
-})(KeySignature || (KeySignature = {}));
 
 /**
  * This public enumeration lists all available types of KeySignatures
@@ -5701,11 +5704,11 @@ class AlphaTexError extends AlphaTabError {
     }
     static symbolError(position, nonTerm, expected, symbol, symbolData = null) {
         let message;
-        if (!symbolData) {
+        if (expected !== symbol) {
             message = `MalFormed AlphaTex: @${position}: Error on block ${nonTerm}, expected a ${AlphaTexSymbols[expected]} found a ${AlphaTexSymbols[symbol]}: '${symbolData}'`;
         }
         else {
-            message = `MalFormed AlphaTex: @${position}: Error on block ${nonTerm}, invalid value: ${symbolData}`;
+            message = `MalFormed AlphaTex: @${position}: Error on block ${nonTerm}, invalid value: '${symbolData}'`;
         }
         let exception = new AlphaTexError(message);
         exception.position = position;
@@ -5716,7 +5719,7 @@ class AlphaTexError extends AlphaTabError {
         return exception;
     }
     static errorMessage(position, message) {
-        message = 'MalFormed AlphaTex: @' + position + ': ' + message;
+        message = `MalFormed AlphaTex: @${position}: ${message}`;
         let exception = new AlphaTexError(message);
         exception.position = position;
         return exception;
@@ -5804,7 +5807,7 @@ class AlphaTexImporter extends ScoreImporter {
     error(nonterm, expected, symbolError = true) {
         let e;
         if (symbolError) {
-            e = AlphaTexError.symbolError(this._curChPos, nonterm, expected, this._sy, null);
+            e = AlphaTexError.symbolError(this._curChPos, nonterm, expected, this._sy, this._syData);
         }
         else {
             e = AlphaTexError.symbolError(this._curChPos, nonterm, expected, expected, this._syData);
@@ -5945,37 +5948,65 @@ class AlphaTexImporter extends ScoreImporter {
     parseKeySignature(str) {
         switch (str.toLowerCase()) {
             case 'cb':
-                return -7;
+            case 'cbmajor':
+                return KeySignature.Cb;
             case 'gb':
-                return -6;
+            case 'gbmajor':
+            case 'd#minor':
+                return KeySignature.Gb;
             case 'db':
-                return -5;
+            case 'dbmajor':
+            case 'bbminor':
+                return KeySignature.Db;
             case 'ab':
-                return -4;
+            case 'abmajor':
+            case 'fminor':
+                return KeySignature.Ab;
             case 'eb':
-                return -3;
+            case 'ebmajor':
+            case 'cminor':
+                return KeySignature.Eb;
             case 'bb':
-                return -2;
+            case 'bbmajor':
+            case 'gminor':
+                return KeySignature.Bb;
             case 'f':
-                return -1;
+            case 'fmajor':
+            case 'dminor':
+                return KeySignature.F;
             case 'c':
-                return 0;
+            case 'cmajor':
+            case 'aminor':
+                return KeySignature.C;
             case 'g':
-                return 1;
+            case 'gmajor':
+            case 'eminor':
+                return KeySignature.G;
             case 'd':
-                return 2;
+            case 'dmajor':
+            case 'bminor':
+                return KeySignature.D;
             case 'a':
-                return 3;
+            case 'amajor':
+            case 'f#minor':
+                return KeySignature.A;
             case 'e':
-                return 4;
+            case 'emajor':
+            case 'c#minor':
+                return KeySignature.E;
             case 'b':
-                return 5;
+            case 'bmajor':
+            case 'g#minor':
+                return KeySignature.B;
             case 'f#':
-                return 6;
+            case 'f#major':
+            case 'ebminor':
+                return KeySignature.FSharp;
             case 'c#':
-                return 7;
+            case 'c#major':
+                return KeySignature.CSharp;
             default:
-                return 0;
+                return KeySignature.C;
             // error("keysignature-value", AlphaTexSymbols.String, false); return 0
         }
     }
@@ -6016,7 +6047,7 @@ class AlphaTexImporter extends ScoreImporter {
                 }
                 else if (this._ch === 0x2a /* * */) {
                     // multiline comment
-                    while (this._ch !== 0) {
+                    while (this._ch !== AlphaTexImporter.Eof) {
                         if (this._ch === 0x2a /* * */) {
                             this._ch = this.nextChar();
                             if (this._ch === 0x2f /* / */) {
@@ -6049,9 +6080,8 @@ class AlphaTexImporter extends ScoreImporter {
                 // negative number
                 // is number?
                 if (this._allowNegatives && this.isDigit(this._ch)) {
-                    let num = this.readNumber();
                     this._sy = AlphaTexSymbols.Number;
-                    this._syData = num;
+                    this._syData = this.readNumber();
                 }
                 else {
                     this._sy = AlphaTexSymbols.String;
@@ -6072,9 +6102,8 @@ class AlphaTexImporter extends ScoreImporter {
             }
             else if (this._ch === 0x5c /* \ */) {
                 this._ch = this.nextChar();
-                let name = this.readName();
                 this._sy = AlphaTexSymbols.MetaCommand;
-                this._syData = name;
+                this._syData = this.readName();
             }
             else if (this._ch === 0x29 /* ) */) {
                 this._sy = AlphaTexSymbols.RParensis;
@@ -6101,9 +6130,8 @@ class AlphaTexImporter extends ScoreImporter {
                 this._ch = this.nextChar();
             }
             else if (this.isDigit(this._ch)) {
-                let num = this.readNumber();
                 this._sy = AlphaTexSymbols.Number;
-                this._syData = num;
+                this._syData = this.readNumber();
             }
             else if (AlphaTexImporter.isLetter(this._ch)) {
                 let name = this.readName();
@@ -7366,8 +7394,8 @@ class AlphaTexImporter extends ScoreImporter {
         }
         this._sy = this.newSy();
     }
-    toFinger(syData) {
-        switch (syData) {
+    toFinger(num) {
+        switch (num) {
             case 1:
                 return Fingers.Thumb;
             case 2:
@@ -7403,6 +7431,8 @@ class AlphaTexImporter extends ScoreImporter {
                 return Duration.SixtyFourth;
             case 128:
                 return Duration.OneHundredTwentyEighth;
+            case 256:
+                return Duration.TwoHundredFiftySixth;
             default:
                 return Duration.Quarter;
         }
@@ -7435,6 +7465,9 @@ class AlphaTexImporter extends ScoreImporter {
                 if (this._sy !== AlphaTexSymbols.Number) {
                     this.error('repeatclose', AlphaTexSymbols.Number, true);
                 }
+                if (this._syData > 2048) {
+                    this.error('repeatclose', AlphaTexSymbols.Number, false);
+                }
                 master.repeatCount = this._syData;
                 this._sy = this.newSy();
             }
@@ -7466,14 +7499,14 @@ class AlphaTexImporter extends ScoreImporter {
                 if (this._sy !== AlphaTexSymbols.String) {
                     this.error('keysignature', AlphaTexSymbols.String, true);
                 }
-                master.keySignature = this.parseKeySignature(this._syData.toLowerCase());
+                master.keySignature = this.parseKeySignature(this._syData);
                 this._sy = this.newSy();
             }
             else if (syData === 'clef') {
                 this._sy = this.newSy();
                 switch (this._sy) {
                     case AlphaTexSymbols.String:
-                        bar.clef = this.parseClefFromString(this._syData.toLowerCase());
+                        bar.clef = this.parseClefFromString(this._syData);
                         break;
                     case AlphaTexSymbols.Number:
                         bar.clef = this.parseClefFromInt(this._syData);
@@ -7524,7 +7557,7 @@ class AlphaTexImporter extends ScoreImporter {
                 this._allowTuning = true;
                 switch (this._sy) {
                     case AlphaTexSymbols.String:
-                        master.tripletFeel = this.parseTripletFeelFromString(this._syData.toLowerCase());
+                        master.tripletFeel = this.parseTripletFeelFromString(this._syData);
                         break;
                     case AlphaTexSymbols.Number:
                         master.tripletFeel = this.parseTripletFeelFromInt(this._syData);
@@ -14530,7 +14563,7 @@ class MidiFileSequencer {
         }
     }
     get currentTime() {
-        return this._currentState.currentTime;
+        return this._currentState.currentTime / this.playbackSpeed;
     }
     /**
      * Gets the duration of the song in ticks.
@@ -17457,6 +17490,11 @@ class AlphaSynth {
                 this._notPlayedSamples += samples.length;
                 this.output.addSamples(samples);
             }
+            else {
+                // Tell output that there is no data left for it.
+                let samples = new Float32Array(0);
+                this.output.addSamples(samples);
+            }
         });
         this.output.samplesPlayed.on(this.onSamplesPlayed.bind(this));
         this.output.open(bufferTimeInMilliseconds);
@@ -17559,7 +17597,7 @@ class AlphaSynth {
             Logger.debug('AlphaSynth', 'Starting countin');
             this._sequencer.startCountIn();
             this._synthesizer.setupMetronomeChannel(this._countInVolume);
-            this.tickPosition = 0;
+            this.updateTimePosition(0, true);
         }
         this.output.play();
         return true;
@@ -17711,6 +17749,7 @@ class AlphaSynth {
                 this._sequencer.resetCountIn();
                 this.timePosition = this._sequencer.currentTime;
                 this.playInternal();
+                this.output.resetSamples();
             }
             else if (this._sequencer.isPlayingOneTimeMidi) {
                 Logger.debug('AlphaSynth', 'Finished playback (one time)');
@@ -17962,6 +18001,7 @@ class FontParser {
         this.lineHeight = 'normal';
         this.size = '1rem';
         this.families = [];
+        this.parseOnlyFamilies = false;
         this._currentTokenIndex = -1;
         this._input = '';
         this._currentToken = null;
@@ -17999,13 +18039,26 @@ class FontParser {
                     return;
             }
         }
-        this.fontStyleVariantWeight();
-        this.fontSizeLineHeight();
+        if (!this.parseOnlyFamilies) {
+            this.fontStyleVariantWeight();
+            this.fontSizeLineHeight();
+        }
         this.fontFamily();
+    }
+    static parseFamilies(value) {
+        const parser = new FontParser(value);
+        parser.parseOnlyFamilies = true;
+        parser.parse();
+        return parser.families;
     }
     fontFamily() {
         if (!this._currentToken) {
-            throw new Error(`Missing font list`);
+            if (this.parseOnlyFamilies) {
+                return;
+            }
+            else {
+                throw new Error(`Missing font list`);
+            }
         }
         const familyListInput = this._input.substr(this._currentToken.startPos).trim();
         let pos = 0;
@@ -18181,6 +18234,13 @@ class FontParser {
         this._currentTokenIndex = -1;
         this.nextToken();
     }
+    static quoteFont(f) {
+        if (f.indexOf(' ') === -1) {
+            return f;
+        }
+        const escapedQuotes = f.replaceAll('"', '\\"');
+        return `"${escapedQuotes}"`;
+    }
 }
 /**
  * Lists all flags for font styles.
@@ -18223,7 +18283,7 @@ class Font {
      */
     constructor(family, size, style = FontStyle.Plain, weight = FontWeight.Regular) {
         this._cssScale = 0.0;
-        this._family = family;
+        this._families = FontParser.parseFamilies(family);
         this._size = size;
         this._style = style;
         this._weight = weight;
@@ -18234,16 +18294,30 @@ class Font {
         this._css = this.toCssString();
     }
     /**
-     * Gets the font family name.
+     * Gets the first font family name.
+     * @deprecated Consider using {@link families} for multi font family support.
      */
     get family() {
-        return this._family;
+        return this._families[0];
+    }
+    /**
+     * Sets the font family list.
+     * @deprecated Consider using {@link families} for multi font family support.
+     */
+    set family(value) {
+        this.families = FontParser.parseFamilies(value);
+    }
+    /**
+     * Gets the font family name.
+     */
+    get families() {
+        return this._families;
     }
     /**
      * Sets the font family name.
      */
-    set family(value) {
-        this._family = value;
+    set families(value) {
+        this._families = value;
         this.reset();
     }
     /**
@@ -18291,6 +18365,18 @@ class Font {
     get isItalic() {
         return this.style === FontStyle.Italic;
     }
+    /**
+     * Initializes a new instance of the {@link Font} class.
+     * @param families The families.
+     * @param size The size.
+     * @param style The style.
+     * @param weight The weight.
+     */
+    static withFamilyList(families, size, style = FontStyle.Plain, weight = FontWeight.Regular) {
+        const f = new Font("", size, style, weight);
+        f.families = families;
+        return f;
+    }
     toCssString(scale = 1) {
         if (!this._css || !(Math.abs(scale - this._cssScale) < 0.01)) {
             let buf = '';
@@ -18302,9 +18388,7 @@ class Font {
             }
             buf += this.size * scale;
             buf += 'px ';
-            buf += "'";
-            buf += this.family;
-            buf += "'";
+            buf += this.families.map(f => FontParser.quoteFont(f)).join(', ');
             this._css = buf;
             this._cssScale = scale;
         }
@@ -18316,21 +18400,17 @@ class Font {
                 return null;
             case 'object': {
                 const m = v;
-                let family = m.get('family');
+                let families = m.get('families');
                 // tslint:disable-next-line: no-unnecessary-type-assertion
                 let size = m.get('size');
                 let style = JsonHelper.parseEnum(m.get('style'), FontStyle);
                 let weight = JsonHelper.parseEnum(m.get('weight'), FontWeight);
-                return new Font(family, size, style, weight);
+                return Font.withFamilyList(families, size, style, weight);
             }
             case 'string': {
                 const parser = new FontParser(v);
                 parser.parse();
-                let family = parser.families[0];
-                if ((family.startsWith("'") && family.endsWith("'")) ||
-                    (family.startsWith('"') && family.endsWith('"'))) {
-                    family = family.substr(1, family.length - 2);
-                }
+                let families = parser.families;
                 let fontSizeString = parser.size.toLowerCase();
                 let fontSize = 0;
                 // as per https://websemantics.uk/articles/font-size-conversion/
@@ -18393,7 +18473,7 @@ class Font {
                         fontWeight = FontWeight.Bold;
                         break;
                 }
-                return new Font(family, fontSize, fontStyle, fontWeight);
+                return Font.withFamilyList(families, fontSize, fontStyle, fontWeight);
             }
             default:
                 return null;
@@ -18401,7 +18481,7 @@ class Font {
     }
     static toJson(font) {
         const o = new Map();
-        o.set('family', font.family);
+        o.set('families', font.families);
         o.set('size', font.size);
         o.set('style', font.style);
         o.set('weight', font.weight);
@@ -18485,8 +18565,8 @@ class RenderingResources {
         this.scoreInfoColor = new Color(0, 0, 0, 0xff);
     }
 }
-RenderingResources.sansFont = 'Arial';
-RenderingResources.serifFont = 'Georgia';
+RenderingResources.sansFont = 'Arial, sans-serif';
+RenderingResources.serifFont = 'Georgia, serif';
 
 /**
  * The display settings control how the general layout and display of alphaTab is done.
@@ -21052,9 +21132,17 @@ class FontSizes {
             FontSizes.FontSizeLookupTables.set(family, new Uint8Array([8]));
         }
     }
-    static measureString(s, family, size, style, weight) {
+    static measureString(s, families, size, style, weight) {
         let data;
         let dataSize = 11;
+        let family = families[0]; // default to first font
+        // find a font which is maybe registered already
+        for (let i = 0; i < families.length; i++) {
+            if (FontSizes.FontSizeLookupTables.has(families[i])) {
+                family = families[i];
+                break;
+            }
+        }
         if (!FontSizes.FontSizeLookupTables.has(family)) {
             FontSizes.generateFontLookup(family);
         }
@@ -24353,6 +24441,10 @@ class AlphaTabApiBase {
      * Applies any changes that were done to the settings object and informs the {@link renderer} about any new values to consider.
      */
     updateSettings() {
+        const score = this.score;
+        if (score) {
+            ModelUtils.applyPitchOffsets(this.settings, score);
+        }
         this.renderer.updateSettings(this.settings);
         // enable/disable player if needed
         if (this.settings.player.enablePlayer) {
@@ -24434,8 +24526,8 @@ class AlphaTabApiBase {
         }
     }
     internalRenderTracks(score, tracks) {
+        ModelUtils.applyPitchOffsets(this.settings, score);
         if (score !== this.score) {
-            ModelUtils.applyPitchOffsets(this.settings, score);
             this.score = score;
             this.tracks = tracks;
             this._trackIndexes = [];
@@ -25727,11 +25819,12 @@ HtmlElementContainer.resizeObserver = new Lazy(() => new ResizeObserver((entries
  * @target web
  */
 class FontLoadingChecker {
-    constructor(family) {
+    constructor(families) {
         this._isStarted = false;
         this.isFontLoaded = false;
         this.fontLoaded = new EventEmitterOfT();
-        this._family = family;
+        this._originalFamilies = families;
+        this._families = families;
     }
     checkForFontAvailability() {
         if (Environment.isRunningInWorker) {
@@ -25745,30 +25838,62 @@ class FontLoadingChecker {
         this._isStarted = true;
         let failCounter = 0;
         let failCounterId = window.setInterval(() => {
-            failCounter++;
-            Logger.warning('Rendering', `Could not load font '${this._family}' within ${failCounter * 5} seconds`, null);
+            Logger.warning('Rendering', `Could not load font '${this._families[0]}' within ${(failCounter + 1) * 5} seconds`, null);
+            // try loading next font if there are more than 1 left
+            if (this._families.length > 1) {
+                this._families.shift();
+                failCounter = 0;
+            }
+            else {
+                failCounter++;
+            }
         }, 5000);
-        Logger.debug('Font', `Start checking for font availablility: ${this._family}`);
-        Logger.debug('Font', `[${this._family}] Font API available`);
+        Logger.debug('Font', `Start checking for font availablility: ${this._families.join(', ')}`);
+        let errorHandler = () => {
+            if (this._families.length > 1) {
+                Logger.debug('Font', `[${this._families[0]}] Loading Failed, switching to ${this._families[1]}`);
+                this._families.shift();
+                window.setTimeout(() => {
+                    checkFont();
+                }, 0);
+            }
+            else {
+                Logger.error('Font', `[${this._originalFamilies.join(',')}] Loading Failed, rendering cannot start`);
+                window.clearInterval(failCounterId);
+            }
+        };
+        let successHandler = (font) => {
+            Logger.debug('Rendering', `[${font}] Font API signaled available`);
+            this.isFontLoaded = true;
+            window.clearInterval(failCounterId);
+            this.fontLoaded.trigger(this._families[0]);
+        };
         let checkFont = () => {
-            document.fonts.load(`1em ${this._family}`).then(() => {
-                Logger.debug('Font', `[${this._family}] Font API signaled loaded`);
-                if (document.fonts.check('1em ' + this._family)) {
-                    Logger.debug('Rendering', `[${this._family}] Font API signaled available`);
-                    this.isFontLoaded = true;
-                    window.clearInterval(failCounterId);
-                    this.fontLoaded.trigger(this._family);
+            // Fast Path: check if one of the specified fonts is already available.
+            for (const font of this._families) {
+                if (document.fonts.check('1em ' + font)) {
+                    successHandler(font);
+                    return;
+                }
+            }
+            // Slow path: Wait for fonts to be loaded sequentially
+            const promise = document.fonts.load(`1em ${this._families[0]}`);
+            promise.then(() => {
+                Logger.debug('Font', `[${this._families[0]}] Font API signaled loaded`);
+                if (document.fonts.check('1em ' + this._families[0])) {
+                    successHandler(this._families[0]);
                 }
                 else {
-                    Logger.debug('Font', `[${this._family}] Font API loaded reported, but font not available, checking later again`, null);
-                    window.setTimeout(() => {
-                        checkFont();
-                    }, 250);
+                    errorHandler();
                 }
                 return true;
+            }, reason => {
+                errorHandler();
             });
         };
-        checkFont();
+        document.fonts.ready.then(() => {
+            checkFont();
+        });
     }
 }
 
@@ -26893,9 +27018,9 @@ class BrowserUiFacade {
         this.registerFontChecker(settings.display.resources.subTitleFont);
     }
     registerFontChecker(font) {
-        if (!this._fontCheckers.has(font.family)) {
-            let checker = new FontLoadingChecker(font.family);
-            this._fontCheckers.set(font.family, checker);
+        if (!this._fontCheckers.has(font.families.join(', '))) {
+            let checker = new FontLoadingChecker(font.families);
+            this._fontCheckers.set(font.families.join(', '), checker);
             checker.fontLoaded.on(this.onFontLoaded.bind(this));
             checker.checkForFontAvailability();
         }
@@ -27870,7 +27995,7 @@ class SvgCanvas {
         if (!text) {
             return 0;
         }
-        return FontSizes.measureString(text, this.font.family, this.font.size, this.font.style, this.font.weight);
+        return FontSizes.measureString(text, this.font.families, this.font.size, this.font.style, this.font.weight);
     }
     onRenderFinished() {
         // nothing to do
@@ -31362,7 +31487,7 @@ class TripletFeelGlyph extends EffectGlyph {
     renderTriplet(cx, cy, canvas) {
         cy += 2 * this.scale;
         let font = this.renderer.resources.effectFont;
-        canvas.font = new Font(font.family, font.size * 0.8, font.style);
+        canvas.font = Font.withFamilyList(font.families, font.size * 0.8, font.style);
         let rightX = cx + TripletFeelGlyph.NoteSeparation * this.scale + 3 * this.scale;
         canvas.beginPath();
         canvas.moveTo(cx, cy + 3 * this.scale);
@@ -32875,7 +33000,7 @@ class ScoreLayout {
         let size = 12 * this.renderer.settings.display.scale;
         let height = Math.floor(size * 2);
         const e = new RenderFinishedEventArgs();
-        const font = new Font(resources.copyrightFont.family, size, FontStyle.Plain, FontWeight.Bold);
+        const font = Font.withFamilyList(resources.copyrightFont.families, size, FontStyle.Plain, FontWeight.Bold);
         this.renderer.canvas.font = font;
         const centered = Environment.getLayoutEngineFactory(this.renderer.settings.display.layoutMode).vertical;
         e.width = this.renderer.canvas.measureText(msg);
@@ -38386,8 +38511,8 @@ class TabBrushGlyph extends Glyph {
     }
     paint(cx, cy, canvas) {
         let tabBarRenderer = this.renderer;
-        let startY = cy + this.x + (tabBarRenderer.getNoteY(this._beat.maxNote, NoteYPosition.Top));
-        let endY = cy + this.y + tabBarRenderer.getNoteY(this._beat.minNote, NoteYPosition.Bottom);
+        let startY = cy + this.x + (tabBarRenderer.getNoteY(this._beat.maxStringNote, NoteYPosition.Top));
+        let endY = cy + this.y + tabBarRenderer.getNoteY(this._beat.minStringNote, NoteYPosition.Bottom);
         let arrowX = (cx + this.x + this.width / 2) | 0;
         let arrowSize = 8 * this.scale;
         if (this._beat.brushType !== BrushType.None) {
@@ -40759,6 +40884,11 @@ class Environment {
                 Document.prototype.replaceChildren = Element.prototype.replaceChildren;
                 DocumentFragment.prototype.replaceChildren = Element.prototype.replaceChildren;
             }
+            if (!('replaceAll' in String.prototype)) {
+                String.prototype.replaceAll = function (str, newStr) {
+                    return this.replace(new RegExp(str, 'g'), newStr);
+                };
+            }
         }
     }
     /**
@@ -40833,7 +40963,7 @@ Environment.scriptFile = Environment.detectScriptFile();
 /**
  * @target web
  */
-Environment.bravuraFontChecker = new FontLoadingChecker('alphaTab');
+Environment.bravuraFontChecker = new FontLoadingChecker(['alphaTab']);
 Environment.renderEngines = Environment.createDefaultRenderEngines();
 Environment.layoutEngines = Environment.createDefaultLayoutEngines();
 Environment.staveProfiles = Environment.createDefaultStaveProfiles();
@@ -40978,8 +41108,8 @@ class CoreSettings {
 // </auto-generated>
 class VersionInfo {
 }
-VersionInfo.version = '1.3.0-alpha.341';
-VersionInfo.date = '2022-07-26T00:55:38.526Z';
+VersionInfo.version = '1.3.0-alpha.376';
+VersionInfo.date = '2022-08-30T01:01:41.651Z';
 
 var index$5 = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -44043,13 +44173,18 @@ var index$1 = /*#__PURE__*/Object.freeze({
 var index = /*#__PURE__*/Object.freeze({
     __proto__: null,
     AlphaSynth: AlphaSynth,
+    CircularSampleBuffer: CircularSampleBuffer,
     PlaybackRange: PlaybackRange,
     get PlayerState () { return PlayerState; },
     PlayerStateChangedEventArgs: PlayerStateChangedEventArgs,
     PlaybackRangeChangedEventArgs: PlaybackRangeChangedEventArgs,
     PositionChangedEventArgs: PositionChangedEventArgs,
+    MidiEventsPlayedEventArgs: MidiEventsPlayedEventArgs,
     ActiveBeatsChangedEventArgs: ActiveBeatsChangedEventArgs,
-    AlphaSynthWebWorkerApi: AlphaSynthWebWorkerApi
+    AlphaSynthWebWorkerApi: AlphaSynthWebWorkerApi,
+    AlphaSynthWebAudioOutputBase: AlphaSynthWebAudioOutputBase,
+    AlphaSynthScriptProcessorOutput: AlphaSynthScriptProcessorOutput,
+    AlphaSynthAudioWorkletOutput: AlphaSynthAudioWorkletOutput
 });
 
 export { AlphaTabApi, AlphaTabError, AlphaTabErrorType, CoreSettings, DisplaySettings, FileLoadError, FingeringMode, FormatError, ImporterSettings, LayoutMode, LogLevel, Logger, NotationMode, NotationSettings, PlayerSettings, ProgressEventArgs, RenderingResources, ResizeEventArgs, ScrollMode, Settings, StaveProfile, TabRhythmMode, VibratoPlaybackSettings, index$4 as exporter, index$5 as importer, VersionInfo as meta, index$3 as midi, index$2 as model, index$1 as rendering, index as synth };
