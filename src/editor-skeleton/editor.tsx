@@ -182,6 +182,13 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
     }
   };
 
+  const setIsLooping = (isLooping: boolean) => {
+    if (api) {
+      api.isLooping = isLooping;
+      forceUpdate();
+    }
+  }
+
   const currentAvailableChords = (): Chord[] => {
     const chords = api?.score?.tracks[0].staves[0].chords;
     return Array.from(chords?.values() ?? []);
@@ -296,9 +303,11 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
         playPause={playPause}
         onCountInChange={setCountIn}
         onMetronomeChange={setMetronome}
+        onLoopingChange={setIsLooping}
         isCountIn={api?.countInVolume !== 0}
         isMetronome={api?.metronomeVolume !== 0}
         isPlaying={api?.playerState === 1}
+        isLooping={api?.isLooping ?? false}
       />
     </AppContainer>
   );

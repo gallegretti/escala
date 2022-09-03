@@ -3,18 +3,21 @@ import { styled } from '@mui/material';
 import PlayPauseGlyph from '@glyphs/player-controls/play';
 import CountInGlyph from '@glyphs/player-controls/count-in';
 import MetronomeGlyph from '@glyphs/player-controls/metronome';
+import RepeatGlyph from '@glyphs/player-controls/repeat';
 import VolumeControlComponent from './volume-control';
 import EditorPlayerSpeedComponent from './editor-player-speed';
 
 interface EditorPlayerControlsProps {
-  playPause: () => void,
-  isPlaying: boolean,
-  isCountIn: boolean,
-  isMetronome: boolean,
-  onCountInChange: (countIn: boolean) => void,
-  onMetronomeChange: (metronome: boolean) => void,
-  onVolumeChange: (volume: number) => void,
-  onSpeedChange: (speed: number) => void,
+  playPause: () => void;
+  isPlaying: boolean;
+  isCountIn: boolean;
+  isMetronome: boolean;
+  isLooping: boolean;
+  onLoopingChange: (isLooping: boolean) => void;
+  onCountInChange: (countIn: boolean) => void;
+  onMetronomeChange: (metronome: boolean) => void;
+  onVolumeChange: (volume: number) => void;
+  onSpeedChange: (speed: number) => void;
 }
 
 const EditorPlayerControlsDiv = styled('div')(({ theme }) => ({
@@ -73,6 +76,11 @@ export default function EditorPlayerControls(props: EditorPlayerControlsProps) {
         <MetronomeGlyph
           selected={props.isMetronome}
           onClick={() => props.onMetronomeChange(!props.isMetronome)}
+          disabled={false}
+        />
+        <RepeatGlyph
+          selected={props.isLooping}
+          onClick={() => props.onLoopingChange(!props.isLooping)}
           disabled={false}
         />
         <VolumeControlComponent volume={currentVolume} setVolume={setVolume} />
