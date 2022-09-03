@@ -22,6 +22,8 @@ import {
 } from '../alphatab-types/alphatab-types';
 import EditorActionDispatcher from '../editor/editor-action-dispatcher';
 import EditorScoreState from '../editor/editor-score-state';
+import exportGuitarPro from './editor-export/export-guitar-pro';
+import exportMidi from './editor-export/export-midi';
 
 function useForceUpdate() {
   const [_, setValue] = useState(0); // integer state
@@ -235,26 +237,8 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
     fileReader.readAsArrayBuffer(file);
   };
 
-  const exportGuitarPro = () => {
-    if (!api) {
-      return;
-    }
-    const exporter = new alphaTab.exporter.Gp7Exporter();
-    const data = exporter.export(api.score!, api.settings);
-    const a = document.createElement('a');
-    a.download = `${api?.score?.title || 'File'}.gp`;
-    a.href = URL.createObjectURL(new Blob([data]));
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
   const newFile = () => {
     api?.tex('\\title \'New score\' . 3.3.4');
-  };
-
-  const exportMidi = () => {
-    api?.downloadMidi();
   };
 
   return (
@@ -277,8 +261,8 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
             currentAvailableChords={currentAvailableChords()}
             editorScoreState={editorScoreState}
             actionDispatcher={editorActionDispatcher}
-            exportGuitarPro={exportGuitarPro}
-            exportMidi={exportMidi}
+            exportGuitarPro={() => exportGuitarPro(api)}
+            exportMidi={() => exportMidi(api)}
             print={print}
             canRedo={editorActions.canRedo()}
             canUndo={editorActions.canUndo()}
