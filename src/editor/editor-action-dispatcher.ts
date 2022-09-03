@@ -280,6 +280,21 @@ class EditorActionDispatcher {
     }
   };
 
+  addBar = () => {
+    let currentBeat = this.selectedBeat();
+    if (currentBeat) {
+      const missingBeats = currentBeat.voice.bar.masterBar.timeSignatureNumerator - currentBeat.voice.beats.length;
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0; i < missingBeats; i++) {
+        const newBeat = new alphaTab.model.Beat();
+        this.dispatchAction({ type: 'add-beat', data: { currentBeat, newBeat } });
+        currentBeat = newBeat;
+      }
+      const currentBar = currentBeat.voice.bar;
+      this.dispatchAction({ type: 'add-bar', data: { currentBar } });
+    }
+  };
+
   setChord = (chord: Chord | null) => {
     const currentBeat = this.selectedBeat();
     if (currentBeat) {

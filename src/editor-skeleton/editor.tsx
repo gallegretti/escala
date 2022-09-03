@@ -107,7 +107,11 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
     }
     if (UIeventData.type === 'move-cursor-next-bar' && selectedNoteController.hasSelectedSlot()) {
       UIeventData.rawEvent.preventDefault();
-      selectedNoteController.moveNextBar();
+      const moved = selectedNoteController.moveNextBar();
+      if (!moved) {
+        editorActionDispatcher.addBar();
+        selectedNoteController.moveNextBar();
+      }
     }
     if (UIeventData.type === 'move-cursor-previous-bar' && selectedNoteController.hasSelectedSlot()) {
       UIeventData.rawEvent.preventDefault();
