@@ -1,7 +1,7 @@
 import { EditorActionResult, EditorActionEventAddBar } from '../../editor-action-event';
-import EditorActionWithoutUndo from '../editor-action-without-undo';
+import EditorActionInterface from '../editor-action.interface';
 
-class AddBarAction extends EditorActionWithoutUndo<EditorActionEventAddBar> {
+class AddBarAction extends EditorActionInterface<EditorActionEventAddBar> {
   do(action: EditorActionEventAddBar): EditorActionResult {
     const { currentBar } = action.data;
     // Create new bar
@@ -15,7 +15,7 @@ class AddBarAction extends EditorActionWithoutUndo<EditorActionEventAddBar> {
     // Configure default voices and beats
     newBar.addVoice(new alphaTab.model.Voice());
     newBar.addVoice(new alphaTab.model.Voice());
-    // It seems like alphatab required the next bar to have at least one beat otherwise we'll get an error
+    // Create one beat on the new Bar
     newBar.voices[0].addBeat(new alphaTab.model.Beat());
     newBar.voices[1].addBeat(new alphaTab.model.Beat());
     currentBar.staff.addBar(newBar);
@@ -24,6 +24,25 @@ class AddBarAction extends EditorActionWithoutUndo<EditorActionEventAddBar> {
       requiresRerender: true,
       requiresMidiUpdate: true,
     };
+  }
+
+  undo(action: EditorActionEventAddBar): EditorActionResult {
+    const { currentBar } = action.data;
+    const barToRemove = currentBar.nextBar;
+    const masterBarToRemove = barToRemove?.masterBar;
+    barToRemove?.staff.bars.splice(barToRemove.index, 1);
+    masterBarToRemove?.score.masterBars.splice(masterBarToRemove.index, 1);
+    currentBar.masterBar.nextMasterBar = null;
+    currentBar.nextBar = null;
+    currentBar?.finish(null as any, {} as any);
+    return {
+      requiresRerender: true,
+      requiresMidiUpdate: true,
+    };
+  }
+
+  canUndo(): boolean {
+    return true;
   }
 }
 
