@@ -6,6 +6,7 @@ export default function baseSvgStyle(props: { disabled: boolean, extraSvgStyles?
   return {
     fontFamily: glyphSymbolFontfamily,
     cursor: props.disabled ? 'auto' : 'pointer',
+    flexShrink: 0,
     userSelect: 'none',
     ...(props.extraSvgStyles ? props.extraSvgStyles : {}),
   };

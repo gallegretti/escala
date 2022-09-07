@@ -110,6 +110,7 @@ export default function EditorControls(props: EditorControlsProps) {
     borderTopColor: theme.palette.mode === 'dark' ? theme.palette.grey[900] : '#ede9e9',
     height: '45px',
     alignItems: 'center',
+    overflowX: 'auto',
     gap: '10px',
     paddingLeft: '10px',
     paddingRight: '10px',
