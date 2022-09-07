@@ -111,6 +111,7 @@ export default function EditorControls(props: EditorControlsProps) {
     height: '45px',
     alignItems: 'center',
     overflowX: 'auto',
+    overflowY: 'hidden',
     gap: '10px',
     paddingLeft: '10px',
     paddingRight: '10px',
