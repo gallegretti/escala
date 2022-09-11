@@ -234,11 +234,13 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
     fileReader.onload = (event) => {
       api?.load(event.target?.result, [0]);
     };
+    editorActions.clearUndoAndRedoHistory();
     fileReader.readAsArrayBuffer(file);
   };
 
   const newFile = () => {
     api?.tex('\\title \'New score\' . 3.3.4');
+    editorActions.clearUndoAndRedoHistory();
   };
 
   return (

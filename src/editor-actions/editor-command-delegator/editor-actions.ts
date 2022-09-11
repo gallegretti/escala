@@ -66,6 +66,11 @@ export default class EditorActions {
     return this.actionToRedo() !== undefined;
   }
 
+  public clearUndoAndRedoHistory() {
+    this.actionsIndex = -1;
+    this.actions = [];
+  }
+
   private actionToRedo() {
     return this.actions[this.actionsIndex + 1];
   }
