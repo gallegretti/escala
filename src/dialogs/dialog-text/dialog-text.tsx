@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button,
 } from '@mui/material';
@@ -15,6 +15,10 @@ export default function DialogText(props: DialogTextProps) {
   const updateNewText = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setNewTextValue(event.target.value);
   };
+
+  useEffect(() => {
+    setNewTextValue(props.currentText);
+  }, [props.currentText]);
 
   const cancel = () => {
     setNewTextValue(props.currentText);
@@ -35,7 +39,7 @@ export default function DialogText(props: DialogTextProps) {
         <TextField
           id="field-beat-text"
           autoFocus
-          value={newTextValue ?? props.currentText ?? ''}
+          value={newTextValue ?? ''}
           onChange={(event) => updateNewText(event)}
         />
       </DialogContent>
