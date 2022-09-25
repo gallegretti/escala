@@ -3,6 +3,7 @@ import './dialog-score-info';
 import {
   Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { ScoreInfo } from '../../editor-actions/actions/set-score-info/score-info';
 import { Score } from '../../alphatab-types/alphatab-types';
 
@@ -25,6 +26,8 @@ export function DialogScoreInfo(props: ScoreInfoProps) {
   });
 
   const [state, setState] = useState(stateFromProps());
+
+  const { t } = useTranslation();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const propertyName = e.target.name as keyof ScoreInfo;
@@ -50,7 +53,7 @@ export function DialogScoreInfo(props: ScoreInfoProps) {
       open={props.isOpen}
       onClose={props.onClose}
     >
-      <DialogTitle>Score Information</DialogTitle>
+      <DialogTitle>{t('Score Information')}</DialogTitle>
       <DialogContent className="score-info-content">
         <TextField
           id="field-title"
@@ -58,7 +61,7 @@ export function DialogScoreInfo(props: ScoreInfoProps) {
           margin="normal"
           variant="outlined"
           name="title"
-          label="Title"
+          label={t('Title')}
           onChange={handleChange}
           value={state.title}
         />
@@ -68,7 +71,7 @@ export function DialogScoreInfo(props: ScoreInfoProps) {
           margin="normal"
           variant="outlined"
           name="subTitle"
-          label="Subtitle"
+          label={t('Subtitle')}
           onChange={handleChange}
           value={state.subTitle}
         />
@@ -78,7 +81,7 @@ export function DialogScoreInfo(props: ScoreInfoProps) {
           margin="normal"
           variant="outlined"
           name="artist"
-          label="Artist"
+          label={t('Artist')}
           onChange={handleChange}
           value={state.artist}
         />
@@ -88,7 +91,7 @@ export function DialogScoreInfo(props: ScoreInfoProps) {
           margin="normal"
           variant="outlined"
           name="album"
-          label="Album"
+          label={t('Album')}
           onChange={handleChange}
           value={state.album}
         />
@@ -98,7 +101,7 @@ export function DialogScoreInfo(props: ScoreInfoProps) {
           margin="normal"
           variant="outlined"
           name="tab"
-          label="Tab Creator"
+          label={t('Tab Creator')}
           onChange={handleChange}
           value={state.tab}
         />
@@ -108,7 +111,7 @@ export function DialogScoreInfo(props: ScoreInfoProps) {
           margin="normal"
           variant="outlined"
           name="notices"
-          label="Comments"
+          label={t('Comments')}
           onChange={handleChange}
           value={state.notices}
         />
@@ -118,14 +121,14 @@ export function DialogScoreInfo(props: ScoreInfoProps) {
           margin="normal"
           variant="outlined"
           name="words"
-          label="Composer"
+          label={t('Composer')}
           onChange={handleChange}
           value={state.words}
         />
       </DialogContent>
       <DialogActions>
-        <Button title="Save" onClick={onSave}>Save</Button>
-        <Button title="Cancel" onClick={onCancel}>Cancel</Button>
+        <Button onClick={onSave}>{t('Save')}</Button>
+        <Button onClick={onCancel}>{t('Cancel')}</Button>
       </DialogActions>
     </Dialog>
   );

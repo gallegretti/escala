@@ -13,6 +13,7 @@ import {
   SelectChangeEvent,
   TextField,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Track, Tuning } from '../../alphatab-types/alphatab-types';
 import TrackInfo from '../../editor-actions/actions/edit-track/track-info';
 import { defaultTuning, tunings } from '../../editor-actions/actions/edit-track/tunings';
@@ -29,12 +30,14 @@ export default function DialogTrack(props: DialogTrackProps) {
   const [capo, setCapo] = useState(0);
   const [tuning, setTuning] = useState<Tuning>(defaultTuning);
 
+  const { t } = useTranslation();
+
   useEffect(() => {
     const currentTuning = props.currentTrack?.staves[0].stringTuning;
     if (currentTuning) {
       setTuning(tunings.find((t) => t.name === currentTuning.name) ?? defaultTuning);
     }
-    setTrackName(props.currentTrack?.shortName ?? 'New Track');
+    setTrackName(props.currentTrack?.shortName ?? t('New Track'));
     setCapo(props.currentTrack?.staves[0].capo ?? 0);
   }, [props.currentTrack]);
 
@@ -52,7 +55,7 @@ export default function DialogTrack(props: DialogTrackProps) {
 
   return (
     <Dialog open={props.isOpen} onClose={props.onClose}>
-      <DialogTitle>{props.currentTrack ? 'Edit Track' : 'New Track'}</DialogTitle>
+      <DialogTitle>{props.currentTrack ? t('Edit Track') : t('New Track')}</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
@@ -60,18 +63,18 @@ export default function DialogTrack(props: DialogTrackProps) {
           placeholder="Untitled"
           margin="normal"
           type="text"
-          label="Track name"
+          label={t('Track name')}
           value={trackName}
           onChange={onTrackNameChange}
         />
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
           <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Tuning Preset</InputLabel>
+            <InputLabel id="demo-simple-select-label">{t('Tuning Preset')}</InputLabel>
             <Select<Tuning>
               labelId="demo-simple-select-label"
               id="demo-simple-select-label"
               fullWidth
-              label="Tuning Preset"
+              label={t('Tuning Preset')}
               onChange={onTuningChange}
               value={tuning}
             >
@@ -82,7 +85,7 @@ export default function DialogTrack(props: DialogTrackProps) {
           </FormControl>
           <TextField
             style={{ width: '100px' }}
-            label="Capo"
+            label={t('Capo')}
             type="number"
             InputProps={{
               inputProps: {
@@ -95,8 +98,8 @@ export default function DialogTrack(props: DialogTrackProps) {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button title="Cancel" onClick={props.onClose}>Cancel</Button>
-        <Button title="Save" onClick={() => props.onSave({ name: trackName, capo, tuning })}>Save</Button>
+        <Button onClick={props.onClose}>{t('Cancel')}</Button>
+        <Button onClick={() => props.onSave({ name: trackName, capo, tuning })}>{t('Save')}</Button>
       </DialogActions>
     </Dialog>
   );

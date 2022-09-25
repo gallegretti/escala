@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 interface DialogTextProps {
   isOpen: boolean,
@@ -15,6 +16,8 @@ export default function DialogText(props: DialogTextProps) {
   const updateNewText = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setNewTextValue(event.target.value);
   };
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     setNewTextValue(props.currentText);
@@ -34,7 +37,7 @@ export default function DialogText(props: DialogTextProps) {
       open={props.isOpen}
       onClose={props.onClose}
     >
-      <DialogTitle>Set text</DialogTitle>
+      <DialogTitle>{t('Set text')}</DialogTitle>
       <DialogContent>
         <TextField
           id="field-beat-text"
@@ -44,8 +47,8 @@ export default function DialogText(props: DialogTextProps) {
         />
       </DialogContent>
       <DialogActions>
-        <Button title="Cancel" onClick={cancel}>Cancel</Button>
-        <Button title="Save" onClick={save}>Save</Button>
+        <Button onClick={cancel}>{t('Cancel')}</Button>
+        <Button onClick={save}>{t('Save')}</Button>
       </DialogActions>
     </Dialog>
   );

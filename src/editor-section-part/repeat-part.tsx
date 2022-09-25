@@ -4,6 +4,7 @@ import OpenRepeatGlyph from '@glyphs/beat/open-repeat';
 import ExpandMoreGlyph from '@glyphs/generic/expand-more';
 import { Input } from '@mui/material';
 import useAnchorElem from '@hooks/use-anchor-element';
+import { useTranslation } from 'react-i18next';
 import StyledPopper from './styled-popper';
 import EditorScoreState from '../editor/editor-score-state';
 import EditorActionDispatcher from '../editor/editor-action-dispatcher';
@@ -15,6 +16,8 @@ interface RepeatPartProps {
 
 export default function RepeatPart(props: RepeatPartProps) {
   const [anchorElem, setAnchorElem] = useAnchorElem();
+
+  const { t } = useTranslation();
 
   const hasCloseRepeat = props.editorScoreState.selectionNumberOfRepetitions > 0;
   const isDisabled = !props.editorScoreState.hasSelectedBeat;
@@ -63,7 +66,7 @@ export default function RepeatPart(props: RepeatPartProps) {
           <StyledPopper anchorEl={anchorElem} open disablePortal>
             <Input
               type="number"
-              title="Number of repetitions"
+              title={t('Number of repetitions')}
               value={props.editorScoreState.selectionNumberOfRepetitions}
               onChange={(e) => {
                 props.actionDispatcher.setCloseRepeat(Number.parseInt(e.target.value, 10));
