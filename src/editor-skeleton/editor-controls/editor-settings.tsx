@@ -45,7 +45,7 @@ export default function EditorSettings() {
       />
       <KeyboardGlyph disabled={false} selected={false} onClick={() => { openShortcutsDialog(); }} />
       <DarkModeGlyph disabled={false} selected={false} onClick={() => { colorMode.toggleColorMode(); }} />
-      <LanguageGlyph disabled={false} selected={false} onClick={onLanguageClick} />
+      <LanguageGlyph hideTooltip={anchorElem !== null} disabled={false} selected={false} onClick={onLanguageClick} />
       {anchorElem
         && (
           <StyledPopper open anchorEl={anchorElem} placement="bottom-end" disablePortal style={{ height: '100%' }}>

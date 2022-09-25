@@ -11,7 +11,7 @@ export default function LanguageGlyph(props: DynamicGlyphProps) {
   const { t } = useTranslation();
 
   return (
-    <Tooltip title={t('Language')}>
+    <Tooltip title={props.hideTooltip ? '' : t('Language')}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="24px"
