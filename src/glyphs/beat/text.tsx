@@ -14,7 +14,7 @@ export default function TextGlyph(props: DynamicGlyphProps) {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="20px"
-        width="45px"
+        width="50px"
         onClick={props.onClick}
         style={baseSvgStyle(props)}
       >
@@ -22,7 +22,7 @@ export default function TextGlyph(props: DynamicGlyphProps) {
           fill={color}
           style={{ transform: 'translate(4px, 16px)', fontFamily: glyphAsciFontfamily, fontSize: '20px' }}
         >
-          Text
+          {t('Text')}
         </text>
       </svg>
     </Tooltip>

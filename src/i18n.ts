@@ -69,6 +69,11 @@ const resources: Resource = {
       'Track name': 'Nome da faixa',
       'Tuning Preset': 'Afinação',
       'Capo': 'Capo',
+      'Palm Mute': 'Nota Abafada',
+      'P.M': 'N.A', // Nota Abafada
+      'Let Ring': 'Deixar Soar',
+      'L.R': 'D.S', // Deixe Soar
+      'Text': 'Texto',
     },
   },
 };

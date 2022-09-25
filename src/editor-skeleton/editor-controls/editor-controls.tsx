@@ -6,6 +6,7 @@ import useDialog from '@hooks/use-dialog';
 import DialogText from '@dialogs/dialog-text/dialog-text';
 import DialogScoreInfo from '@dialogs/dialog-score-info/dialog-score-info';
 import DialogTempo from '@dialogs/dialog-tempo/dialog-tempo';
+import { useTranslation } from 'react-i18next';
 import { ScoreInfo } from '../../editor-actions/actions/set-score-info/score-info';
 import { BendType } from '../../alphatab-types/bend-type';
 import DynamicsSection from '../../editor-sections/dynamics';
@@ -21,7 +22,6 @@ import DialogChord from '../../dialogs/dialog-chord/dialog-chord';
 import EditorActionDispatcher from '../../editor/editor-action-dispatcher';
 import EditorScoreState from '../../editor/editor-score-state';
 import EditorSettings from './editor-settings';
-import { useTranslation } from 'react-i18next';
 
 export interface BendState {
   preBend: BendType;
