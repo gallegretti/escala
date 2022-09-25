@@ -1,14 +1,16 @@
 /* eslint-disable max-len */
 import React from 'react';
 import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { DynamicGlyphProps } from '../dynamics/dynamic';
 import baseSvgStyle from '../glyphBaseSvgStyle';
 import { useGlyphColor } from '../glyphColor';
 
 export default function DeleteGlyph(props: DynamicGlyphProps) {
   const color = useGlyphColor(props);
+  const { t } = useTranslation();
   return (
-    <Tooltip title="Delete">
+    <Tooltip title={t('Delete')}>
       <svg
         id={props.id}
         height="24px"

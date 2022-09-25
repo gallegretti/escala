@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mui/material';
 import { useGlyphColor } from '../glyphColor';
 import { BaseGlyphProps } from '../glyphBaseProps';
@@ -7,9 +8,10 @@ import baseSvgStyle from '../glyphBaseSvgStyle';
 
 export default function NewGlyph(props: BaseGlyphProps) {
   const color = useGlyphColor(props);
+  const { t } = useTranslation();
   // https://fonts.google.com/icons?selected=Material%20Icons%3Anote_add%3A
   return (
-    <Tooltip title="New File">
+    <Tooltip title={t('New File')}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         id={props.id}

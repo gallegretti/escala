@@ -1,13 +1,15 @@
 import React from 'react';
 import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { DynamicGlyphProps } from '../dynamics/dynamic';
 import { useGlyphColor } from '../glyphColor';
 import baseSvgStyle from '../glyphBaseSvgStyle';
 
 export default function OpenRepeatGlyph(props: DynamicGlyphProps) {
   const color = useGlyphColor(props);
+  const { t } = useTranslation();
   return (
-    <Tooltip title="Open Repeat">
+    <Tooltip title={t('Open Repeat')}>
       <svg
         height="22px"
         width="12px"

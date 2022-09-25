@@ -1,13 +1,15 @@
 import React from 'react';
 import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { DynamicGlyphProps } from '../dynamics/dynamic';
 import { useGlyphColor } from '../glyphColor';
 import baseSvgStyle from '../glyphBaseSvgStyle';
 
 export default function DownStrokeGlyph(props: DynamicGlyphProps) {
   const color = useGlyphColor(props);
+  const { t } = useTranslation();
   return (
-    <Tooltip title="Downstroke">
+    <Tooltip title={t('Downstroke')}>
       <svg
         height="20px"
         width="18px"

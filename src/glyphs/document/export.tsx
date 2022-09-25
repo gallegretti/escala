@@ -1,14 +1,16 @@
 import React from 'react';
 import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { useGlyphColor } from '../glyphColor';
 import { BaseGlyphProps } from '../glyphBaseProps';
 import baseSvgStyle from '../glyphBaseSvgStyle';
 
 export default function ExportGlyph(props: BaseGlyphProps) {
   const color = useGlyphColor(props);
+  const { t } = useTranslation();
   // https://fonts.google.com/icons?selected=Material%20Icons%3Afile_download%3A
   return (
-    <Tooltip title={props.hideTooltip ? '' : 'Download'}>
+    <Tooltip title={props.hideTooltip ? '' : t('Download')}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         id={props.id}

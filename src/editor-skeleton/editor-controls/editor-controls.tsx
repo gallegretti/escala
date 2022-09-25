@@ -2,16 +2,12 @@ import React, { useState } from 'react';
 import {
   Tabs, Tab, useTheme, styled,
 } from '@mui/material';
-import DarkModeGlyph from '@glyphs/settings/dark-mode';
 import useDialog from '@hooks/use-dialog';
 import DialogText from '@dialogs/dialog-text/dialog-text';
 import DialogScoreInfo from '@dialogs/dialog-score-info/dialog-score-info';
 import DialogTempo from '@dialogs/dialog-tempo/dialog-tempo';
-import DialogShortcuts from '@dialogs/dialog-shortcuts/dialog-shortcuts';
-import KeyboardGlyph from '@glyphs/document/keyboard';
 import { ScoreInfo } from '../../editor-actions/actions/set-score-info/score-info';
 import { BendType } from '../../alphatab-types/bend-type';
-import { ColorModeContext } from '../../editor/color-mode-context';
 import DynamicsSection from '../../editor-sections/dynamics';
 import DurationSetion from '../../editor-sections/duration';
 import BeatSection from '../../editor-sections/beat';
@@ -24,6 +20,8 @@ import {
 import DialogChord from '../../dialogs/dialog-chord/dialog-chord';
 import EditorActionDispatcher from '../../editor/editor-action-dispatcher';
 import EditorScoreState from '../../editor/editor-score-state';
+import EditorSettings from './editor-settings';
+import { useTranslation } from 'react-i18next';
 
 export interface BendState {
   preBend: BendType;
@@ -76,12 +74,6 @@ export default function EditorControls(props: EditorControlsProps) {
     isDialogOpen: isChordDialogOpen,
   } = useDialog();
 
-  const {
-    openDialog: openShortcutsDialog,
-    closeDialog: closeShortcutsDialog,
-    isDialogOpen: isShortcutsDialogOpen,
-  } = useDialog();
-
   const saveNewText = (newText: string) => {
     props.actionDispatcher.setText(newText);
     closeTextDialog();
@@ -101,8 +93,6 @@ export default function EditorControls(props: EditorControlsProps) {
     closeTempoDialog();
     props.actionDispatcher.setTempo(tempo);
   };
-
-  const colorMode = React.useContext(ColorModeContext);
 
   const TabContainer = styled('div')(({ theme }) => ({
     display: 'flex',
@@ -124,6 +114,8 @@ export default function EditorControls(props: EditorControlsProps) {
 
   const backgroundColor = theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100];
   const borderColor = theme.palette.mode === 'dark' ? theme.palette.grey[900] : '#ede9e9';
+
+  const { t } = useTranslation();
 
   return (
     <div>
@@ -149,10 +141,6 @@ export default function EditorControls(props: EditorControlsProps) {
           onSave={saveNewScoreInfo}
         />
       )}
-      <DialogShortcuts
-        isOpen={isShortcutsDialogOpen}
-        onClose={closeShortcutsDialog}
-      />
       <DialogChord
         isOpen={isChordDialogOpen}
         chord={props.editorScoreState.selectionChord}
@@ -170,15 +158,14 @@ export default function EditorControls(props: EditorControlsProps) {
       }}
       >
         <Tabs style={{ backgroundColor }} value={currentTab} onChange={(e, v) => setCurrentTab(v)}>
-          <Tab label="Document" />
-          <Tab label="Effects" />
-          <Tab label="Beat" />
-          <Tab label="Duration" />
-          <Tab label="Dynamics" />
+          <Tab label={t('Document')} />
+          <Tab label={t('Effects')} />
+          <Tab label={t('Beat')} />
+          <Tab label={t('Duration')} />
+          <Tab label={t('Dynamics')} />
         </Tabs>
         <div style={{ backgroundColor, display: 'flex', gap: '10px' }}>
-          <KeyboardGlyph disabled={false} selected={false} onClick={() => { openShortcutsDialog(); }} />
-          <DarkModeGlyph disabled={false} selected={false} onClick={() => { colorMode.toggleColorMode(); }} />
+          <EditorSettings />
         </div>
       </div>
       <div>

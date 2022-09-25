@@ -4,13 +4,13 @@ import {
   DialogTitle,
   DialogContent,
   Table,
-  TableHead,
   TableRow,
   TableBody,
   TableContainer,
   Paper,
   TableCell,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 interface DialogShortcutsProps {
   isOpen: boolean;
@@ -31,30 +31,21 @@ const shortcuts = [
 ];
 
 export function DialogShortcuts(props: DialogShortcutsProps) {
+  const { t } = useTranslation();
   return (
     <Dialog
       open={props.isOpen}
       onClose={props.onClose}
     >
-      <DialogTitle>Shortcuts Information</DialogTitle>
+      <DialogTitle>{t('Shortcuts Information')}</DialogTitle>
       <DialogContent className="score-info-content">
         <TableContainer component={Paper}>
           <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  Action
-                </TableCell>
-                <TableCell>
-                  Key
-                </TableCell>
-              </TableRow>
-            </TableHead>
             <TableBody>
               {shortcuts.map(([description, key]) => (
                 <TableRow key={description}>
-                  <TableCell>{description}</TableCell>
-                  <TableCell>{key}</TableCell>
+                  <TableCell>{t(description)}</TableCell>
+                  <TableCell>{t(key)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

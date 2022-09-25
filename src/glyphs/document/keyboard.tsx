@@ -1,15 +1,17 @@
 /* eslint-disable max-len */
 import React from 'react';
 import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { useGlyphColor } from '../glyphColor';
 import { BaseGlyphProps } from '../glyphBaseProps';
 import baseSvgStyle from '../glyphBaseSvgStyle';
 
 export default function KeyboardGlyph(props: BaseGlyphProps) {
   const color = useGlyphColor(props);
+  const { t } = useTranslation();
   // https://fonts.google.com/icons?selected=Material%20Icons%3Akeyboard%3A
   return (
-    <Tooltip title="Keyboard Shortcuts">
+    <Tooltip title={t('Keyboard Shortcuts')}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         id={props.id}
