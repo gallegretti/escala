@@ -1,12 +1,10 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState } from 'react';
-import { useTheme } from '@mui/material';
 import ChordGlyph from '@glyphs/beat/chord';
 import ExpandMoreGlyph from '@glyphs/generic/expand-more';
 import useAnchorElem from '@hooks/use-anchor-element';
 import { Chord } from '../alphatab-types/alphatab-types';
 import StyledPopper from './styled-popper';
+import ChordItem from './chord-item';
 
 interface ChordSectionProps {
   disabled: boolean;
@@ -19,7 +17,6 @@ interface ChordSectionProps {
 export default function ChordSection(props: ChordSectionProps) {
   const [isPopperOpen, setIsPopperOpen] = useState(false);
   const [anchorElem, setAnchorElement] = useAnchorElem();
-  const theme = useTheme();
 
   const onExpandMoreClick = (e: any) => {
     if (props.disabled) {
@@ -53,19 +50,21 @@ export default function ChordSection(props: ChordSectionProps) {
         onClick={clickChord}
       />
       {props.chords.length > 0
-        && <ExpandMoreGlyph disabled={props.disabled} selected={false} onClick={onExpandMoreClick} />}
+        && (
+          <ExpandMoreGlyph
+            disabled={props.disabled}
+            selected={props.currentChord !== null}
+            onClick={onExpandMoreClick}
+          />
+        )}
       <StyledPopper anchorEl={anchorElem} open={isPopperOpen} disablePortal>
         {props.chords.map((chord) => (
-          <div
+          <ChordItem
             key={chord.name}
+            isSelected={chord.name === props.currentChord?.name}
+            chord={chord}
             onClick={() => useChord(chord)}
-            style={{
-              cursor: 'pointer',
-              color: theme.palette.text.primary,
-            }}
-          >
-            {chord.name}
-          </div>
+          />
         ))}
       </StyledPopper>
     </div>
