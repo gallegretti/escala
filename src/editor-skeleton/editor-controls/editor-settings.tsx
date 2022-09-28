@@ -1,13 +1,12 @@
 import React from 'react';
-import StyledPopper from '@editor-section-part/styled-popper';
+import { useTranslation } from 'react-i18next';
 import KeyboardGlyph from '@glyphs/document/keyboard';
 import DarkModeGlyph from '@glyphs/settings/dark-mode';
 import LanguageGlyph from '@glyphs/generic/language';
 import useDialog from '@hooks/use-dialog';
 import DialogShortcuts from '@dialogs/dialog-shortcuts/dialog-shortcuts';
 import useAnchorElem from '@hooks/use-anchor-element';
-import { MenuList } from '@mui/material';
-import { useTranslation } from 'react-i18next';
+import { Menu } from '@mui/material';
 import { ColorModeContext } from '../../editor/color-mode-context';
 import EditorLanguageItem from './editor-language-item';
 
@@ -48,20 +47,18 @@ export default function EditorSettings() {
       <LanguageGlyph hideTooltip={anchorElem !== null} disabled={false} selected={false} onClick={onLanguageClick} />
       {anchorElem
         && (
-          <StyledPopper open anchorEl={anchorElem} placement="bottom-end" disablePortal style={{ height: '100%' }}>
-            <MenuList>
-              <EditorLanguageItem
-                language="Português"
-                isSelected={i18n.language === 'pt'}
-                onClick={() => changeLanguage('pt')}
-              />
-              <EditorLanguageItem
-                language="Inglês"
-                isSelected={i18n.language === 'en'}
-                onClick={() => changeLanguage('en')}
-              />
-            </MenuList>
-          </StyledPopper>
+          <Menu open onClose={() => setAnchorElem(null)} anchorEl={anchorElem}>
+            <EditorLanguageItem
+              language="Português"
+              isSelected={i18n.language === 'pt'}
+              onClick={() => changeLanguage('pt')}
+            />
+            <EditorLanguageItem
+              language="Inglês"
+              isSelected={i18n.language === 'en'}
+              onClick={() => changeLanguage('en')}
+            />
+          </Menu>
         )}
     </>
   );
