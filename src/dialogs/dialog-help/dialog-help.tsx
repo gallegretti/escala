@@ -12,6 +12,10 @@ import {
 import { useTranslation } from 'react-i18next';
 import HelpBasics from './help-basics';
 import HelpDocument from './help-document';
+import HelpDynamics from './help-dynamics';
+import HelpDuration from './help-duration';
+import HelpBeat from './help-beat';
+import HelpEffects from './help-effects';
 
 interface DialogHelpProps {
   isOpen: boolean;
@@ -65,6 +69,10 @@ export function DialogHelp(props: DialogHelpProps) {
         <ContentWrapper>
           {currentPage === 'Basics' && <HelpBasics />}
           {currentPage === 'Document' && <HelpDocument />}
+          {currentPage === 'Dynamics' && <HelpDynamics />}
+          {currentPage === 'Duration' && <HelpDuration />}
+          {currentPage === 'Beat' && <HelpBeat />}
+          {currentPage === 'Effects' && <HelpEffects />}
         </ContentWrapper>
       </DialogHelpContent>
     </Dialog>

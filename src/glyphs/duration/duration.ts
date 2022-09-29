@@ -1,6 +1,6 @@
 export interface DurationGlyphProps {
   selected: boolean;
   disabled: boolean;
-  onClick: () => void;
+  onClick?: () => void;
   children?: React.ReactNode;
 }
