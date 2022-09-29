@@ -7,6 +7,8 @@ import useDialog from '@hooks/use-dialog';
 import DialogShortcuts from '@dialogs/dialog-shortcuts/dialog-shortcuts';
 import useAnchorElem from '@hooks/use-anchor-element';
 import { Menu } from '@mui/material';
+import HelpGlyph from '@glyphs/settings/help';
+import DialogHelp from '@dialogs/dialog-help/dialog-help';
 import { ColorModeContext } from '../../editor/color-mode-context';
 import EditorLanguageItem from './editor-language-item';
 
@@ -15,6 +17,12 @@ export default function EditorSettings() {
     openDialog: openShortcutsDialog,
     closeDialog: closeShortcutsDialog,
     isDialogOpen: isShortcutsDialogOpen,
+  } = useDialog();
+
+  const {
+    openDialog: openHelpDialog,
+    closeDialog: closeHelpDialog,
+    isDialogOpen: isHelpDialogOpen,
   } = useDialog();
 
   const { i18n } = useTranslation();
@@ -42,9 +50,14 @@ export default function EditorSettings() {
         isOpen={isShortcutsDialogOpen}
         onClose={closeShortcutsDialog}
       />
+      <DialogHelp
+        isOpen={isHelpDialogOpen}
+        onClose={closeHelpDialog}
+      />
       <KeyboardGlyph disabled={false} selected={false} onClick={() => { openShortcutsDialog(); }} />
       <DarkModeGlyph disabled={false} selected={false} onClick={() => { colorMode.toggleColorMode(); }} />
       <LanguageGlyph hideTooltip={anchorElem !== null} disabled={false} selected={false} onClick={onLanguageClick} />
+      <HelpGlyph disabled={false} selected={false} onClick={openHelpDialog} />
       {anchorElem
         && (
           <Menu open onClose={() => setAnchorElem(null)} anchorEl={anchorElem}>

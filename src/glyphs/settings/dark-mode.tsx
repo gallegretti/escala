@@ -1,9 +1,9 @@
 /* eslint-disable max-len */
 import React from 'react';
 import { Tooltip, useTheme } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { DynamicGlyphProps } from '../dynamics/dynamic';
 import baseSvgStyle from '../glyphBaseSvgStyle';
-import { useTranslation } from 'react-i18next';
 
 function Light(props: DynamicGlyphProps) {
   // https://fonts.google.com/icons?selected=Material%20Icons%20Outlined%3Alight_mode%3A

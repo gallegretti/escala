@@ -8,6 +8,13 @@ import { initReactI18next } from 'react-i18next';
 const resources: Resource = {
   en: {
     translation: {
+      help: {
+        basic: {
+          'mouse_select': 'Use your mouse to select a note or a string',
+          'arrow_keys': 'Use your arrow keys to move between beats and strings',
+          'delete': 'Press \'delete\' to remove a selected note',
+        },
+      },
     },
   },
   pt: {
@@ -74,6 +81,8 @@ const resources: Resource = {
       'Let Ring': 'Deixar Soar',
       'L.R': 'D.S', // Deixe Soar
       'Text': 'Texto',
+      'Help': 'Ajuda',
+      'Basics': 'Básico',
     },
   },
 };
