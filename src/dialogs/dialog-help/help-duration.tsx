@@ -1,21 +1,18 @@
 import React from 'react';
 import HalfGlyph from '@glyphs/duration/half';
 import WholeGlyph from '@glyphs/duration/whole';
-import styled from '@emotion/styled';
 import QuarterGlyph from '@glyphs/duration/quarter';
 import EighthGlyph from '@glyphs/duration/eighth';
 import SixTeenthGlyph from '@glyphs/duration/sixteenth';
 import ThirtySecondGlyph from '@glyphs/duration/thirty-second';
 import SixtyFourGlyph from '@glyphs/duration/sixty-four';
 import Tie from '@glyphs/duration/tie';
+import {
+  Typography,
+} from '@mui/material';
+import HelpTable, { HelpTableRow } from './help-table';
 
-const GlyphWrapper = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '12px',
-});
-
-const tempos = [
+const tempos: HelpTableRow[] = [
   [WholeGlyph, '1/1'],
   [HalfGlyph, '1/2'],
   [QuarterGlyph, '1/4'],
@@ -23,20 +20,16 @@ const tempos = [
   [SixTeenthGlyph, '1/16'],
   [ThirtySecondGlyph, '1/32'],
   [SixtyFourGlyph, '1/64'],
+  [Tie, 'Ties the selected note to the next'],
 ];
 
 export default function HelpDuration() {
   return (
     <>
-      {tempos.map(([Component, tempo]) => (
-        <GlyphWrapper>
-          <Component selected={false} disabled={false} />
-          <div>
-            {`${tempo} note duration`}
-          </div>
-        </GlyphWrapper>
-      ))}
-      <Tie disabled={false} selected={false} />
+      <Typography variant="h6">
+        How long the note should be played
+      </Typography>
+      <HelpTable rows={tempos} />
     </>
   );
 }

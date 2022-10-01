@@ -1,5 +1,10 @@
 import React from 'react';
+import { Typography } from '@mui/material';
 
 export default function HelpEffects() {
-  return (<h1>Effects</h1>);
+  return (
+    <Typography variant="h6">
+      Effects
+    </Typography>
+  );
 }
