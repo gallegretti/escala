@@ -17,7 +17,7 @@ export default function HelpTable({ rows }: { rows: HelpTableRow[] }) {
       <Table size="small">
         <TableBody>
           {rows.map(([Component, text]) => (
-            <TableRow>
+            <TableRow key={text}>
               <TableCell><Component disabled={false} selected={false} /></TableCell>
               <TableCell>{text}</TableCell>
             </TableRow>

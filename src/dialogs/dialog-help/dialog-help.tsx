@@ -24,11 +24,12 @@ interface DialogHelpProps {
 
 const DialogHelpContent = styled(DialogContent)({
   display: 'flex',
+  overflowY: 'hidden',
+  height: '600px',
+  width: '500px',
 });
 
 const ContentWrapper = styled('div')({
-  width: '500px',
-  height: '600px',
   overflowY: 'auto',
   padding: '12px',
 });

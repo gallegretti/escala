@@ -14,6 +14,12 @@ const resources: Resource = {
           'arrow_keys': 'Use your arrow keys to move between beats and strings',
           'delete': 'Press \'delete\' to remove a selected note',
         },
+        effects: {
+          'palm_mute': 'Place the side of your picking hand over the string, creating a muffled sound',
+          'bend_pre': 'Bend starting position, before the string is plucked',
+          'bend': 'Main bend movement',
+          'bend_release': 'How the bend should be released after the main bend',
+        },
         beat: {
           'text': 'Sets a text above the beat. Can be used for lyrics or instructions on how to play',
           'fermata': 'Indicates a brief pause',
