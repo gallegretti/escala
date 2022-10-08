@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import DeadNoteGlyph from '@glyphs/effects/dead-note';
 import TapNoteGlyph from '@glyphs/effects/tap-note';
 import HammerPullNoteGlyph from '@glyphs/effects/hammer-pull';
-import GenericHarmonicGlyph from '@glyphs/effects/harmonic/generic-harmonic';
 import NaturalHarmonicGlyph from '@glyphs/effects/harmonic/natural-harmonic';
 import ArtificialHarmonicGlyph from '@glyphs/effects/harmonic/artificial-harmonic';
 import PinchHarmonicGlyph from '@glyphs/effects/harmonic/pinch-harmonic';
@@ -23,67 +22,69 @@ import SlideInNoteGlyph from '@glyphs/effects/slide/slide-in';
 import SlideNoteGlyph from '@glyphs/effects/slide/slide';
 import SlideOutNoteGlyph from '@glyphs/effects/slide/slide-out';
 import StaccatoGlyph from '@glyphs/effects/staccato';
+import HarmonicGlyph from '@glyphs/effects/harmonic/harmonic';
 import HelpTable, { HelpTableRow } from './help-table';
 
 export default function HelpEffects() {
-  const { t } = useTranslation(undefined, { keyPrefix: 'help.effects' });
+  const { t } = useTranslation(undefined, { keyPrefix: 'help' });
+  const { t: tGeneral } = useTranslation();
   const rows: HelpTableRow[] = [
-    [PalmMuteGlyph, t('palm_mute')],
-    [LetRingGlyph, t('let_ring')],
-    [GhostNoteGlyph, t('ghost_note')],
-    [DeadNoteGlyph, t('dead_note')],
-    [TapNoteGlyph, t('tap')],
-    [HammerPullNoteGlyph, t('hammer_pull')],
-    [StaccatoGlyph, t('staccato')],
+    [PalmMuteGlyph, t('effects.palm_mute')],
+    [LetRingGlyph, t('effects.let_ring')],
+    [GhostNoteGlyph, t('effects.ghost_note')],
+    [DeadNoteGlyph, t('effects.dead_note')],
+    [TapNoteGlyph, t('effects.tap')],
+    [HammerPullNoteGlyph, t('effects.hammer_pull')],
+    [StaccatoGlyph, t('effects.staccato')],
   ];
 
   const harmonicas: HelpTableRow[] = [
-    [GenericHarmonicGlyph, t('harmonic')],
-    [NaturalHarmonicGlyph, t('harmonic_natural')],
-    [ArtificialHarmonicGlyph, t('harmonic_artificial')],
-    [PinchHarmonicGlyph, t('harmonic_pinch')],
-    [TapHarmonicGlyph, t('harmonic_tap')],
-    [SemiHarmonicGlyph, t('harmonic_semi')],
-    [FeedbackHarmonicGlyph, t('harmonic_feedback')],
+    [HarmonicGlyph, t('harmonic.main')],
+    [NaturalHarmonicGlyph, t('harmonic.natural')],
+    [ArtificialHarmonicGlyph, t('harmonic.artificial')],
+    [PinchHarmonicGlyph, t('harmonic.pinch')],
+    [TapHarmonicGlyph, t('harmonic.tap')],
+    [SemiHarmonicGlyph, t('harmonic.semi')],
+    [FeedbackHarmonicGlyph, t('harmonic.feedback')],
   ];
 
   const accentuationRows: HelpTableRow[] = [
-    [AccentuatedNoteGlyph, ''],
-    [HeavyAccentuatedNoteGlyph, ''],
+    [AccentuatedNoteGlyph, t('effects.accentuated')],
+    [HeavyAccentuatedNoteGlyph, t('effects.accentuated_heavy')],
   ];
 
   const bendRows: HelpTableRow[] = [
-    [PreBendGlyph, t('bend_pre')],
-    [BendGlyph, t('bend')],
-    [ReleaseBendGlyph, t('bend_release')],
+    [PreBendGlyph, t('effects.bend_pre')],
+    [BendGlyph, t('effects.bend')],
+    [ReleaseBendGlyph, t('effects.bend_release')],
   ];
 
   const slides: HelpTableRow[] = [
-    [SlideInNoteGlyph, t('slide_in')],
-    [SlideNoteGlyph, t('slide')],
-    [SlideOutNoteGlyph, t('slide_out')],
+    [SlideInNoteGlyph, t('effects.slide_in')],
+    [SlideNoteGlyph, t('effects.slide')],
+    [SlideOutNoteGlyph, t('effects.slide_out')],
   ];
 
   return (
     <>
       <Typography variant="h6">
-        Effects
+        {tGeneral('Effects')}
       </Typography>
       <HelpTable rows={rows} />
       <Typography variant="h6">
-        Harmonics
+        {tGeneral('Harmonics')}
       </Typography>
       <HelpTable rows={harmonicas} />
       <Typography variant="h6">
-        Bends
+        {tGeneral('Bends')}
       </Typography>
       <HelpTable rows={bendRows} />
       <Typography variant="h6">
-        Accentuation
+        {tGeneral('Accentuation')}
       </Typography>
       <HelpTable rows={accentuationRows} />
       <Typography variant="h6">
-        Slides
+        {tGeneral('Slides')}
       </Typography>
       <HelpTable rows={slides} />
     </>

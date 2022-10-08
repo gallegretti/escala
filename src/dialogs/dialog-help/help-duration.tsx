@@ -10,24 +10,27 @@ import Tie from '@glyphs/duration/tie';
 import {
   Typography,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import HelpTable, { HelpTableRow } from './help-table';
 
-const tempos: HelpTableRow[] = [
-  [WholeGlyph, '1/1'],
-  [HalfGlyph, '1/2'],
-  [QuarterGlyph, '1/4'],
-  [EighthGlyph, '1/8'],
-  [SixTeenthGlyph, '1/16'],
-  [ThirtySecondGlyph, '1/32'],
-  [SixtyFourGlyph, '1/64'],
-  [Tie, 'Ties the selected note to the next'],
-];
-
 export default function HelpDuration() {
+  const { t } = useTranslation();
+
+  const tempos: HelpTableRow[] = [
+    [WholeGlyph, '1/1'],
+    [HalfGlyph, '1/2'],
+    [QuarterGlyph, '1/4'],
+    [EighthGlyph, '1/8'],
+    [SixTeenthGlyph, '1/16'],
+    [ThirtySecondGlyph, '1/32'],
+    [SixtyFourGlyph, '1/64'],
+    [Tie, t('help.duration.tie')],
+  ];
+
   return (
     <>
       <Typography variant="h6">
-        How long the note should be played
+        {t('How long the note should be played')}
       </Typography>
       <HelpTable rows={tempos} />
     </>

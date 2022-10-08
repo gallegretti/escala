@@ -3,20 +3,20 @@ import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 export default function HelpBasics() {
-  const { t } = useTranslation(undefined, { keyPrefix: 'help.basic' });
+  const { t } = useTranslation();
   return (
     <>
       <Typography variant="h6">
-        Getting started
+        {t('Getting started')}
       </Typography>
       <p>
-        {t('mouse_select')}
+        {t('help.basic.mouse_select')}
       </p>
       <p>
-        {t('arrow_keys')}
+        {t('help.basic.arrow_keys')}
       </p>
       <p>
-        {t('delete')}
+        {t('help.basic.delete')}
       </p>
     </>
   );

@@ -10,19 +10,19 @@ import { useTranslation } from 'react-i18next';
 import HelpTable, { HelpTableRow } from './help-table';
 
 export default function HelpBeat() {
-  const { t } = useTranslation(undefined, { keyPrefix: 'help.beat' });
+  const { t } = useTranslation();
   const rows: HelpTableRow[] = [
-    [TextGlyph, t('text')],
-    [FermataGlyph, t('fermata')],
-    [UpstrokeGlyph, t('upstroke')],
-    [DownStrokeGlyph, t('downstroke')],
-    [OpenRepeatGlyph, t('open_repeat')],
-    [CloseRepeatGlyph, t('close-repeat')],
+    [TextGlyph, t('help.beat.text')],
+    [FermataGlyph, t('help.beat.fermata')],
+    [UpstrokeGlyph, t('help.beat.upstroke')],
+    [DownStrokeGlyph, t('help.beat.downstroke')],
+    [OpenRepeatGlyph, t('help.beat.open_repeat')],
+    [CloseRepeatGlyph, t('help.beat.close_repeat')],
   ];
   return (
     <>
       <Typography variant="h6">
-        Beat
+        {t('Beat')}
       </Typography>
       <HelpTable rows={rows} />
     </>

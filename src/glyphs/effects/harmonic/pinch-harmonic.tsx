@@ -1,10 +1,12 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { DynamicGlyphProps } from '../../dynamics/dynamic';
 import GenericHarmonicGlyph from './generic-harmonic';
 
 export default function PinchHarmonicGlyph(props: DynamicGlyphProps) {
+  const { t } = useTranslation();
   return (
-    <GenericHarmonicGlyph {...props} title="Pinch Harmonic">
+    <GenericHarmonicGlyph {...props} title={t('Pinch Harmonic')}>
       P.H
     </GenericHarmonicGlyph>
   );

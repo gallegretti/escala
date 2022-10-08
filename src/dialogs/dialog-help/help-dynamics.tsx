@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from '@emotion/styled';
 import ForteGlyph from '@glyphs/dynamics/f';
 import FortissimoGlyph from '@glyphs/dynamics/ff';
 import ForteFortissimoGlyph from '@glyphs/dynamics/fff';
@@ -11,24 +10,26 @@ import PianoPianissimoGlyph from '@glyphs/dynamics/ppp';
 import {
   Typography,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import HelpTable, { HelpTableRow } from './help-table';
 
-const dynamics: HelpTableRow[] = [
-  [PianoPianissimoGlyph, 'dsadsa'],
-  [PianissimoGlyph, '1'],
-  [PianoGlyph, '2'],
-  [MezzoPianoGlyph, ''],
-  [MezzoForteGlyph, ''],
-  [ForteGlyph, ''],
-  [FortissimoGlyph, ''],
-  [ForteFortissimoGlyph, ''],
-];
-
 export default function HelpDynamics() {
+  const { t } = useTranslation();
+
+  const dynamics: HelpTableRow[] = [
+    [PianoPianissimoGlyph, t('help.dynamic.ppp')],
+    [PianissimoGlyph, t('help.dynamic.pp')],
+    [PianoGlyph, t('help.dynamic.p')],
+    [MezzoPianoGlyph, t('help.dynamic.mp')],
+    [MezzoForteGlyph, t('help.dynamic.mf')],
+    [ForteGlyph, t('help.dynamic.f')],
+    [FortissimoGlyph, t('help.dynamic.ff')],
+    [ForteFortissimoGlyph, t('help.dynamic.fff')],
+  ];
   return (
     <>
       <Typography variant="h6">
-        How strong the note should be played
+        {t('How strong the note should be played')}
       </Typography>
       <HelpTable rows={dynamics} />
     </>

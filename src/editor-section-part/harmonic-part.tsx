@@ -7,6 +7,7 @@ import SemiHarmonicGlyph from '@glyphs/effects/harmonic/semi-harmonic';
 import FeedbackHarmonicGlyph from '@glyphs/effects/harmonic/feedback-harmonic';
 import GenericHarmonicGlyph from '@glyphs/effects/harmonic/generic-harmonic';
 import useAnchorElem from '@hooks/use-anchor-element';
+import { useTranslation } from 'react-i18next';
 import StyledPopper from './styled-popper';
 import EditorScoreState from '../editor/editor-score-state';
 import EditorActionDispatcher from '../editor/editor-action-dispatcher';
@@ -43,6 +44,8 @@ function harmonicTypeToString(type: number) {
 export default function HarmonicPart(props: HarmonicPartProps) {
   const [anchorElem, setAnchorElement] = useAnchorElem();
 
+  const { t } = useTranslation();
+
   const onClick = (e: any) => {
     setAnchorElement(e);
     props.updateOpenPopper('harmonic');
@@ -72,7 +75,7 @@ export default function HarmonicPart(props: HarmonicPartProps) {
   return (
     <div>
       <GenericHarmonicGlyph
-        title="Harmonics"
+        title={t('Harmonics')}
         hideTooltip={isPopperOpen}
         selected={props.currentHarmonicType !== 0}
         disabled={disabled}
