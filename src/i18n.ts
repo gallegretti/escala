@@ -22,7 +22,8 @@ const resources: Resource = {
         },
         basic: {
           'mouse_select': 'Use your mouse to select a note or a string',
-          'arrow_keys': 'Use your arrow keys to move between beats and strings',
+          'arrow_keys': 'You can also use your arrow keys to move between beats and strings',
+          'create_note': 'Use your numpad to create or change a note at the given fret',
           'delete': 'Press \'delete\' to remove a selected note',
         },
         duration: {
@@ -91,6 +92,7 @@ const resources: Resource = {
         basic: {
           'mouse_select': 'Use seu mouse para selecionar uma nota ou corda',
           'arrow_keys': 'Use as setas do teclado para mover entre notas e cordas',
+          'create_note': 'Use os números do teclado para criar ou alterar a casa de uma nota',
           'delete': 'Pressione \'delete\' para remover a nota selecionada',
         },
         duration: {
