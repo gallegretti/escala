@@ -21,19 +21,19 @@ export default function HelpBasics() {
       <p>
         {t('help.basic.mouse_select')}
       </p>
-      <DemostrationVideo src="/videos/mouse-select.webm" />
+      <DemostrationVideo src="videos/mouse-select.webm" />
       <p>
         {t('help.basic.arrow_keys')}
       </p>
-      <DemostrationVideo src="/videos/arrow-keys.webm" />
+      <DemostrationVideo src="videos/arrow-keys.webm" />
       <p>
         {t('help.basic.create_note')}
       </p>
-      <DemostrationVideo src="/videos/create-note.webm" />
+      <DemostrationVideo src="videos/create-note.webm" />
       <p>
         {t('help.basic.delete')}
       </p>
-      <DemostrationVideo src="/videos/delete-note.webm" />
+      <DemostrationVideo src="videos/delete-note.webm" />
     </>
   );
 }
