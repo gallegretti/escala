@@ -2,6 +2,7 @@
 /* eslint-disable quote-props */
 import i18n, { Resource } from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import detector, { DetectorOptions } from 'i18next-browser-languagedetector';
 
 // the translations
 // (tip move them in a JSON file and import them,
@@ -74,6 +75,29 @@ const resources: Resource = {
           'ppp': 'Very very quiet',
         },
       },
+      shortcuts: {
+        'title': 'Shortcuts Information',
+        'set_fret': 'Set fret',
+        'set_fret_shortcut': 'Numpad',
+        'remove_note': 'Remove Note',
+        'remove_note_shortcut': 'Delete',
+        'undo': 'Undo',
+        'undo_shortcut': 'Ctrl + Z',
+        'redo': 'Redo',
+        'redo_shortcut': 'Ctrl + Y',
+        'move_cursor_left': 'Move cursor Left',
+        'move_cursor_left_shortcut': 'Left Arrow',
+        'move_cursor_right': 'Move cursor Right',
+        'move_cursor_right_shortcut': 'Right Arrow',
+        'move_cursor_up': 'Move cursor up',
+        'move_cursor_up_shortcut': 'Up Arrow',
+        'move_cursor_down': 'Move cursor down',
+        'move_cursor_down_shortcut': 'Down Arrow',
+        'move_cursor_next_bar': 'Move cursor next bar',
+        'move_cursor_next_bar_shortcut': 'Ctrl + Right',
+        'move_cursor_previous_bar': 'Move cursor previous bar',
+        'move_cursor_previous_bar_shortcut': 'Ctrl + Left',
+      },
     },
   },
   pt: {
@@ -143,6 +167,29 @@ const resources: Resource = {
           'feedback': 'Utiliza-se a saída do amplificador para gerar uma ressonância com a corda que está sendo tocada',
         },
       },
+      shortcuts: {
+        'title': 'Atalhos do teclado',
+        'set_fret': 'Alterar casa da nota',
+        'set_fret_shortcut': 'Teclado numérico',
+        'remove_note': 'Remover nota',
+        'remove_note_shortcut': 'Botão Delete',
+        'undo': 'Desfazer',
+        'undo_shortcut': 'Ctrl + Z',
+        'redo': 'Refazer',
+        'redo_shortcut': 'Ctrl + Y',
+        'move_cursor_left': 'Mover cursor para esquerda',
+        'move_cursor_left_shortcut': 'Seta para esquerda',
+        'move_cursor_right': 'Mover cursor para direita',
+        'move_cursor_right_shortcut': 'Seta para direita',
+        'move_cursor_up': 'Mover cursor para cima',
+        'move_cursor_up_shortcut': 'Seta para cima',
+        'move_cursor_down': 'Mover cursor para baixo',
+        'move_cursor_down_shortcut': 'Seta para baixo',
+        'move_cursor_next_bar': 'Mover cursor para próxima barra',
+        'move_cursor_next_bar_shortcut': 'Ctrl + Right',
+        'move_cursor_previous_bar': 'Mover cursor para a barra anterior',
+        'move_cursor_previous_bar_shortcut': 'Ctrl + Left',
+      },
       'How long the note should be played': 'Por quanto tempo a nota deve ser tocada',
       'How strong the note should be played': 'Quão forte a nota deve ser tocada',
       'Getting started': 'Básico',
@@ -188,7 +235,6 @@ const resources: Resource = {
       'Edit': 'Editar',
       'Delete': 'Deletar',
       'Shortcuts Information': 'Informações dos atalhos',
-      'Set fret': 'Usar casa',
       'Remove note': 'Remover nota',
       'Move cursor up': 'Mover cursor para cima',
       'Move cursor down': 'Mover cursor para baixo',
@@ -222,11 +268,16 @@ const resources: Resource = {
   },
 };
 
+const languageDetectorOptions: DetectorOptions = {
+};
+
 i18n
+  .use(detector)
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     resources,
-    lng: 'en',
+    detection: languageDetectorOptions,
+    fallbackLng: 'en',
     interpolation: {
       escapeValue: false, // react already safes from xss
     },
