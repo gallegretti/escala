@@ -23,6 +23,7 @@ export default function EditorTrackSelector(props: EditorTrackSelectorProps) {
       {props.tracks.map((track, i) => (
         <EditorTrackItem
           isExpanded={i === expandedIndex}
+          canDelete={props.tracks.length > 1}
           onExpand={(v) => { setExpandedIndex(v ? i : null) }}
           key={track.index}
           track={track}

@@ -18,6 +18,7 @@ const ListItemStyled = styled(ListItemText)(({ theme }) => ({
 type EditorTrackItemProps = {
   isSelected: boolean;
   isExpanded: boolean;
+  canDelete: boolean;
   onExpand: (v: boolean) => void;
   onSelect: () => void;
   onEdit: () => void;
@@ -31,6 +32,7 @@ export default function EditorTrackItem({
   onEdit,
   track,
   isExpanded,
+  canDelete,
   onExpand,
   onRemove,
 }: EditorTrackItemProps) {
@@ -56,7 +58,7 @@ export default function EditorTrackItem({
       <Collapse in={isExpanded}>
         <div style={{ paddingLeft: '16px', display: 'flex', gap: '10px' }}>
           <EditGlyph disabled={false} selected={false} onClick={onEdit} />
-          <DeleteGlyph disabled={false} selected={false} onClick={onRemove} />
+          <DeleteGlyph disabled={!canDelete} selected={false} onClick={canDelete ? onRemove : undefined } />
         </div>
       </Collapse>
     </>
