@@ -1864,7 +1864,7 @@ declare class Track {
     percussionArticulations: InstrumentArticulation[];
     ensureStaveCount(staveCount: number): void;
     addStaff(staff: Staff): void;
-    finish(settings: Settings, sharedDataBag: Map<string, unknown>): void;
+    finish(settings: Settings, sharedDataBag?: Map<string, unknown> | null): void;
     applyLyrics(lyrics: Lyrics[]): void;
 }
 
@@ -2091,7 +2091,7 @@ declare class MasterBar {
      * Gets or sets the fermatas for this bar. The key is the offset of the fermata in midi ticks.
      * @json_add addFermata
      */
-    fermata: Map<number, Fermata> | null;
+    fermata: Map<number, Fermata>;
     /**
      * The timeline position of the voice within the whole score. (unit: midi ticks)
      */
@@ -2205,7 +2205,7 @@ declare class Voice {
     private chain;
     addGraceBeat(beat: Beat): void;
     getBeatAtPlaybackStart(playbackStart: number): Beat | null;
-    finish(settings: Settings, sharedDataBag: Map<string, unknown>): void;
+    finish(settings: Settings, sharedDataBag?: Map<string, unknown> | null): void;
     calculateDuration(): number;
 }
 
@@ -2265,7 +2265,7 @@ declare class Bar {
     get masterBar(): MasterBar;
     get isEmpty(): boolean;
     addVoice(voice: Voice): void;
-    finish(settings: Settings, sharedDataBag: Map<string, unknown>): void;
+    finish(settings: Settings, sharedDataBag?: Map<string, unknown> | null): void;
     calculateDuration(): number;
 }
 
@@ -2355,7 +2355,7 @@ declare class Staff {
      * Gets or sets a list of all chords defined for this staff. {@link Beat.chordId} refers to entries in this lookup.
      * @json_add addChord
      */
-    chords: Map<string, Chord> | null;
+    chords: Map<string, Chord>;
     /**
      * Gets or sets the fret on which a capo is set.
      */
@@ -2402,7 +2402,7 @@ declare class Staff {
      * For some percussion instruments this number might vary.
      */
     standardNotationLineCount: number;
-    finish(settings: Settings, sharedDataBag: Map<string, unknown>): void;
+    finish(settings: Settings, sharedDataBag?: Map<string, unknown> | null): void;
     addChord(chordId: string, chord: Chord): void;
     hasChord(chordId: string): boolean;
     getChord(chordId: string): Chord | null;
@@ -2813,7 +2813,7 @@ declare class Note {
      * @clone_add addBendPoint
      * @json_add addBendPoint
      */
-    bendPoints: BendPoint[] | null;
+    bendPoints: BendPoint[];
     /**
      * Gets or sets the bend point with the highest bend value.
      * @clone_ignore
@@ -3147,14 +3147,14 @@ declare class Note {
     get displayValueWithoutBend(): number;
     get hasQuarterToneOffset(): boolean;
     addBendPoint(point: BendPoint): void;
-    finish(settings: Settings, sharedDataBag: Map<string, unknown>): void;
+    finish(settings: Settings, sharedDataBag?: Map<string, unknown> | null): void;
     private static readonly MaxOffsetForSameLineSearch;
     static nextNoteOnSameLine(note: Note): Note | null;
     static findHammerPullDestination(note: Note): Note | null;
     static findTieOrigin(note: Note): Note | null;
     private static NoteIdLookupKey;
     private _noteIdBag;
-    chain(sharedDataBag: Map<string, unknown>): void;
+    chain(sharedDataBag?: Map<string, unknown> | null): void;
     /**
      * @internal
      */
@@ -3494,7 +3494,7 @@ declare class Beat {
      * @json_add addWhammyBarPoint
      * @clone_add addWhammyBarPoint
      */
-    whammyBarPoints: BendPoint[] | null;
+    whammyBarPoints: BendPoint[];
     /**
      * Gets or sets the highest point with for the highest whammy bar value.
      * @json_ignore
@@ -3610,7 +3610,7 @@ declare class Beat {
     private calculateDuration;
     updateDurations(): void;
     finishTuplet(): void;
-    finish(settings: Settings, sharedDataBag: Map<string, unknown>): void;
+    finish(settings: Settings, sharedDataBag?: Map<string, unknown> | null): void;
     /**
      * Checks whether the current beat is timewise before the given beat.
      * @param beat
@@ -3625,7 +3625,7 @@ declare class Beat {
     isAfter(beat: Beat): boolean;
     hasNoteOnString(noteString: number): boolean;
     getNoteWithRealValue(noteRealValue: number): Note | null;
-    chain(sharedDataBag: Map<string, unknown>): void;
+    chain(sharedDataBag?: Map<string, unknown> | null): void;
 }
 
 /**
@@ -3722,6 +3722,11 @@ declare class MidiTickLookupFindBeatResult {
      * Gets or sets the duration in milliseconds how long this beat is playing.
      */
     duration: number;
+    /**
+     * Gets or sets the duration in midi ticks for how long this tick lookup is valid
+     * starting at the `currentBeatLookup.start`
+     */
+    tickDuration: number;
     /**
      * Gets or sets the beats ot highlight along the current beat.
      */
@@ -4411,6 +4416,10 @@ declare class BarBounds {
      * @returns The beat at the given X-position or null if none was found.
      */
     findBeatAtPos(x: number): BeatBounds | null;
+    /**
+     * Finishes the lookup object and optimizes itself for fast access.
+     */
+    finish(): void;
 }
 
 /**
@@ -5508,6 +5517,7 @@ declare class MidiFileGenerator {
     private static getDynamicValue;
     private generateFadeIn;
     private generateVibrato;
+    vibratoResolution: number;
     private generateVibratorWithParams;
     /**
      * Maximum semitones that are supported in bends in one direction (up or down)
@@ -6161,6 +6171,7 @@ declare class BeatContainerGlyph extends Glyph {
     minWidth: number;
     get onTimeX(): number;
     constructor(beat: Beat, voiceContainer: VoiceContainerGlyph);
+    addTie(tie: Glyph): void;
     registerLayoutingInfo(layoutings: BarLayoutingInfo): void;
     applyLayoutingInfo(info: BarLayoutingInfo): void;
     doLayout(): void;
@@ -6398,6 +6409,7 @@ declare class BarRendererBase {
     private _preBeatGlyphs;
     private _voiceContainers;
     private _postBeatGlyphs;
+    private _ties;
     get nextRenderer(): BarRendererBase | null;
     get previousRenderer(): BarRendererBase | null;
     scoreRenderer: ScoreRenderer;
@@ -6424,9 +6436,10 @@ declare class BarRendererBase {
      */
     canWrap: boolean;
     constructor(renderer: ScoreRenderer, bar: Bar);
+    registerTies(ties: Glyph[]): void;
     get middleYPosition(): number;
-    registerOverflowTop(topOverflow: number): void;
-    registerOverflowBottom(bottomOverflow: number): void;
+    registerOverflowTop(topOverflow: number): boolean;
+    registerOverflowBottom(bottomOverflow: number): boolean;
     scaleToWidth(width: number): void;
     get resources(): RenderingResources;
     get settings(): Settings;
@@ -6438,7 +6451,7 @@ declare class BarRendererBase {
     private _appliedLayoutingInfo;
     applyLayoutingInfo(): boolean;
     isFinalized: boolean;
-    finalizeRenderer(): void;
+    finalizeRenderer(): boolean;
     /**
      * Gets the top padding for the main content of the renderer.
      * Can be used to specify where i.E. the score lines of the notation start.

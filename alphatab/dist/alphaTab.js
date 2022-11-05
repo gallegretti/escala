@@ -1,5 +1,5 @@
 /**
- * alphaTab v1.3.0-alpha.376 (develop, build 376)
+ * alphaTab v1.2.3 (, build 7)
  * 
  * Copyright © 2022, Daniel Kuschny and Contributors, All rights reserved.
  * 
@@ -393,7 +393,7 @@
             voice.index = this.voices.length;
             this.voices.push(voice);
         }
-        finish(settings, sharedDataBag) {
+        finish(settings, sharedDataBag = null) {
             this.isMultiVoice = false;
             for (let i = 0, j = this.voices.length; i < j; i++) {
                 let voice = this.voices[i];
@@ -2024,7 +2024,7 @@
              * @clone_add addBendPoint
              * @json_add addBendPoint
              */
-            this.bendPoints = null;
+            this.bendPoints = [];
             /**
              * Gets or sets the bend point with the highest bend value.
              * @clone_ignore
@@ -2324,7 +2324,7 @@
             this._noteIdBag = null;
         }
         get hasBend() {
-            return this.bendPoints !== null && this.bendType !== BendType.None;
+            return this.bendType !== BendType.None;
         }
         get isStringed() {
             return this.string >= 0;
@@ -2560,12 +2560,7 @@
             return false;
         }
         addBendPoint(point) {
-            let points = this.bendPoints;
-            if (points === null) {
-                points = [];
-                this.bendPoints = points;
-            }
-            points.push(point);
+            this.bendPoints.push(point);
             if (!this.maxBendPoint || point.value > this.maxBendPoint.value) {
                 this.maxBendPoint = point;
             }
@@ -2573,7 +2568,7 @@
                 this.bendType = BendType.Custom;
             }
         }
-        finish(settings, sharedDataBag) {
+        finish(settings, sharedDataBag = null) {
             let nextNoteOnLine = new Lazy(() => Note.nextNoteOnSameLine(this));
             let isSongBook = settings && settings.notation.notationMode === exports.NotationMode.SongBook;
             // connect ties
@@ -2652,7 +2647,7 @@
             // try to detect what kind of bend was used and cleans unneeded points if required
             // Guitar Pro 6 and above (gpif.xml) uses exactly 4 points to define all bends
             const points = this.bendPoints;
-            if (points != null && points.length > 0 && this.bendType === BendType.Custom) {
+            if (points.length > 0 && this.bendType === BendType.Custom) {
                 let isContinuedBend = this.isTieDestination && this.tieOrigin.hasBend;
                 this.isContinuedBend = isContinuedBend;
                 if (points.length === 4) {
@@ -2737,7 +2732,7 @@
                     }
                 }
             }
-            else if (points === null || points.length === 0) {
+            else if (points.length === 0) {
                 this.bendType = BendType.None;
             }
             // initial bend pitch offsets and forced accidentals don't play well together
@@ -2833,10 +2828,14 @@
             }
             return null;
         }
-        chain(sharedDataBag) {
-            // if we have some IDs from a serialization flow, 
+        chain(sharedDataBag = null) {
+            // mainly for backwards compat in case we reach this code from somewhere outside.
+            if (sharedDataBag === null) {
+                return;
+            }
+            // if we have some IDs from a serialization flow,
             // we need to lookup/register the notes correctly
-            if (this._noteIdBag != null) {
+            if (this._noteIdBag !== null) {
                 // get or create lookup
                 let noteIdLookup;
                 if (sharedDataBag.has(Note.NoteIdLookupKey)) {
@@ -2853,7 +2852,7 @@
                     this._noteIdBag.slurDestinationNoteId !== -1) {
                     noteIdLookup.set(this.id, this);
                 }
-                // on any effect destiniation, lookup the origin which should already be 
+                // on any effect destiniation, lookup the origin which should already be
                 // registered
                 if (this._noteIdBag.hammerPullOriginNoteId !== -1) {
                     this.hammerPullOrigin = noteIdLookup.get(this._noteIdBag.hammerPullOriginNoteId);
@@ -2870,7 +2869,7 @@
                 this._noteIdBag = null; // not needed anymore
             }
             else {
-                if (!this.isTieDestination && this.tieOrigin == null) {
+                if (!this.isTieDestination && this.tieOrigin === null) {
                     return;
                 }
                 let tieOrigin = Note.findTieOrigin(this);
@@ -2895,22 +2894,22 @@
         toJson(o) {
             // inject linked note ids into JSON
             if (this.tieDestination !== null) {
-                o.set("tiedestinationnoteid", this.tieDestination.id);
+                o.set('tiedestinationnoteid', this.tieDestination.id);
             }
             if (this.tieOrigin !== null) {
-                o.set("tieoriginnoteid", this.tieOrigin.id);
+                o.set('tieoriginnoteid', this.tieOrigin.id);
             }
             if (this.slurDestination !== null) {
-                o.set("slurdestinationnoteid", this.slurDestination.id);
+                o.set('slurdestinationnoteid', this.slurDestination.id);
             }
             if (this.slurOrigin !== null) {
-                o.set("sluroriginnoteid", this.slurOrigin.id);
+                o.set('sluroriginnoteid', this.slurOrigin.id);
             }
             if (this.hammerPullOrigin !== null) {
-                o.set("hammerpulloriginnoteid", this.hammerPullOrigin.id);
+                o.set('hammerpulloriginnoteid', this.hammerPullOrigin.id);
             }
             if (this.hammerPullDestination !== null) {
-                o.set("hammerpulldestinationnoteid", this.hammerPullDestination.id);
+                o.set('hammerpulldestinationnoteid', this.hammerPullDestination.id);
             }
         }
         /**
@@ -2918,38 +2917,38 @@
          */
         setProperty(property, v) {
             switch (property) {
-                case "tiedestinationnoteid":
-                    if (this._noteIdBag == null) {
+                case 'tiedestinationnoteid':
+                    if (this._noteIdBag === null) {
                         this._noteIdBag = new NoteIdBag();
                     }
                     this._noteIdBag.tieDestinationNoteId = v;
                     return true;
-                case "tieoriginnoteid":
-                    if (this._noteIdBag == null) {
+                case 'tieoriginnoteid':
+                    if (this._noteIdBag === null) {
                         this._noteIdBag = new NoteIdBag();
                     }
                     this._noteIdBag.tieOriginNoteId = v;
                     return true;
-                case "slurdestinationnoteid":
-                    if (this._noteIdBag == null) {
+                case 'slurdestinationnoteid':
+                    if (this._noteIdBag === null) {
                         this._noteIdBag = new NoteIdBag();
                     }
                     this._noteIdBag.slurDestinationNoteId = v;
                     return true;
-                case "sluroriginnoteid":
-                    if (this._noteIdBag == null) {
+                case 'sluroriginnoteid':
+                    if (this._noteIdBag === null) {
                         this._noteIdBag = new NoteIdBag();
                     }
                     this._noteIdBag.slurOriginNoteId = v;
                     return true;
-                case "hammerpulloriginnoteid":
-                    if (this._noteIdBag == null) {
+                case 'hammerpulloriginnoteid':
+                    if (this._noteIdBag === null) {
                         this._noteIdBag = new NoteIdBag();
                     }
                     this._noteIdBag.hammerPullOriginNoteId = v;
                     return true;
-                case "hammerpulldestinationnoteid":
-                    if (this._noteIdBag == null) {
+                case 'hammerpulldestinationnoteid':
+                    if (this._noteIdBag === null) {
                         this._noteIdBag = new NoteIdBag();
                     }
                     this._noteIdBag.hammerPullDestinationNoteId = v;
@@ -2960,7 +2959,7 @@
     }
     Note.GlobalNoteId = 0;
     Note.MaxOffsetForSameLineSearch = 3;
-    Note.NoteIdLookupKey = "NoteIdLookup";
+    Note.NoteIdLookupKey = 'NoteIdLookup';
 
     /**
      * Represents a list of beats that are grouped within the same tuplet.
@@ -3106,11 +3105,9 @@
             clone.bendType = original.bendType;
             clone.bendStyle = original.bendStyle;
             clone.isContinuedBend = original.isContinuedBend;
-            if (original.bendPoints) {
-                clone.bendPoints = [];
-                for (const i of original.bendPoints) {
-                    clone.addBendPoint(BendPointCloner.clone(i));
-                }
+            clone.bendPoints = [];
+            for (const i of original.bendPoints) {
+                clone.addBendPoint(BendPointCloner.clone(i));
             }
             clone.fret = original.fret;
             clone.string = original.string;
@@ -3191,11 +3188,9 @@
             clone.tupletNumerator = original.tupletNumerator;
             clone.isContinuedWhammy = original.isContinuedWhammy;
             clone.whammyBarType = original.whammyBarType;
-            if (original.whammyBarPoints) {
-                clone.whammyBarPoints = [];
-                for (const i of original.whammyBarPoints) {
-                    clone.addWhammyBarPoint(BendPointCloner.clone(i));
-                }
+            clone.whammyBarPoints = [];
+            for (const i of original.whammyBarPoints) {
+                clone.addWhammyBarPoint(BendPointCloner.clone(i));
             }
             clone.vibrato = original.vibrato;
             clone.chordId = original.chordId;
@@ -3448,7 +3443,7 @@
              * @json_add addWhammyBarPoint
              * @clone_add addWhammyBarPoint
              */
-            this.whammyBarPoints = null;
+            this.whammyBarPoints = [];
             /**
              * Gets or sets the highest point with for the highest whammy bar value.
              * @json_ignore
@@ -3569,7 +3564,7 @@
                 !(this.tupletDenominator === 1 && this.tupletNumerator === 1));
         }
         get hasWhammyBar() {
-            return this.whammyBarPoints !== null && this.whammyBarType !== WhammyType.None;
+            return this.whammyBarType !== WhammyType.None;
         }
         get hasChord() {
             return !!this.chordId;
@@ -3590,12 +3585,7 @@
             return !!this.effectSlurOrigin;
         }
         addWhammyBarPoint(point) {
-            let points = this.whammyBarPoints;
-            if (points === null) {
-                points = [];
-                this.whammyBarPoints = points;
-            }
-            points.push(point);
+            this.whammyBarPoints.push(point);
             if (!this.maxWhammyPoint || point.value > this.maxWhammyPoint.value) {
                 this.maxWhammyPoint = point;
             }
@@ -3609,7 +3599,7 @@
         removeWhammyBarPoint(index) {
             // check index
             const points = this.whammyBarPoints;
-            if (points === null || index < 0 || index >= points.length) {
+            if (index < 0 || index >= points.length) {
                 return;
             }
             // remove point
@@ -3724,7 +3714,7 @@
                 this.tupletGroup = currentTupletGroup;
             }
         }
-        finish(settings, sharedDataBag) {
+        finish(settings, sharedDataBag = null) {
             if (this.getAutomation(AutomationType.Instrument) === null &&
                 this.index === 0 &&
                 this.voice.index === 0 &&
@@ -3855,7 +3845,7 @@
             // try to detect what kind of bend was used and cleans unneeded points if required
             // Guitar Pro 6 and above (gpif.xml) uses exactly 4 points to define all whammys
             const points = this.whammyBarPoints;
-            if (points !== null && points.length > 0 && this.whammyBarType === WhammyType.Custom) {
+            if (points.length > 0 && this.whammyBarType === WhammyType.Custom) {
                 if (displayMode === exports.NotationMode.SongBook) {
                     this.whammyStyle = isGradual ? BendStyle.Gradual : BendStyle.Fast;
                 }
@@ -3919,7 +3909,7 @@
                     // remove bend on cloned note
                     cloneNote.bendType = BendType.None;
                     cloneNote.maxBendPoint = null;
-                    cloneNote.bendPoints = null;
+                    cloneNote.bendPoints = [];
                     cloneNote.bendStyle = BendStyle.Default;
                     cloneNote.id = Note.GlobalNoteId++;
                     // fix ties
@@ -3954,7 +3944,7 @@
                 this.voice.insertBeat(this, cloneBeat);
                 // ensure cloned beat has also a grace simple grace group for itself
                 // (see Voice.finish where every beat gets one)
-                // this ensures later that grace rods are assigned correctly to this beat. 
+                // this ensures later that grace rods are assigned correctly to this beat.
                 cloneBeat.graceGroup = new GraceGroup();
                 cloneBeat.graceGroup.addBeat(this);
                 cloneBeat.graceGroup.isComplete = true;
@@ -3989,7 +3979,7 @@
             }
             return null;
         }
-        chain(sharedDataBag) {
+        chain(sharedDataBag = null) {
             for (const n of this.notes) {
                 this.noteValueLookup.set(n.realValue, n);
                 n.chain(sharedDataBag);
@@ -4368,7 +4358,7 @@
              * Gets or sets the fermatas for this bar. The key is the offset of the fermata in midi ticks.
              * @json_add addFermata
              */
-            this.fermata = null;
+            this.fermata = new Map();
             /**
              * The timeline position of the voice within the whole score. (unit: midi ticks)
              */
@@ -4408,12 +4398,7 @@
          * @param fermata The fermata.
          */
         addFermata(offset, fermata) {
-            let fermataMap = this.fermata;
-            if (fermataMap === null) {
-                fermataMap = new Map();
-                this.fermata = fermataMap;
-            }
-            fermataMap.set(offset, fermata);
+            this.fermata.set(offset, fermata);
         }
         /**
          * Gets the fermata for a given beat.
@@ -4422,9 +4407,6 @@
          */
         getFermata(beat) {
             const fermataMap = this.fermata;
-            if (fermataMap === null) {
-                return null;
-            }
             if (fermataMap.has(beat.playbackStart)) {
                 return fermataMap.get(beat.playbackStart);
             }
@@ -5001,7 +4983,7 @@
              * Gets or sets a list of all chords defined for this staff. {@link Beat.chordId} refers to entries in this lookup.
              * @json_add addChord
              */
-            this.chords = null;
+            this.chords = new Map();
             /**
              * Gets or sets the fret on which a capo is set.
              */
@@ -5021,7 +5003,7 @@
              * guitar tablature. Unlike the {@link Note.string} property this array directly represents
              * the order of the tracks shown in the tablature. The first item is the most top tablature line.
              */
-            this.stringTuning = new Tuning("", [], false);
+            this.stringTuning = new Tuning('', [], false);
             /**
              * Gets or sets whether the tabs are shown.
              */
@@ -5055,7 +5037,7 @@
         get isStringed() {
             return this.stringTuning.tunings.length > 0;
         }
-        finish(settings, sharedDataBag) {
+        finish(settings, sharedDataBag = null) {
             this.stringTuning.finish();
             for (let i = 0, j = this.bars.length; i < j; i++) {
                 this.bars[i].finish(settings, sharedDataBag);
@@ -5063,20 +5045,13 @@
         }
         addChord(chordId, chord) {
             chord.staff = this;
-            let chordMap = this.chords;
-            if (chordMap === null) {
-                chordMap = new Map();
-                this.chords = chordMap;
-            }
-            chordMap.set(chordId, chord);
+            this.chords.set(chordId, chord);
         }
         hasChord(chordId) {
-            var _a, _b;
-            return (_b = (_a = this.chords) === null || _a === void 0 ? void 0 : _a.has(chordId)) !== null && _b !== void 0 ? _b : false;
+            return this.chords.has(chordId);
         }
         getChord(chordId) {
-            var _a, _b;
-            return (_b = (_a = this.chords) === null || _a === void 0 ? void 0 : _a.get(chordId)) !== null && _b !== void 0 ? _b : null;
+            return this.chords.get(chordId);
         }
         addBar(bar) {
             let bars = this.bars;
@@ -5140,7 +5115,7 @@
             staff.track = this;
             this.staves.push(staff);
         }
-        finish(settings, sharedDataBag) {
+        finish(settings, sharedDataBag = null) {
             if (!this.shortName) {
                 this.shortName = this.name;
                 if (this.shortName.length > Track.ShortNameMaxLength) {
@@ -5227,7 +5202,7 @@
                 this.isEmpty = false;
             }
         }
-        chain(beat, sharedDataBag) {
+        chain(beat, sharedDataBag = null) {
             if (!this.bar) {
                 return;
             }
@@ -5267,7 +5242,7 @@
             }
             return null;
         }
-        finish(settings, sharedDataBag) {
+        finish(settings, sharedDataBag = null) {
             this._beatLookup = new Map();
             let currentGraceGroup = null;
             for (let index = 0; index < this.beats.length; index++) {
@@ -6349,7 +6324,6 @@
             return anyMeta;
         }
         handleStaffMeta() {
-            var _a, _b;
             let syData = this._syData.toLowerCase();
             switch (syData) {
                 case 'capo':
@@ -6393,7 +6367,7 @@
                             this.error('tuning', AlphaTexSymbols.Tuning, true);
                             break;
                     }
-                    if (strings !== this._currentStaff.tuning.length && ((_b = (_a = this._currentStaff.chords) === null || _a === void 0 ? void 0 : _a.size) !== null && _b !== void 0 ? _b : 0) > 0) {
+                    if (strings !== this._currentStaff.tuning.length && this._currentStaff.chords.size > 0) {
                         this.errorMessage('Tuning must be defined before any chord');
                     }
                     return true;
@@ -6944,25 +6918,23 @@
                     beat.addWhammyBarPoint(new BendPoint(offset, value));
                     this._sy = this.newSy();
                 }
-                if (beat.whammyBarPoints != null) {
-                    while (beat.whammyBarPoints.length > 60) {
-                        beat.removeWhammyBarPoint(beat.whammyBarPoints.length - 1);
+                while (beat.whammyBarPoints.length > 60) {
+                    beat.removeWhammyBarPoint(beat.whammyBarPoints.length - 1);
+                }
+                // set positions
+                if (!exact) {
+                    let count = beat.whammyBarPoints.length;
+                    let step = (60 / count) | 0;
+                    let i = 0;
+                    while (i < count) {
+                        beat.whammyBarPoints[i].offset = Math.min(60, i * step);
+                        i++;
                     }
-                    // set positions
-                    if (!exact) {
-                        let count = beat.whammyBarPoints.length;
-                        let step = (60 / count) | 0;
-                        let i = 0;
-                        while (i < count) {
-                            beat.whammyBarPoints[i].offset = Math.min(60, i * step);
-                            i++;
-                        }
-                    }
-                    else {
-                        beat.whammyBarPoints.sort((a, b) => {
-                            return a.offset - b.offset;
-                        });
-                    }
+                }
+                else {
+                    beat.whammyBarPoints.sort((a, b) => {
+                        return a.offset - b.offset;
+                    });
                 }
                 this._allowNegatives = false;
                 if (this._sy !== AlphaTexSymbols.RParensis) {
@@ -6970,6 +6942,38 @@
                     return false;
                 }
                 this._sy = this.newSy();
+                return true;
+            }
+            if (syData === 'bu' || syData === 'bd' || syData === 'au' || syData === 'ad') {
+                switch (syData) {
+                    case 'bu':
+                        beat.brushType = BrushType.BrushUp;
+                        break;
+                    case 'bd':
+                        beat.brushType = BrushType.BrushDown;
+                        break;
+                    case 'au':
+                        beat.brushType = BrushType.ArpeggioUp;
+                        break;
+                    case 'ad':
+                        beat.brushType = BrushType.ArpeggioDown;
+                        break;
+                }
+                this._sy = this.newSy();
+                if (this._sy === AlphaTexSymbols.Number) {
+                    // explicit duration
+                    beat.brushDuration = this._syData;
+                    this._sy = this.newSy();
+                    return true;
+                }
+                // default to calcuated duration
+                beat.updateDurations();
+                if (syData === 'bu' || syData === 'bd') {
+                    beat.brushDuration = beat.playbackDuration / 4 / beat.notes.length;
+                }
+                else if (syData === 'au' || syData === 'ad') {
+                    beat.brushDuration = beat.playbackDuration / beat.notes.length;
+                }
                 return true;
             }
             if (syData === 'ch') {
@@ -7220,24 +7224,22 @@
                         this._sy = this.newSy();
                     }
                     const points = note.bendPoints;
-                    if (points != null) {
-                        while (points.length > 60) {
-                            points.splice(points.length - 1, 1);
-                        }
-                        // set positions
-                        if (exact) {
-                            points.sort((a, b) => {
-                                return a.offset - b.offset;
-                            });
-                        }
-                        else {
-                            let count = points.length;
-                            let step = (60 / (count - 1)) | 0;
-                            let i = 0;
-                            while (i < count) {
-                                points[i].offset = Math.min(60, i * step);
-                                i++;
-                            }
+                    while (points.length > 60) {
+                        points.splice(points.length - 1, 1);
+                    }
+                    // set positions
+                    if (exact) {
+                        points.sort((a, b) => {
+                            return a.offset - b.offset;
+                        });
+                    }
+                    else {
+                        let count = points.length;
+                        let step = (60 / (count - 1)) | 0;
+                        let i = 0;
+                        while (i < count) {
+                            points[i].offset = Math.min(60, i * step);
+                            i++;
                         }
                     }
                     if (this._sy !== AlphaTexSymbols.RParensis) {
@@ -13897,6 +13899,9 @@
                                 tempoAutomation.type = AutomationType.Tempo;
                                 tempoAutomation.value = parseInt(tempo);
                                 masterBar.tempoAutomation = tempoAutomation;
+                                if (masterBar.index === 0) {
+                                    masterBar.score.tempo = tempoAutomation.value;
+                                }
                             }
                             break;
                         case 'direction-type':
@@ -13933,6 +13938,9 @@
             tempoAutomation.type = AutomationType.Tempo;
             tempoAutomation.value = perMinute * ((unit / 4) | 0);
             masterBar.tempoAutomation = tempoAutomation;
+            if (masterBar.index === 0) {
+                masterBar.score.tempo = tempoAutomation.value;
+            }
         }
         parseAttributes(element, bars, masterBar, track) {
             let num = 0;
@@ -19659,7 +19667,7 @@
             o.set("tripletfeel", obj.tripletFeel);
             o.set("section", SectionSerializer.toJson(obj.section));
             o.set("tempoautomation", AutomationSerializer.toJson(obj.tempoAutomation));
-            if (obj.fermata !== null) {
+            {
                 const m = new Map();
                 o.set("fermata", m);
                 for (const [k, v] of obj.fermata) {
@@ -19778,7 +19786,6 @@
             JsonHelper.forEach(m, (v, k) => this.setProperty(obj, k, v));
         }
         static toJson(obj) {
-            var _a;
             if (!obj) {
                 return null;
             }
@@ -19788,9 +19795,7 @@
             o.set("bendtype", obj.bendType);
             o.set("bendstyle", obj.bendStyle);
             o.set("iscontinuedbend", obj.isContinuedBend);
-            if (obj.bendPoints !== null) {
-                o.set("bendpoints", (_a = obj.bendPoints) === null || _a === void 0 ? void 0 : _a.map(i => BendPointSerializer.toJson(i)));
-            }
+            o.set("bendpoints", obj.bendPoints.map(i => BendPointSerializer.toJson(i)));
             o.set("fret", obj.fret);
             o.set("string", obj.string);
             o.set("octave", obj.octave);
@@ -19840,13 +19845,11 @@
                     obj.isContinuedBend = v;
                     return true;
                 case "bendpoints":
-                    if (v) {
-                        obj.bendPoints = [];
-                        for (const o of v) {
-                            const i = new BendPoint();
-                            BendPointSerializer.fromJson(i, o);
-                            obj.addBendPoint(i);
-                        }
+                    obj.bendPoints = [];
+                    for (const o of v) {
+                        const i = new BendPoint();
+                        BendPointSerializer.fromJson(i, o);
+                        obj.addBendPoint(i);
                     }
                     return true;
                 case "fret":
@@ -19946,7 +19949,6 @@
             JsonHelper.forEach(m, (v, k) => this.setProperty(obj, k, v));
         }
         static toJson(obj) {
-            var _a;
             if (!obj) {
                 return null;
             }
@@ -19973,9 +19975,7 @@
             o.set("tupletnumerator", obj.tupletNumerator);
             o.set("iscontinuedwhammy", obj.isContinuedWhammy);
             o.set("whammybartype", obj.whammyBarType);
-            if (obj.whammyBarPoints !== null) {
-                o.set("whammybarpoints", (_a = obj.whammyBarPoints) === null || _a === void 0 ? void 0 : _a.map(i => BendPointSerializer.toJson(i)));
-            }
+            o.set("whammybarpoints", obj.whammyBarPoints.map(i => BendPointSerializer.toJson(i)));
             o.set("vibrato", obj.vibrato);
             o.set("chordid", obj.chordId);
             o.set("gracetype", obj.graceType);
@@ -20071,13 +20071,11 @@
                     obj.whammyBarType = JsonHelper.parseEnum(v, WhammyType);
                     return true;
                 case "whammybarpoints":
-                    if (v) {
-                        obj.whammyBarPoints = [];
-                        for (const o of v) {
-                            const i = new BendPoint();
-                            BendPointSerializer.fromJson(i, o);
-                            obj.addWhammyBarPoint(i);
-                        }
+                    obj.whammyBarPoints = [];
+                    for (const o of v) {
+                        const i = new BendPoint();
+                        BendPointSerializer.fromJson(i, o);
+                        obj.addWhammyBarPoint(i);
                     }
                     return true;
                 case "vibrato":
@@ -20306,7 +20304,7 @@
             }
             const o = new Map();
             o.set("bars", obj.bars.map(i => BarSerializer.toJson(i)));
-            if (obj.chords !== null) {
+            {
                 const m = new Map();
                 o.set("chords", m);
                 for (const [k, v] of obj.chords) {
@@ -21287,6 +21285,12 @@
             }
             return beat;
         }
+        /**
+         * Finishes the lookup object and optimizes itself for fast access.
+         */
+        finish() {
+            this.beats.sort((a, b) => a.realBounds.x - b.realBounds.x);
+        }
     }
 
     /**
@@ -21373,10 +21377,14 @@
          */
         findBeatAtPos(x, y) {
             let beat = null;
+            let distance = 10000000;
             for (let bar of this.bars) {
                 let b = bar.findBeatAtPos(x);
                 if (b && (!beat || beat.realBounds.x < b.realBounds.x)) {
-                    beat = b;
+                    const newDistance = Math.abs(b.realBounds.x - x);
+                    if (!beat || newDistance < distance) {
+                        beat = b;
+                    }
                 }
             }
             return !beat ? null : beat.beat;
@@ -21400,6 +21408,9 @@
                 }
                 return 0;
             });
+            for (const bar of this.bars) {
+                bar.finish();
+            }
         }
         /**
          * Adds a new beat to the lookup.
@@ -21916,6 +21927,8 @@
             this.postRenderFinished.trigger();
         }
         onRenderFinished() {
+            var _a;
+            (_a = this.boundsLookup) === null || _a === void 0 ? void 0 : _a.finish();
             const e = new RenderFinishedEventArgs();
             e.totalHeight = this.layout.height;
             e.totalWidth = this.layout.width;
@@ -22676,6 +22689,11 @@
              */
             this.duration = 0;
             /**
+             * Gets or sets the duration in midi ticks for how long this tick lookup is valid
+             * starting at the `currentBeatLookup.start`
+             */
+            this.tickDuration = 0;
+            /**
              * Gets or sets the beat lookup for the next beat.
              */
             this.nextBeatLookup = null;
@@ -22766,7 +22784,8 @@
             return result;
         }
         findBeatFast(trackLookup, currentBeatHint, tick) {
-            if (tick >= currentBeatHint.currentBeatLookup.start && tick < currentBeatHint.currentBeatLookup.end) {
+            const end = currentBeatHint.currentBeatLookup.start + currentBeatHint.tickDuration;
+            if (tick >= currentBeatHint.currentBeatLookup.start && tick < end) {
                 // still same beat?
                 return currentBeatHint;
             }
@@ -22815,9 +22834,8 @@
             const result = new MidiTickLookupFindBeatResult();
             result.currentBeatLookup = beat;
             result.nextBeatLookup = nextBeat;
-            result.duration = !nextBeat
-                ? MidiUtils.ticksToMillis(beat.end - beat.start, beat.masterBar.tempo)
-                : MidiUtils.ticksToMillis(nextBeat.start - beat.start, beat.masterBar.tempo);
+            result.tickDuration = !nextBeat ? beat.end - beat.start : nextBeat.start - beat.start;
+            result.duration = MidiUtils.ticksToMillis(result.tickDuration, beat.masterBar.tempo);
             result.beatsToHighlight = beat.beatsToHighlight;
             return result;
         }
@@ -22946,6 +22964,7 @@
              */
             this.tickLookup = new MidiTickLookup();
             this._currentTripletFeel = null;
+            this.vibratoResolution = 16;
             this._score = score;
             this._settings = !settings ? new Settings() : settings;
             this._currentTempo = this._score.tempo;
@@ -23026,13 +23045,13 @@
                 this._handler.addTimeSignature(currentTick, masterBar.timeSignatureNumerator, masterBar.timeSignatureDenominator);
             }
             // tempo
-            if (!previousMasterBar) {
-                this._handler.addTempo(currentTick, masterBar.score.tempo);
-                this._currentTempo = masterBar.score.tempo;
-            }
-            else if (masterBar.tempoAutomation) {
+            if (masterBar.tempoAutomation) {
                 this._handler.addTempo(currentTick, masterBar.tempoAutomation.value);
                 this._currentTempo = masterBar.tempoAutomation.value;
+            }
+            else if (!previousMasterBar) {
+                this._handler.addTempo(currentTick, masterBar.score.tempo);
+                this._currentTempo = masterBar.score.tempo;
             }
             const masterBarLookup = new MasterBarTickLookup();
             masterBarLookup.masterBar = masterBar;
@@ -23284,7 +23303,7 @@
             else if (note.slideInType !== SlideInType.None || note.slideOutType !== SlideOutType.None) {
                 this.generateSlide(note, noteStart, noteDuration, noteKey, dynamicValue, channel);
             }
-            else if (note.vibrato !== VibratoType.None) {
+            else if (note.vibrato !== VibratoType.None || (note.isTieDestination && note.tieOrigin.vibrato !== VibratoType.None)) {
                 this.generateVibrato(note, noteStart, noteDuration, noteKey, channel);
             }
             // for tied notes, and target notes of legato slides we do not pick the note
@@ -23430,7 +23449,9 @@
         generateVibrato(note, noteStart, noteDuration, noteKey, channel) {
             let phaseLength = 0;
             let bendAmplitude = 0;
-            switch (note.vibrato) {
+            const vibratoType = note.vibrato !== VibratoType.None ? note.vibrato : (note.isTieDestination ? note.tieOrigin.vibrato :
+                VibratoType.Slight /* should never happen unless called wrongly */);
+            switch (vibratoType) {
                 case VibratoType.Slight:
                     phaseLength = this._settings.player.vibrato.noteSlightLength;
                     bendAmplitude = this._settings.player.vibrato.noteSlightAmplitude;
@@ -23448,7 +23469,7 @@
             });
         }
         generateVibratorWithParams(noteStart, noteDuration, phaseLength, bendAmplitude, addBend) {
-            const resolution = 16;
+            const resolution = this.vibratoResolution;
             const phaseHalf = (phaseLength / 2) | 0;
             // 1st Phase stays at bend 0,
             // then we have a sine wave with the given amplitude and phase length
@@ -24092,6 +24113,10 @@
         get onTimeX() {
             return this.onNotes.x + this.onNotes.centerX;
         }
+        addTie(tie) {
+            tie.renderer = this.renderer;
+            this.ties.push(tie);
+        }
         registerLayoutingInfo(layoutings) {
             let preBeatStretch = this.preNotes.computedWidth + this.onNotes.centerX;
             if (this.beat.graceGroup && !this.beat.graceGroup.isComplete) {
@@ -24100,8 +24125,11 @@
             let postBeatStretch = this.onNotes.computedWidth - this.onNotes.centerX;
             // make space for flag
             const helper = this.renderer.helpers.getBeamingHelperForBeat(this.beat);
-            if (helper && helper.hasFlag || this.beat.graceType !== GraceType.None) {
-                postBeatStretch += (FlagGlyph.FlagWidth * this.scale * (this.beat.graceType !== GraceType.None ? NoteHeadGlyph.GraceScale : 1));
+            if ((helper && helper.hasFlag) || this.beat.graceType !== GraceType.None) {
+                postBeatStretch +=
+                    FlagGlyph.FlagWidth *
+                        this.scale *
+                        (this.beat.graceType !== GraceType.None ? NoteHeadGlyph.GraceScale : 1);
             }
             for (const tie of this.ties) {
                 postBeatStretch += tie.width;
@@ -24141,6 +24169,7 @@
             while (i >= 0) {
                 this.createTies(this.beat.notes[i--]);
             }
+            this.renderer.registerTies(this.ties);
             this.updateWidth();
         }
         updateWidth() {
@@ -24172,9 +24201,6 @@
             this.width = this.minWidth;
         }
         scaleToWidth(beatWidth) {
-            for (let tie of this.ties) {
-                tie.doLayout();
-            }
             this.onNotes.updateBeamingHelper();
             this.width = beatWidth;
         }
@@ -24972,6 +24998,7 @@
             this._playerState = PlayerState.Paused;
             // we need to update our position caches if we render a tablature
             this.renderer.postRenderFinished.on(() => {
+                this._currentBeat = null;
                 this.cursorUpdateTick(this._previousTick, false, this._previousTick > 10);
             });
             if (this.player) {
@@ -25695,7 +25722,7 @@
     class HtmlElementContainer {
         constructor(element) {
             this._resizeListeners = 0;
-            this._lastBounds = new Bounds();
+            this.lastBounds = new Bounds();
             this.element = element;
             this.mouseDown = {
                 on: (value) => {
@@ -25786,23 +25813,23 @@
         }
         setBounds(x, y, w, h) {
             if (isNaN(x)) {
-                x = this._lastBounds.x;
+                x = this.lastBounds.x;
             }
             if (isNaN(y)) {
-                y = this._lastBounds.y;
+                y = this.lastBounds.y;
             }
             if (isNaN(w)) {
-                w = this._lastBounds.w;
+                w = this.lastBounds.w;
             }
             if (isNaN(h)) {
-                h = this._lastBounds.h;
+                h = this.lastBounds.h;
             }
             this.element.style.transform = `translate(${x}px, ${y}px) scale(${w}, ${h})`;
             this.element.style.transformOrigin = 'top left';
-            this._lastBounds.x = x;
-            this._lastBounds.y = y;
-            this._lastBounds.w = w;
-            this._lastBounds.h = h;
+            this.lastBounds.x = x;
+            this.lastBounds.y = y;
+            this.lastBounds.w = w;
+            this.lastBounds.h = h;
         }
         appendChild(child) {
             this.element.appendChild(child.element);
@@ -25820,6 +25847,15 @@
         }
     }));
 
+    var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+        return new (P || (P = Promise))(function (resolve, reject) {
+            function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+            function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+            step((generator = generator.apply(thisArg, _arguments || [])).next());
+        });
+    };
     /**
      * This small utility helps to detect whether a particular font is already loaded.
      * @target web
@@ -25855,50 +25891,87 @@
                 }
             }, 5000);
             Logger.debug('Font', `Start checking for font availablility: ${this._families.join(', ')}`);
-            let errorHandler = () => {
+            let errorHandler = (e) => {
                 if (this._families.length > 1) {
-                    Logger.debug('Font', `[${this._families[0]}] Loading Failed, switching to ${this._families[1]}`);
+                    Logger.debug('Font', `[${this._families[0]}] Loading Failed, switching to ${this._families[1]}`, e);
                     this._families.shift();
                     window.setTimeout(() => {
+                        // tslint:disable-next-line: no-floating-promises
                         checkFont();
                     }, 0);
                 }
                 else {
-                    Logger.error('Font', `[${this._originalFamilies.join(',')}] Loading Failed, rendering cannot start`);
+                    Logger.error('Font', `[${this._originalFamilies.join(',')}] Loading Failed, rendering cannot start`, e);
                     window.clearInterval(failCounterId);
+                    debugger;
                 }
             };
             let successHandler = (font) => {
-                Logger.debug('Rendering', `[${font}] Font API signaled available`);
+                Logger.debug('Font', `[${font}] Font API signaled available`);
                 this.isFontLoaded = true;
                 window.clearInterval(failCounterId);
                 this.fontLoaded.trigger(this._families[0]);
             };
-            let checkFont = () => {
+            let checkFont = () => __awaiter(this, void 0, void 0, function* () {
                 // Fast Path: check if one of the specified fonts is already available.
                 for (const font of this._families) {
-                    if (document.fonts.check('1em ' + font)) {
+                    if (yield this.isFontAvailable(font, false)) {
                         successHandler(font);
                         return;
                     }
                 }
                 // Slow path: Wait for fonts to be loaded sequentially
-                const promise = document.fonts.load(`1em ${this._families[0]}`);
-                promise.then(() => {
-                    Logger.debug('Font', `[${this._families[0]}] Font API signaled loaded`);
-                    if (document.fonts.check('1em ' + this._families[0])) {
-                        successHandler(this._families[0]);
-                    }
-                    else {
-                        errorHandler();
-                    }
-                    return true;
-                }, reason => {
-                    errorHandler();
-                });
-            };
+                try {
+                    yield document.fonts.load(`1em ${this._families[0]}`);
+                }
+                catch (e) {
+                    errorHandler(e);
+                }
+                Logger.debug('Font', `[${this._families[0]}] Font API signaled loaded`);
+                if (yield this.isFontAvailable(this._families[0], true)) {
+                    successHandler(this._families[0]);
+                }
+                else {
+                    errorHandler('Font not available');
+                }
+                return true;
+            });
             document.fonts.ready.then(() => {
+                // tslint:disable-next-line: no-floating-promises
                 checkFont();
+            });
+        }
+        isFontAvailable(family, advancedCheck) {
+            return new Promise(resolve => {
+                // In some very rare occasions Chrome reports false for the font.
+                // in this case we try to force some refresh and reload by creating an element with this font.
+                const fontString = '1em ' + family;
+                if (document.fonts.check(fontString)) {
+                    resolve(true);
+                }
+                else if (advancedCheck) {
+                    Logger.debug('Font', `Font ${family} not available, creating test element to trigger load`);
+                    const testElement = document.createElement('div');
+                    testElement.style.font = fontString;
+                    testElement.style.opacity = '0';
+                    testElement.style.position = 'absolute';
+                    testElement.style.top = '0';
+                    testElement.style.left = '0';
+                    testElement.innerText = `Trigger ${family} load`;
+                    document.body.appendChild(testElement);
+                    setTimeout(() => {
+                        document.body.removeChild(testElement);
+                        if (document.fonts.check(fontString)) {
+                            resolve(true);
+                        }
+                        else {
+                            resolve(false);
+                        }
+                    }, 200);
+                }
+                else {
+                    resolve(false);
+                }
             });
         }
     }
@@ -26669,6 +26742,7 @@
                     break;
                 case 'alphaTab.postRenderFinished':
                     this.boundsLookup = BoundsLookup.fromJson(data.boundsLookup, this._api.score);
+                    this.boundsLookup.finish();
                     this.postRenderFinished.trigger();
                     break;
                 case 'alphaTab.error':
@@ -26877,6 +26951,71 @@
             (_a = this._worklet) === null || _a === void 0 ? void 0 : _a.port.postMessage({
                 cmd: AlphaSynthWorkerSynthOutput.CmdOutputResetSamples
             });
+        }
+    }
+
+    /**
+     * An IContainer implementation which can be used for cursors and select ranges
+     * where browser scaling is relevant.
+     *
+     * The problem is that with having 1x1 pixel elements which are sized then to the actual size with a
+     * scale transform this cannot be combined properly with a browser zoom.
+     *
+     * The browser will apply first the browser zoom to the 1x1px element and then apply the scale leaving it always
+     * at full scale instead of a 50% browser zoom.
+     *
+     * This is solved in this container by scaling the element first up to a higher degree (as specified)
+     * so that the browser can do a scaling according to typical zoom levels and then the scaling will work.
+     * @target web
+     */
+    class ScalableHtmlElementContainer extends HtmlElementContainer {
+        constructor(element, xscale, yscale) {
+            super(element);
+            this._xscale = xscale;
+            this._yscale = yscale;
+        }
+        get width() {
+            return this.element.offsetWidth / this._xscale;
+        }
+        set width(value) {
+            this.element.style.width = value * this._xscale + 'px';
+        }
+        get height() {
+            return this.element.offsetHeight / this._yscale;
+        }
+        set height(value) {
+            if (value >= 0) {
+                this.element.style.height = value * this._yscale + 'px';
+            }
+            else {
+                this.element.style.height = '100%';
+            }
+        }
+        setBounds(x, y, w, h) {
+            if (isNaN(x)) {
+                x = this.lastBounds.x;
+            }
+            if (isNaN(y)) {
+                y = this.lastBounds.y;
+            }
+            if (isNaN(w)) {
+                w = this.lastBounds.w;
+            }
+            else {
+                w = w / this._xscale;
+            }
+            if (isNaN(h)) {
+                h = this.lastBounds.h;
+            }
+            else {
+                h = h / this._yscale;
+            }
+            this.element.style.transform = `translate(${x}px, ${y}px) scale(${w}, ${h})`;
+            this.element.style.transformOrigin = 'top left';
+            this.lastBounds.x = x;
+            this.lastBounds.y = y;
+            this.lastBounds.w = w;
+            this.lastBounds.h = h;
         }
     }
 
@@ -27254,7 +27393,7 @@
                     if (this._api.settings.core.enableLazyLoading) {
                         this._intersectionObserver.unobserve(canvasElement.lastChild);
                     }
-                    canvasElement.removeChild(canvasElement.lastChild);
+                    canvasElement.removeChild(canvasElement.lastElementChild);
                 }
             }
             else {
@@ -27364,9 +27503,11 @@
             cursorWrapper.classList.add('at-cursors');
             let selectionWrapper = document.createElement('div');
             selectionWrapper.classList.add('at-selection');
-            let barCursor = document.createElement('div');
+            const barCursorContainer = this.createScalingElement();
+            const beatCursorContainer = this.createScalingElement();
+            let barCursor = barCursorContainer.element;
             barCursor.classList.add('at-cursor-bar');
-            let beatCursor = document.createElement('div');
+            let beatCursor = beatCursorContainer.element;
             beatCursor.classList.add('at-cursor-beat');
             // required css styles
             element.style.position = 'relative';
@@ -27380,21 +27521,23 @@
             barCursor.style.left = '0';
             barCursor.style.top = '0';
             barCursor.style.willChange = 'transform';
-            barCursor.style.width = '1px';
-            barCursor.style.height = '1px';
+            barCursorContainer.width = 1;
+            barCursorContainer.height = 1;
+            barCursorContainer.setBounds(0, 0, 1, 1);
             beatCursor.style.position = 'absolute';
             beatCursor.style.transition = 'all 0s linear';
             beatCursor.style.left = '0';
             beatCursor.style.top = '0';
             beatCursor.style.willChange = 'transform';
-            beatCursor.style.width = '3px';
-            beatCursor.style.height = '1px';
+            beatCursorContainer.width = 3;
+            beatCursorContainer.height = 1;
+            beatCursorContainer.setBounds(0, 0, 1, 1);
             // add cursors to UI
             element.insertBefore(cursorWrapper, element.firstChild);
             cursorWrapper.appendChild(selectionWrapper);
             cursorWrapper.appendChild(barCursor);
             cursorWrapper.appendChild(beatCursor);
-            return new Cursors(new HtmlElementContainer(cursorWrapper), new HtmlElementContainer(barCursor), new HtmlElementContainer(beatCursor), new HtmlElementContainer(selectionWrapper));
+            return new Cursors(new HtmlElementContainer(cursorWrapper), barCursorContainer, beatCursorContainer, new HtmlElementContainer(selectionWrapper));
         }
         getOffset(scrollContainer, container) {
             let element = container.element;
@@ -27448,11 +27591,20 @@
             return this._scrollContainer;
         }
         createSelectionElement() {
-            let element = document.createElement('div');
+            return this.createScalingElement();
+        }
+        createScalingElement() {
+            const element = document.createElement('div');
             element.style.position = 'absolute';
-            element.style.width = '1px';
-            element.style.height = '1px';
-            return new HtmlElementContainer(element);
+            // to typical browser zoom levels are:
+            // Chromium: 25,33,50,67,75,80,90, 100, 110, 125, 150, 175, 200, 250, 300, 400, 500
+            // Firefox: 30, 50, 67, 80, 90, 100, 110, 120, 133, 150, 170, 200, 240, 300, 400, 500
+            // with having a 100x100 scaling container we should be able to provide appropriate scaling
+            const container = new ScalableHtmlElementContainer(element, 100, 100);
+            container.width = 1;
+            container.height = 1;
+            container.setBounds(0, 0, 1, 1);
+            return container;
         }
         scrollToY(element, scrollTargetY, speed) {
             this.internalScrollToY(element.element, scrollTargetY, speed);
@@ -29367,6 +29519,7 @@
             this._preBeatGlyphs = new LeftToRightLayoutingGlyphGroup();
             this._voiceContainers = new Map();
             this._postBeatGlyphs = new LeftToRightLayoutingGlyphGroup();
+            this._ties = [];
             this.x = 0;
             this.y = 0;
             this.width = 0;
@@ -29417,18 +29570,25 @@
             }
             return this.scoreRenderer.layout.getRendererForBar(this.staff.staveId, this.bar.previousBar);
         }
+        registerTies(ties) {
+            this._ties.push(...ties);
+        }
         get middleYPosition() {
             return 0;
         }
         registerOverflowTop(topOverflow) {
             if (topOverflow > this.topOverflow) {
                 this.topOverflow = topOverflow;
+                return true;
             }
+            return false;
         }
         registerOverflowBottom(bottomOverflow) {
             if (bottomOverflow > this.bottomOverflow) {
                 this.bottomOverflow = bottomOverflow;
+                return true;
             }
+            return false;
         }
         scaleToWidth(width) {
             // preBeat and postBeat glyphs do not get resized
@@ -29494,12 +29654,35 @@
         }
         finalizeRenderer() {
             this.isFinalized = true;
+            let didChangeOverflows = false;
+            // allow spacing to be used for tie overflows
+            const barTop = this.y - this.staff.topSpacing;
+            const barBottom = this.y + this.height + this.staff.bottomSpacing;
+            for (const tie of this._ties) {
+                tie.doLayout();
+                if (tie.height > 0) {
+                    const bottomOverflow = tie.y + tie.height - barBottom;
+                    if (bottomOverflow > 0) {
+                        if (this.registerOverflowBottom(bottomOverflow)) {
+                            didChangeOverflows = true;
+                        }
+                    }
+                    const topOverflow = tie.y - barTop;
+                    if (topOverflow < 0) {
+                        if (this.registerOverflowTop(topOverflow * -1)) {
+                            didChangeOverflows = true;
+                        }
+                    }
+                }
+            }
+            return didChangeOverflows;
         }
         doLayout() {
             if (!this.bar) {
                 return;
             }
             this.helpers.initialize();
+            this._ties = [];
             this._preBeatGlyphs = new LeftToRightLayoutingGlyphGroup();
             this._preBeatGlyphs.renderer = this;
             this._voiceContainers.clear();
@@ -29588,7 +29771,7 @@
         paintBackground(cx, cy, canvas) {
             this.layoutingInfo.paint(cx + this.x + this._preBeatGlyphs.x + this._preBeatGlyphs.width, cy + this.y + this.height, canvas);
             // canvas.color = Color.random();
-            // canvas.fillRect(cx + this.x + this._preBeatGlyphs.x, cy + this.y, this._preBeatGlyphs.width, this.height);
+            // canvas.fillRect(cx + this.x, cy + this.y, this.width, this.height);
         }
         buildBoundingsLookup(masterBarBounds, cx, cy) {
             let barBounds = new BarBounds();
@@ -30061,12 +30244,15 @@
             super.updateSizes();
         }
         finalizeRenderer() {
-            super.finalizeRenderer();
-            this.updateHeight();
+            let didChange = super.finalizeRenderer();
+            if (this.updateHeight()) {
+                didChange = true;
+            }
+            return didChange;
         }
         updateHeight() {
             if (!this.sizingInfo) {
-                return;
+                return false;
             }
             let y = 0;
             for (let slot of this.sizingInfo.slots) {
@@ -30077,7 +30263,11 @@
                 }
                 y += slot.shared.height;
             }
-            this.height = y;
+            if (y !== this.height) {
+                this.height = y;
+                return true;
+            }
+            return false;
         }
         applyLayoutingInfo() {
             if (!super.applyLayoutingInfo()) {
@@ -31347,20 +31537,20 @@
         }
         doLayout() {
             super.doLayout();
-            this.height = 20 * this.scale;
+            this.height = this.renderer.resources.markerFont.size * this.scale;
         }
         paint(cx, cy, canvas) {
             let res = this.renderer.resources;
             canvas.font = res.markerFont;
             let textw = canvas.measureText('tr');
-            canvas.fillText('tr', cx + this.x, cy + this.y + canvas.font.size / 2);
+            canvas.fillText('tr', cx + this.x, cy + this.y);
             let startX = textw + 3 * this.scale;
             let endX = this.width - startX;
             let waveScale = 1.2;
             let step = 11 * this.scale * waveScale;
             let loops = Math.max(1, (endX - startX) / step);
             let loopX = startX;
-            let loopY = cy + this.y + this.height;
+            let loopY = cy + this.y + this.height * 1.2;
             for (let i = 0; i < loops; i++) {
                 canvas.fillMusicFontSymbol(cx + this.x + loopX, loopY, waveScale, MusicFontSymbol.WiggleTrill, false);
                 loopX += step;
@@ -31919,8 +32109,15 @@
             // the space over the bar renderers, for now we evenly apply the space to all bars
             let difference = width - this.staveGroup.width;
             let spacePerBar = difference / this.barRenderers.length;
+            let x = 0;
+            let topOverflow = this.topOverflow;
             for (let i = 0, j = this.barRenderers.length; i < j; i++) {
-                this.barRenderers[i].scaleToWidth(this.barRenderers[i].width + spacePerBar);
+                this.barRenderers[i].x = x;
+                this.barRenderers[i].y = this.topSpacing + topOverflow;
+                if (difference !== 0) {
+                    this.barRenderers[i].scaleToWidth(this.barRenderers[i].width + spacePerBar);
+                }
+                x += this.barRenderers[i].width;
             }
         }
         get topOverflow() {
@@ -31944,19 +32141,29 @@
             return m;
         }
         finalizeStaff() {
-            let x = 0;
             this.height = 0;
+            // 1st pass: let all renderers finalize themselves, this might cause
+            // changes in the overflows
+            let needsSecondPass = false;
             let topOverflow = this.topOverflow;
-            let bottomOverflow = this.bottomOverflow;
             for (let i = 0; i < this.barRenderers.length; i++) {
-                this.barRenderers[i].x = x;
                 this.barRenderers[i].y = this.topSpacing + topOverflow;
                 this.height = Math.max(this.height, this.barRenderers[i].height);
-                this.barRenderers[i].finalizeRenderer();
-                x += this.barRenderers[i].width;
+                if (this.barRenderers[i].finalizeRenderer()) {
+                    needsSecondPass = true;
+                }
+            }
+            // 2nd pass: move renderers to correct position respecting the new overflows
+            if (needsSecondPass) {
+                topOverflow = this.topOverflow;
+                for (let i = 0; i < this.barRenderers.length; i++) {
+                    this.barRenderers[i].y = this.topSpacing + topOverflow;
+                    this.height = Math.max(this.height, this.barRenderers[i].height);
+                    this.barRenderers[i].finalizeRenderer();
+                }
             }
             if (this.height > 0) {
-                this.height += this.topSpacing + topOverflow + bottomOverflow + this.bottomSpacing;
+                this.height += this.topSpacing + topOverflow + this.bottomOverflow + this.bottomSpacing;
             }
         }
         paint(cx, cy, canvas, startIndex, count) {
@@ -32919,13 +33126,11 @@
                 for (let track of this.renderer.tracks) {
                     for (let staff of track.staves) {
                         const sc = staff.chords;
-                        if (sc) {
-                            for (const [chordId, chord] of sc) {
-                                if (!chords.has(chordId)) {
-                                    if (chord.showDiagram) {
-                                        chords.set(chordId, chord);
-                                        this.chordDiagrams.addChord(chord);
-                                    }
+                        for (const [chordId, chord] of sc) {
+                            if (!chords.has(chordId)) {
+                                if (chord.showDiagram) {
+                                    chords.set(chordId, chord);
+                                    this.chordDiagrams.addChord(chord);
                                 }
                             }
                         }
@@ -33146,7 +33351,7 @@
                     ' to ' +
                     currentPartial.masterBars[currentPartial.masterBars.length - 1].index, null);
             }
-            this._group.finalizeGroup();
+            this.finalizeGroup();
             this.height = Math.floor(this._group.y + this._group.height);
             this.width = this._group.x + this._group.width + this._pagePadding[2];
             currentBarIndex = 0;
@@ -33183,6 +33388,10 @@
                 currentBarIndex += partial.masterBars.length;
             }
             this.height = this.layoutAndRenderAnnotation(this.height) + this._pagePadding[3];
+        }
+        finalizeGroup() {
+            this._group.scaleToWidth(this._group.width);
+            this._group.finalizeGroup();
         }
     }
     HorizontalScreenLayout.PagePadding = [20, 20, 20, 20];
@@ -33380,7 +33589,6 @@
                 for (let i = 0; i < this._groups.length; i++) {
                     let group = this._groups[i];
                     this.fitGroup(group);
-                    group.finalizeGroup();
                     y += this.paintGroup(group, oldHeight);
                 }
             }
@@ -33413,7 +33621,6 @@
                         group.isLast = this.lastBarIndex === group.lastBarIndex;
                         this._groups.push(group);
                         this.fitGroup(group);
-                        group.finalizeGroup();
                         y += this.paintGroup(group, oldHeight);
                         // note: we do not increase currentIndex here to have it added to the next group
                         group = this.createEmptyStaveGroup();
@@ -33425,7 +33632,6 @@
                 group.isLast = this.lastBarIndex === group.lastBarIndex;
                 // don't forget to finish the last group
                 this.fitGroup(group);
-                group.finalizeGroup();
                 y += this.paintGroup(group, oldHeight);
             }
             return y;
@@ -33444,7 +33650,6 @@
                 currentBarIndex = group.lastBarIndex + 1;
                 // finalize group (sizing etc).
                 this.fitGroup(group);
-                group.finalizeGroup();
                 Logger.debug(this.name, 'Rendering partial from bar ' + group.firstBarIndex + ' to ' + group.lastBarIndex, null);
                 y += this.paintGroup(group, y);
             }
@@ -33481,6 +33686,10 @@
             if (group.isFull || group.width > this.maxWidth) {
                 group.scaleToWidth(this.maxWidth);
             }
+            else {
+                group.scaleToWidth(group.width);
+            }
+            group.finalizeGroup();
         }
         createStaveGroup(currentBarIndex, endIndex) {
             let group = this.createEmptyStaveGroup();
@@ -33905,27 +34114,33 @@
             this.startNoteRenderer = null;
             this.endNoteRenderer = null;
             this.tieDirection = BeamDirection.Up;
+            this._startX = 0;
+            this._startY = 0;
+            this._endX = 0;
+            this._endY = 0;
+            this._tieHeight = 0;
+            this._shouldDraw = false;
             this.startBeat = startBeat;
             this.endBeat = endBeat;
             this.forEnd = forEnd;
         }
         doLayout() {
             this.width = 0;
-        }
-        paint(cx, cy, canvas) {
+            // TODO fix nullability of start/end beat,
             if (!this.endBeat) {
+                this._shouldDraw = false;
                 return;
             }
-            // TODO fix nullability of start/end beat,
             let startNoteRenderer = this.renderer.scoreRenderer.layout.getRendererForBar(this.renderer.staff.staveId, this.startBeat.voice.bar);
             this.startNoteRenderer = startNoteRenderer;
             let endNoteRenderer = this.renderer.scoreRenderer.layout.getRendererForBar(this.renderer.staff.staveId, this.endBeat.voice.bar);
             this.endNoteRenderer = endNoteRenderer;
-            let startX = 0;
-            let endX = 0;
-            let startY = 0;
-            let endY = 0;
-            let shouldDraw = false;
+            this._startX = 0;
+            this._endX = 0;
+            this._startY = 0;
+            this._endY = 0;
+            this.height = 0;
+            this._shouldDraw = false;
             // if we are on the tie start, we check if we
             // either can draw till the end note, or we just can draw till the bar end
             this.tieDirection = !startNoteRenderer
@@ -33934,39 +34149,54 @@
             if (!this.forEnd && startNoteRenderer) {
                 // line break or bar break
                 if (startNoteRenderer !== endNoteRenderer) {
-                    startX = cx + startNoteRenderer.x + this.getStartX();
-                    startY = cy + startNoteRenderer.y + this.getStartY() + this.yOffset;
+                    this._startX = startNoteRenderer.x + this.getStartX();
+                    this._startY = startNoteRenderer.y + this.getStartY() + this.yOffset;
                     // line break: to bar end
                     if (!endNoteRenderer || startNoteRenderer.staff !== endNoteRenderer.staff) {
-                        endX = cx + startNoteRenderer.x + startNoteRenderer.width;
-                        endY = startY;
+                        this._endX = startNoteRenderer.x + startNoteRenderer.width;
+                        this._endY = this._startY;
                     }
                     else {
-                        endX = cx + endNoteRenderer.x + this.getEndX();
-                        endY = cy + endNoteRenderer.y + this.getEndY() + this.yOffset;
+                        this._endX = endNoteRenderer.x + this.getEndX();
+                        this._endY = endNoteRenderer.y + this.getEndY() + this.yOffset;
                     }
                 }
                 else {
-                    startX = cx + startNoteRenderer.x + this.getStartX();
-                    endX = cx + endNoteRenderer.x + this.getEndX();
-                    startY = cy + startNoteRenderer.y + this.getStartY() + this.yOffset;
-                    endY = cy + endNoteRenderer.y + this.getEndY() + this.yOffset;
+                    this._startX = startNoteRenderer.x + this.getStartX();
+                    this._endX = endNoteRenderer.x + this.getEndX();
+                    this._startY = startNoteRenderer.y + this.getStartY() + this.yOffset;
+                    this._endY = endNoteRenderer.y + this.getEndY() + this.yOffset;
                 }
-                shouldDraw = true;
+                this._shouldDraw = true;
             }
             else if (!startNoteRenderer || startNoteRenderer.staff !== endNoteRenderer.staff) {
-                startX = cx + endNoteRenderer.x;
-                endX = cx + endNoteRenderer.x + this.getEndX();
-                startY = cy + endNoteRenderer.y + this.getEndY() + this.yOffset;
-                endY = startY;
-                shouldDraw = true;
+                this._startX = endNoteRenderer.x;
+                this._endX = endNoteRenderer.x + this.getEndX();
+                this._startY = endNoteRenderer.y + this.getEndY() + this.yOffset;
+                this._endY = this._startY;
+                this._shouldDraw = true;
             }
-            if (shouldDraw) {
+            if (this._shouldDraw) {
+                this.y = Math.min(this._startY, this._endY);
                 if (this.shouldDrawBendSlur()) {
-                    TieGlyph.drawBendSlur(canvas, startX, startY, endX, endY, this.tieDirection === BeamDirection.Down, this.scale);
+                    this._tieHeight = 0; // TODO: Bend slur height to be considered?
                 }
                 else {
-                    TieGlyph.paintTie(canvas, this.scale, startX, startY, endX, endY, this.tieDirection === BeamDirection.Down, this.getTieHeight(startX, startY, endX, endY), 4);
+                    this._tieHeight = this.getTieHeight(this._startX, this._startY, this._endX, this._endY);
+                    this.height = TieGlyph.calculateActualTieHeight(this.renderer.scale, this._startX, this._startY, this._endX, this._endY, this.tieDirection === BeamDirection.Down, this._tieHeight, 4).h;
+                }
+                if (this.tieDirection === BeamDirection.Up) {
+                    this.y -= this.height;
+                }
+            }
+        }
+        paint(cx, cy, canvas) {
+            if (this._shouldDraw) {
+                if (this.shouldDrawBendSlur()) {
+                    TieGlyph.drawBendSlur(canvas, cx + this._startX, cy + this._startY, cx + this._endX, cy + this._endY, this.tieDirection === BeamDirection.Down, this.scale);
+                }
+                else {
+                    TieGlyph.paintTie(canvas, this.scale, cx + this._startX, cy + this._startY, cx + this._endX, cy + this._endY, this.tieDirection === BeamDirection.Down, this._tieHeight, 4);
                 }
             }
         }
@@ -33991,9 +34221,42 @@
         getEndX() {
             return 0;
         }
-        static paintTie(canvas, scale, x1, y1, x2, y2, down = false, offset = 22, size = 4) {
+        static calculateActualTieHeight(scale, x1, y1, x2, y2, down, offset, size) {
+            const cp = TieGlyph.computeBezierControlPoints(scale, x1, y1, x2, y2, down, offset, size);
+            x1 = cp[0];
+            y1 = cp[1];
+            const cpx = cp[2];
+            const cpy = cp[3];
+            x2 = cp[6];
+            y2 = cp[7];
+            const tx = (x1 - cpx) / (x1 - 2 * cpx + x2);
+            const ex = TieGlyph.calculateExtrema(x1, y1, cpx, cpy, x2, y2, tx);
+            const xMin = ex.length > 0 ? Math.min(x1, x2, ex[0]) : Math.min(x1, x2);
+            const xMax = ex.length > 0 ? Math.max(x1, x2, ex[0]) : Math.max(x1, x2);
+            const ty = (y1 - cpy) / (y1 - 2 * cpy + y2);
+            const ey = TieGlyph.calculateExtrema(x1, y1, cpx, cpy, x2, y2, ty);
+            const yMin = ey.length > 0 ? Math.min(y1, y2, ey[1]) : Math.min(y1, y2);
+            const yMax = ey.length > 0 ? Math.max(y1, y2, ey[1]) : Math.max(y1, y2);
+            const b = new Bounds();
+            b.x = xMin;
+            b.y = yMin;
+            b.w = xMax - xMin;
+            b.h = yMax - yMin;
+            return b;
+        }
+        static calculateExtrema(x1, y1, cpx, cpy, x2, y2, t) {
+            if (t <= 0 || 1 <= t) {
+                return [];
+            }
+            const c1x = x1 + (cpx - x1) * t;
+            const c1y = y1 + (cpy - y1) * t;
+            const c2x = cpx + (x2 - cpx) * t;
+            const c2y = cpy + (y2 - cpy) * t;
+            return [c1x + (c2x - c1x) * t, c1y + (c2y - c1y) * t];
+        }
+        static computeBezierControlPoints(scale, x1, y1, x2, y2, down, offset, size) {
             if (x1 === x2 && y1 === y2) {
-                return;
+                return [];
             }
             // ensure endX > startX
             if (x2 < x1) {
@@ -34030,12 +34293,26 @@
             let cp1Y = centerY + offset * normalVectorY;
             let cp2X = centerX + (offset - size) * normalVectorX;
             let cp2Y = centerY + (offset - size) * normalVectorY;
+            return [x1, y1, cp1X, cp1Y, cp2X, cp2Y, x2, y2];
+        }
+        static paintTie(canvas, scale, x1, y1, x2, y2, down = false, offset = 22, size = 4) {
+            const cps = TieGlyph.computeBezierControlPoints(scale, x1, y1, x2, y2, down, offset, size);
             canvas.beginPath();
-            canvas.moveTo(x1, y1);
-            canvas.quadraticCurveTo(cp1X, cp1Y, x2, y2);
-            canvas.quadraticCurveTo(cp2X, cp2Y, x1, y1);
+            canvas.moveTo(cps[0], cps[1]);
+            canvas.quadraticCurveTo(cps[2], cps[3], cps[6], cps[7]);
+            canvas.quadraticCurveTo(cps[4], cps[5], cps[0], cps[1]);
             canvas.closePath();
             canvas.fill();
+            // const c = canvas.color;
+            // canvas.color = Color.random(100);
+            // canvas.fillCircle(cps[0], cps[1], 4);
+            // canvas.fillCircle(cps[2], cps[3], 4);
+            // canvas.fillCircle(cps[4], cps[5], 4);
+            // canvas.fillCircle(cps[7], cps[6], 4);
+            // canvas.color = Color.random(100);
+            // const bbox = TieGlyph.calculateActualTieHeight(scale, x1, y1, x2, y2, down, offset, size);
+            // canvas.fillRect(bbox.x, bbox.y, bbox.w, bbox.h);
+            // canvas.color = c;
         }
         static drawBendSlur(canvas, x1, y1, x2, y2, down, scale, slurText) {
             let normalVectorX = y2 - y1;
@@ -36857,7 +37134,7 @@
                     while (destination.nextBeat && destination.nextBeat.isLegatoDestination) {
                         destination = destination.nextBeat;
                     }
-                    this.ties.push(new ScoreLegatoGlyph(this.beat, destination, false));
+                    this.addTie(new ScoreLegatoGlyph(this.beat, destination, false));
                 }
             }
             else if (this.beat.isLegatoDestination) {
@@ -36867,7 +37144,7 @@
                     while (origin.previousBeat && origin.previousBeat.isLegatoOrigin) {
                         origin = origin.previousBeat;
                     }
-                    this.ties.push(new ScoreLegatoGlyph(origin, this.beat, true));
+                    this.addTie(new ScoreLegatoGlyph(origin, this.beat, true));
                 }
             }
             if (this._bend) {
@@ -36891,32 +37168,32 @@
                 n.tieDestination.isVisible) {
                 // tslint:disable-next-line: no-unnecessary-type-assertion
                 let tie = new ScoreTieGlyph(n, n.tieDestination, false);
-                this.ties.push(tie);
+                this.addTie(tie);
             }
             if (n.isTieDestination && !n.tieOrigin.hasBend && !n.beat.hasWhammyBar) {
                 let tie = new ScoreTieGlyph(n.tieOrigin, n, true);
-                this.ties.push(tie);
+                this.addTie(tie);
             }
             // TODO: depending on the type we have other positioning
             // we should place glyphs in the preNotesGlyph or postNotesGlyph if needed
             if (n.slideInType !== SlideInType.None || n.slideOutType !== SlideOutType.None) {
                 let l = new ScoreSlideLineGlyph(n.slideInType, n.slideOutType, n, this);
-                this.ties.push(l);
+                this.addTie(l);
             }
             if (n.isSlurOrigin && n.slurDestination && n.slurDestination.isVisible) {
                 // tslint:disable-next-line: no-unnecessary-type-assertion
                 let tie = new ScoreSlurGlyph(n, n.slurDestination, false);
-                this.ties.push(tie);
+                this.addTie(tie);
             }
             if (n.isSlurDestination) {
                 let tie = new ScoreSlurGlyph(n.slurOrigin, n, true);
-                this.ties.push(tie);
+                this.addTie(tie);
             }
             // start effect slur on first beat
             if (!this._effectSlur && n.isEffectSlurOrigin && n.effectSlurDestination) {
                 const effectSlur = new ScoreSlurGlyph(n, n.effectSlurDestination, false);
                 this._effectSlur = effectSlur;
-                this.ties.push(effectSlur);
+                this.addTie(effectSlur);
             }
             // end effect slur on last beat
             if (!this._effectEndSlur && n.beat.isEffectSlurDestination && n.beat.effectSlurOrigin) {
@@ -36925,14 +37202,14 @@
                 let endNote = direction === BeamDirection.Up ? n.beat.minNote : n.beat.maxNote;
                 const effectEndSlur = new ScoreSlurGlyph(startNote, endNote, true);
                 this._effectEndSlur = effectEndSlur;
-                this.ties.push(effectEndSlur);
+                this.addTie(effectEndSlur);
             }
             if (n.hasBend) {
                 if (!this._bend) {
                     const bend = new ScoreBendGlyph(n.beat);
                     this._bend = bend;
                     bend.renderer = this.renderer;
-                    this.ties.push(bend);
+                    this.addTie(bend);
                 }
                 // tslint:disable-next-line: no-unnecessary-type-assertion
                 this._bend.addBends(n);
@@ -38074,15 +38351,15 @@
             let renderer = this.renderer;
             if (n.isTieOrigin && renderer.showTiedNotes && n.tieDestination.isVisible) {
                 let tie = new TabTieGlyph(n, n.tieDestination, false);
-                this.ties.push(tie);
+                this.addTie(tie);
             }
             if (n.isTieDestination && renderer.showTiedNotes) {
                 let tie = new TabTieGlyph(n.tieOrigin, n, true);
-                this.ties.push(tie);
+                this.addTie(tie);
             }
             if (n.isLeftHandTapped && !n.isHammerPullDestination) {
                 let tapSlur = new TabTieGlyph(n, n, false);
-                this.ties.push(tapSlur);
+                this.addTie(tapSlur);
             }
             // start effect slur on first beat
             if (n.isEffectSlurOrigin && n.effectSlurDestination) {
@@ -38096,7 +38373,7 @@
                 if (!expanded) {
                     let effectSlur = new TabSlurGlyph(n, n.effectSlurDestination, false, false);
                     this._effectSlurs.push(effectSlur);
-                    this.ties.push(effectSlur);
+                    this.addTie(effectSlur);
                 }
             }
             // end effect slur on last beat
@@ -38111,19 +38388,19 @@
                 if (!expanded) {
                     let effectSlur = new TabSlurGlyph(n.effectSlurOrigin, n, false, true);
                     this._effectSlurs.push(effectSlur);
-                    this.ties.push(effectSlur);
+                    this.addTie(effectSlur);
                 }
             }
             if (n.slideInType !== SlideInType.None || n.slideOutType !== SlideOutType.None) {
                 let l = new TabSlideLineGlyph(n.slideInType, n.slideOutType, n, this);
-                this.ties.push(l);
+                this.addTie(l);
             }
             if (n.hasBend) {
                 if (!this._bend) {
                     const bend = new TabBendGlyph();
                     this._bend = bend;
                     bend.renderer = this.renderer;
-                    this.ties.push(bend);
+                    this.addTie(bend);
                 }
                 this._bend.addBends(n);
             }
@@ -39373,7 +39650,7 @@
             // after the layout is parsed we can build up the
             // track > staff structure for later use
             // curly brackets define which staves go together into a track
-            const curlyBrackets = this._brackets.filter(b => b.curly);
+            const curlyBrackets = this._brackets.filter(b => !!b.curly);
             curlyBrackets.sort((a, b) => a.from - b.from);
             let currentBracketIndex = 0;
             let currentTrack = null;
@@ -41114,8 +41391,8 @@
     // </auto-generated>
     class VersionInfo {
     }
-    VersionInfo.version = '1.3.0-alpha.376';
-    VersionInfo.date = '2022-08-30T01:01:41.651Z';
+    VersionInfo.version = '1.2.3';
+    VersionInfo.date = '2022-10-16T13:33:07.436Z';
 
     var index$5 = /*#__PURE__*/Object.freeze({
         __proto__: null,
@@ -41209,7 +41486,7 @@
         }
         writeDom(parent, score) {
             const gpif = parent.addElement('GPIF');
-            // just some values at the time this was implemented, 
+            // just some values at the time this was implemented,
             gpif.addElement('GPVersion').innerText = '7';
             const gpRevision = gpif.addElement('GPRevision');
             gpRevision.innerText = '7';
@@ -41423,18 +41700,18 @@
         }
         writeTransposedPitch(properties, note) {
             if (note.isPercussion) {
-                this.writePitch(properties, "ConcertPitch", "C", "-1", '');
+                this.writePitch(properties, 'ConcertPitch', 'C', '-1', '');
             }
             else {
-                this.writePitchForValue(properties, "TransposedPitch", note.displayValueWithoutBend, note.accidentalMode);
+                this.writePitchForValue(properties, 'TransposedPitch', note.displayValueWithoutBend, note.accidentalMode);
             }
         }
         writeConcertPitch(properties, note) {
             if (note.isPercussion) {
-                this.writePitch(properties, "ConcertPitch", "C", "-1", '');
+                this.writePitch(properties, 'ConcertPitch', 'C', '-1', '');
             }
             else {
-                this.writePitchForValue(properties, "ConcertPitch", note.realValueWithoutHarmonic, note.accidentalMode);
+                this.writePitchForValue(properties, 'ConcertPitch', note.realValueWithoutHarmonic, note.accidentalMode);
             }
         }
         writePitchForValue(properties, propertyName, value, accidentalMode) {
@@ -41783,8 +42060,8 @@
             const initialTempoAutomation = automations.addElement('Automation');
             initialTempoAutomation.addElement('Type').innerText = 'Tempo';
             initialTempoAutomation.addElement('Linear').innerText = 'false';
-            initialTempoAutomation.addElement('Bar').innerText = "0";
-            initialTempoAutomation.addElement('Position').innerText = "0";
+            initialTempoAutomation.addElement('Bar').innerText = '0';
+            initialTempoAutomation.addElement('Position').innerText = '0';
             initialTempoAutomation.addElement('Visible').innerText = 'true';
             initialTempoAutomation.addElement('Value').innerText = `${score.tempo} 2`;
             if (score.tempoLabel) {
@@ -41821,8 +42098,8 @@
             trackNode.addElement('ShortName').setCData(track.shortName);
             trackNode.addElement('Color').innerText = `${track.color.r} ${track.color.g} ${track.color.b}`;
             // Note: unclear what these values mean, various combinations in GP7 lead to these values
-            trackNode.addElement('SystemsDefautLayout').innerText = "3";
-            trackNode.addElement('SystemsLayout').innerText = "1";
+            trackNode.addElement('SystemsDefautLayout').innerText = '3';
+            trackNode.addElement('SystemsLayout').innerText = '1';
             trackNode.addElement('AutoBrush');
             trackNode.addElement('PalmMute').innerText = '0';
             trackNode.addElement('PlayingStyle').innerText = GeneralMidi.isGuitar(track.playbackInfo.program)
@@ -41873,7 +42150,7 @@
             automationNode.addElement('Linear').innerText = 'false';
             automationNode.addElement('Bar').innerText = barIndex.toString();
             automationNode.addElement('Position').innerText = ratioPosition.toString();
-            automationNode.addElement('Visible').innerText = "true";
+            automationNode.addElement('Visible').innerText = 'true';
             automationNode.addElement('Value').setCData(`${path};${name};${role}`);
         }
         writeSoundsAndAutomations(trackNode, track) {
@@ -41933,13 +42210,13 @@
             const staffNode = parent.addElement('Staff');
             const properties = staffNode.addElement('Properties');
             this.writeSimplePropertyNode(properties, 'CapoFret', 'Fret', staff.capo.toString());
-            this.writeSimplePropertyNode(properties, 'FretCount', 'Fret', "24");
+            this.writeSimplePropertyNode(properties, 'FretCount', 'Fret', '24');
             if (staff.tuning.length > 0) {
                 const tuningProperty = properties.addElement('Property');
                 tuningProperty.attributes.set('name', 'Tuning');
                 tuningProperty.addElement('Pitches').innerText = staff.tuning.slice().reverse().join(' ');
                 tuningProperty.addElement('Label').setCData(staff.tuningName);
-                tuningProperty.addElement('LabelVisible').innerText = staff.tuningName ? "true" : "false";
+                tuningProperty.addElement('LabelVisible').innerText = staff.tuningName ? 'true' : 'false';
                 tuningProperty.addElement('Flat');
                 switch (staff.tuning.length) {
                     case 3:
@@ -41997,7 +42274,7 @@
                         break;
                 }
             }
-            this.writeSimplePropertyNode(properties, 'PartialCapoFret', 'Fret', "0");
+            this.writeSimplePropertyNode(properties, 'PartialCapoFret', 'Fret', '0');
             this.writeSimplePropertyNode(properties, 'PartialCapoStringFlags', 'Bitset', staff.tuning.map(_ => '0').join(''));
             this.writeSimplePropertyNode(properties, 'TuningFlat', 'Enable', null);
             this.writeDiagramCollection(properties, staff, 'DiagramCollection');
@@ -42008,97 +42285,95 @@
             diagramCollectionProperty.attributes.set('name', name);
             const diagramCollectionItems = diagramCollectionProperty.addElement('Items');
             const sc = staff.chords;
-            if (sc) {
-                for (const [id, chord] of sc) {
-                    const diagramCollectionItem = diagramCollectionItems.addElement('Item');
-                    diagramCollectionItem.attributes.set('id', id);
-                    diagramCollectionItem.attributes.set('name', chord.name);
-                    const diagram = diagramCollectionItem.addElement('Diagram');
-                    diagram.attributes.set('stringCount', chord.strings.length.toString());
-                    diagram.attributes.set('fretCount', '5');
-                    diagram.attributes.set('baseFret', (chord.firstFret - 1).toString());
-                    diagram.attributes.set('barStates', chord.strings.map(_ => '1').join(' '));
-                    const frets = [];
-                    const fretToStrings = new Map();
-                    for (let i = 0; i < chord.strings.length; i++) {
-                        let chordFret = chord.strings[i];
-                        if (chordFret !== -1) {
-                            const fretNode = diagram.addElement('Fret');
-                            const chordString = (chord.strings.length - 1 - i);
-                            fretNode.attributes.set('string', chordString.toString());
-                            fretNode.attributes.set('fret', (chordFret - chord.firstFret + 1).toString());
-                            if (!fretToStrings.has(chordFret)) {
-                                fretToStrings.set(chordFret, []);
-                                frets.push(chordFret);
-                            }
-                            fretToStrings.get(chordFret).push(chordString);
+            for (const [id, chord] of sc) {
+                const diagramCollectionItem = diagramCollectionItems.addElement('Item');
+                diagramCollectionItem.attributes.set('id', id);
+                diagramCollectionItem.attributes.set('name', chord.name);
+                const diagram = diagramCollectionItem.addElement('Diagram');
+                diagram.attributes.set('stringCount', chord.strings.length.toString());
+                diagram.attributes.set('fretCount', '5');
+                diagram.attributes.set('baseFret', (chord.firstFret - 1).toString());
+                diagram.attributes.set('barStates', chord.strings.map(_ => '1').join(' '));
+                const frets = [];
+                const fretToStrings = new Map();
+                for (let i = 0; i < chord.strings.length; i++) {
+                    let chordFret = chord.strings[i];
+                    if (chordFret !== -1) {
+                        const fretNode = diagram.addElement('Fret');
+                        const chordString = chord.strings.length - 1 - i;
+                        fretNode.attributes.set('string', chordString.toString());
+                        fretNode.attributes.set('fret', (chordFret - chord.firstFret + 1).toString());
+                        if (!fretToStrings.has(chordFret)) {
+                            fretToStrings.set(chordFret, []);
+                            frets.push(chordFret);
                         }
+                        fretToStrings.get(chordFret).push(chordString);
                     }
-                    frets.sort();
-                    // try to rebuild the barre frets
-                    const fingering = diagram.addElement('Fingering');
-                    if (chord.barreFrets.length > 0) {
-                        const fingers = [
-                            Fingers.LittleFinger,
-                            Fingers.AnnularFinger,
-                            Fingers.MiddleFinger,
-                            Fingers.IndexFinger,
-                        ];
-                        for (const fret of frets) {
-                            const fretStrings = fretToStrings.get(fret);
-                            if (fretStrings.length > 1 && chord.barreFrets.indexOf(fret) >= 0) {
-                                const finger = fingers.length > 0 ? fingers.pop() : Fingers.IndexFinger;
-                                for (const fretString of fretStrings) {
-                                    const position = fingering.addElement('Position');
-                                    switch (finger) {
-                                        case Fingers.LittleFinger:
-                                            position.attributes.set('finger', 'Pinky');
-                                            break;
-                                        case Fingers.AnnularFinger:
-                                            position.attributes.set('finger', 'Ring');
-                                            break;
-                                        case Fingers.MiddleFinger:
-                                            position.attributes.set('finger', 'Middle');
-                                            break;
-                                        case Fingers.IndexFinger:
-                                            position.attributes.set('finger', 'Index');
-                                            break;
-                                    }
-                                    position.attributes.set('fret', (fret - chord.firstFret + 1).toString());
-                                    position.attributes.set('string', fretString.toString());
-                                }
-                            }
-                        }
-                    }
-                    const showName = diagram.addElement('Property');
-                    showName.attributes.set('name', 'ShowName');
-                    showName.attributes.set('type', 'bool');
-                    showName.attributes.set('value', chord.showName ? "true" : "false");
-                    const showDiagram = diagram.addElement('Property');
-                    showDiagram.attributes.set('name', 'ShowDiagram');
-                    showDiagram.attributes.set('type', 'bool');
-                    showDiagram.attributes.set('value', chord.showDiagram ? "true" : "false");
-                    const showFingering = diagram.addElement('Property');
-                    showFingering.attributes.set('name', 'ShowFingering');
-                    showFingering.attributes.set('type', 'bool');
-                    showFingering.attributes.set('value', chord.showFingering ? "true" : "false");
-                    // TODO Chord details
-                    const chordNode = diagram.addElement('Chord');
-                    const keyNoteNode = chordNode.addElement('KeyNote');
-                    keyNoteNode.attributes.set('step', 'C');
-                    keyNoteNode.attributes.set('accidental', 'Natural');
-                    const bassNoteNode = chordNode.addElement('BassNote');
-                    bassNoteNode.attributes.set('step', 'C');
-                    bassNoteNode.attributes.set('accidental', 'Natural');
-                    const degree1Node = chordNode.addElement('Degree');
-                    degree1Node.attributes.set('interval', 'Third');
-                    degree1Node.attributes.set('alteration', 'Major');
-                    degree1Node.attributes.set('omitted', 'false');
-                    const degree2Node = chordNode.addElement('Degree');
-                    degree2Node.attributes.set('interval', 'Fifth');
-                    degree2Node.attributes.set('alteration', 'Perfect');
-                    degree2Node.attributes.set('omitted', 'false');
                 }
+                frets.sort();
+                // try to rebuild the barre frets
+                const fingering = diagram.addElement('Fingering');
+                if (chord.barreFrets.length > 0) {
+                    const fingers = [
+                        Fingers.LittleFinger,
+                        Fingers.AnnularFinger,
+                        Fingers.MiddleFinger,
+                        Fingers.IndexFinger
+                    ];
+                    for (const fret of frets) {
+                        const fretStrings = fretToStrings.get(fret);
+                        if (fretStrings.length > 1 && chord.barreFrets.indexOf(fret) >= 0) {
+                            const finger = fingers.length > 0 ? fingers.pop() : Fingers.IndexFinger;
+                            for (const fretString of fretStrings) {
+                                const position = fingering.addElement('Position');
+                                switch (finger) {
+                                    case Fingers.LittleFinger:
+                                        position.attributes.set('finger', 'Pinky');
+                                        break;
+                                    case Fingers.AnnularFinger:
+                                        position.attributes.set('finger', 'Ring');
+                                        break;
+                                    case Fingers.MiddleFinger:
+                                        position.attributes.set('finger', 'Middle');
+                                        break;
+                                    case Fingers.IndexFinger:
+                                        position.attributes.set('finger', 'Index');
+                                        break;
+                                }
+                                position.attributes.set('fret', (fret - chord.firstFret + 1).toString());
+                                position.attributes.set('string', fretString.toString());
+                            }
+                        }
+                    }
+                }
+                const showName = diagram.addElement('Property');
+                showName.attributes.set('name', 'ShowName');
+                showName.attributes.set('type', 'bool');
+                showName.attributes.set('value', chord.showName ? 'true' : 'false');
+                const showDiagram = diagram.addElement('Property');
+                showDiagram.attributes.set('name', 'ShowDiagram');
+                showDiagram.attributes.set('type', 'bool');
+                showDiagram.attributes.set('value', chord.showDiagram ? 'true' : 'false');
+                const showFingering = diagram.addElement('Property');
+                showFingering.attributes.set('name', 'ShowFingering');
+                showFingering.attributes.set('type', 'bool');
+                showFingering.attributes.set('value', chord.showFingering ? 'true' : 'false');
+                // TODO Chord details
+                const chordNode = diagram.addElement('Chord');
+                const keyNoteNode = chordNode.addElement('KeyNote');
+                keyNoteNode.attributes.set('step', 'C');
+                keyNoteNode.attributes.set('accidental', 'Natural');
+                const bassNoteNode = chordNode.addElement('BassNote');
+                bassNoteNode.attributes.set('step', 'C');
+                bassNoteNode.attributes.set('accidental', 'Natural');
+                const degree1Node = chordNode.addElement('Degree');
+                degree1Node.attributes.set('interval', 'Third');
+                degree1Node.attributes.set('alteration', 'Major');
+                degree1Node.attributes.set('omitted', 'false');
+                const degree2Node = chordNode.addElement('Degree');
+                degree2Node.attributes.set('interval', 'Fifth');
+                degree2Node.attributes.set('alteration', 'Perfect');
+                degree2Node.attributes.set('omitted', 'false');
             }
         }
         writeSimplePropertyNode(parent, propertyName, propertyValueTagName, propertyValue) {
@@ -42137,9 +42412,10 @@
                                         lines.push(newLyrics);
                                     }
                                     const line = lines[l];
-                                    line.text = line.text == '[Empty]'
-                                        ? beat.lyrics[l]
-                                        : line.text + ' ' + beat.lyrics[l].split(' ').join('+');
+                                    line.text =
+                                        line.text == '[Empty]'
+                                            ? beat.lyrics[l]
+                                            : line.text + ' ' + beat.lyrics[l].split(' ').join('+');
                                 }
                             }
                         }
@@ -42155,7 +42431,7 @@
         writeTransposeNode(trackNode, track) {
             const transpose = trackNode.addElement('Transpose');
             const octaveTranspose = Math.floor(track.staves[0].displayTranspositionPitch / 12);
-            const chromaticTranspose = track.staves[0].displayTranspositionPitch - (octaveTranspose * 12);
+            const chromaticTranspose = track.staves[0].displayTranspositionPitch - octaveTranspose * 12;
             transpose.addElement('Chromatic').innerText = chromaticTranspose.toString();
             transpose.addElement('Octave').innerText = octaveTranspose.toString();
         }
@@ -42169,7 +42445,7 @@
                     : Array.from(PercussionMapper.instrumentArticulations.values());
                 instrumentSet.addElement('Name').innerText = GpifWriter.DrumKitProgramInfo.instrumentSetName;
                 instrumentSet.addElement('Type').innerText = GpifWriter.DrumKitProgramInfo.instrumentSetType;
-                let currentElementName = "";
+                let currentElementName = '';
                 let currentArticulations = new XmlNode();
                 let counterPerType = new Map();
                 const elements = instrumentSet.addElement('Elements');
@@ -42191,7 +42467,8 @@
                         currentArticulations = currentElement.addElement('Articulations');
                     }
                     const articulationNode = currentArticulations.addElement('Articulation');
-                    articulationNode.addElement('Name').innerText = currentElementName + ' ' + currentArticulations.childNodes.length;
+                    articulationNode.addElement('Name').innerText =
+                        currentElementName + ' ' + currentArticulations.childNodes.length;
                     articulationNode.addElement('StaffLine').innerText = articulation.staffLine.toString();
                     articulationNode.addElement('Noteheads').innerText = [
                         this.mapMusicSymbol(articulation.noteHeadDefault),
@@ -42200,13 +42477,13 @@
                     ].join(' ');
                     switch (articulation.techniqueSymbolPlacement) {
                         case TextBaseline.Top:
-                            articulationNode.addElement('TechniquePlacement').innerText = "below";
+                            articulationNode.addElement('TechniquePlacement').innerText = 'below';
                             break;
                         case TextBaseline.Middle:
-                            articulationNode.addElement('TechniquePlacement').innerText = "inside";
+                            articulationNode.addElement('TechniquePlacement').innerText = 'inside';
                             break;
                         case TextBaseline.Bottom:
-                            articulationNode.addElement('TechniquePlacement').innerText = "above";
+                            articulationNode.addElement('TechniquePlacement').innerText = 'above';
                             break;
                     }
                     articulationNode.addElement('TechniqueSymbol').innerText = this.mapMusicSymbol(articulation.techniqueSymbol);
@@ -42275,8 +42552,8 @@
             }
             if (masterBar.isRepeatStart || masterBar.isRepeatEnd) {
                 const repeat = masterBarNode.addElement('Repeat');
-                repeat.attributes.set('start', masterBar.isRepeatStart ? "true" : "false");
-                repeat.attributes.set('end', masterBar.isRepeatEnd ? "true" : "false");
+                repeat.attributes.set('start', masterBar.isRepeatStart ? 'true' : 'false');
+                repeat.attributes.set('end', masterBar.isRepeatEnd ? 'true' : 'false');
                 if (masterBar.isRepeatEnd) {
                     repeat.attributes.set('count', masterBar.repeatCount.toString());
                 }
@@ -42301,8 +42578,7 @@
             this.writeFermatas(masterBarNode, masterBar);
         }
         writeFermatas(parent, masterBar) {
-            var _a, _b;
-            const fermataCount = ((_b = (_a = masterBar.fermata) === null || _a === void 0 ? void 0 : _a.size) !== null && _b !== void 0 ? _b : 0);
+            const fermataCount = masterBar.fermata.size;
             if (fermataCount === 0) {
                 return;
             }
@@ -42345,7 +42621,7 @@
         writeBarNode(parent, bar) {
             const barNode = parent.addElement('Bar');
             barNode.attributes.set('id', bar.id.toString());
-            barNode.addElement('Voices').innerText = bar.voices.map(v => v.isEmpty ? '-1' : v.id.toString()).join(' ');
+            barNode.addElement('Voices').innerText = bar.voices.map(v => (v.isEmpty ? '-1' : v.id.toString())).join(' ');
             barNode.addElement('Clef').innerText = Clef[bar.clef];
             if (bar.clefOttava !== Ottavia.Regular) {
                 barNode.addElement('Ottavia').innerText = Ottavia[bar.clefOttava].substr(1);
@@ -42364,136 +42640,136 @@
         }
     }
     GpifWriter.MidiProgramInfoLookup = new Map([
-        [0, new GpifMidiProgramInfo(GpifIconIds.Piano, "Acoustic Piano")],
-        [1, new GpifMidiProgramInfo(GpifIconIds.Piano, "Acoustic Piano")],
-        [2, new GpifMidiProgramInfo(GpifIconIds.Piano, "Electric Piano")],
-        [3, new GpifMidiProgramInfo(GpifIconIds.Piano, "Acoustic Piano")],
-        [4, new GpifMidiProgramInfo(GpifIconIds.Piano, "Electric Piano")],
-        [5, new GpifMidiProgramInfo(GpifIconIds.Piano, "Electric Piano")],
-        [6, new GpifMidiProgramInfo(GpifIconIds.Piano, "Harpsichord")],
-        [7, new GpifMidiProgramInfo(GpifIconIds.Piano, "Harpsichord")],
-        [8, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, "Celesta")],
-        [9, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, "Vibraphone")],
-        [10, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, "Vibraphone")],
-        [11, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, "Vibraphone")],
-        [12, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, "Xylophone")],
-        [13, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, "Xylophone")],
-        [14, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, "Vibraphone")],
-        [15, new GpifMidiProgramInfo(GpifIconIds.Banjo, "Banjo")],
-        [16, new GpifMidiProgramInfo(GpifIconIds.Piano, "Electric Organ")],
-        [17, new GpifMidiProgramInfo(GpifIconIds.Piano, "Electric Organ")],
-        [18, new GpifMidiProgramInfo(GpifIconIds.Piano, "Electric Organ")],
-        [19, new GpifMidiProgramInfo(GpifIconIds.Piano, "Electric Organ")],
-        [20, new GpifMidiProgramInfo(GpifIconIds.Piano, "Electric Organ")],
-        [21, new GpifMidiProgramInfo(GpifIconIds.Piano, "Electric Organ")],
-        [22, new GpifMidiProgramInfo(GpifIconIds.Woodwind, "Recorder")],
-        [23, new GpifMidiProgramInfo(GpifIconIds.Piano, "Electric Organ")],
-        [24, new GpifMidiProgramInfo(GpifIconIds.ClassicalGuitar, "Nylon Guitar")],
-        [25, new GpifMidiProgramInfo(GpifIconIds.SteelGuitar, "Steel Guitar")],
-        [26, new GpifMidiProgramInfo(GpifIconIds.SteelGuitar, "Electric Guitar")],
-        [27, new GpifMidiProgramInfo(GpifIconIds.ElectricGuitar, "Electric Guitar")],
-        [28, new GpifMidiProgramInfo(GpifIconIds.ElectricGuitar, "Electric Guitar")],
-        [29, new GpifMidiProgramInfo(GpifIconIds.ElectricGuitar, "Electric Guitar")],
-        [30, new GpifMidiProgramInfo(GpifIconIds.SteelGuitar, "Electric Guitar")],
-        [31, new GpifMidiProgramInfo(GpifIconIds.SteelGuitar, "Electric Guitar")],
-        [32, new GpifMidiProgramInfo(GpifIconIds.Bass, "Acoustic Bass")],
-        [33, new GpifMidiProgramInfo(GpifIconIds.Bass, "Electric Bass")],
-        [34, new GpifMidiProgramInfo(GpifIconIds.Bass, "Electric Bass")],
-        [35, new GpifMidiProgramInfo(GpifIconIds.Bass, "Acoustic Bass")],
-        [36, new GpifMidiProgramInfo(GpifIconIds.Bass, "Electric Bass")],
-        [37, new GpifMidiProgramInfo(GpifIconIds.Bass, "Electric Bass")],
-        [38, new GpifMidiProgramInfo(GpifIconIds.Synth, "Synth Bass")],
-        [39, new GpifMidiProgramInfo(GpifIconIds.Synth, "Synth Bass")],
-        [40, new GpifMidiProgramInfo(GpifIconIds.Strings, "Violin")],
-        [41, new GpifMidiProgramInfo(GpifIconIds.Strings, "Viola")],
-        [42, new GpifMidiProgramInfo(GpifIconIds.Strings, "Cello")],
-        [43, new GpifMidiProgramInfo(GpifIconIds.Strings, "Contrabass")],
-        [44, new GpifMidiProgramInfo(GpifIconIds.Strings, "Violin")],
-        [45, new GpifMidiProgramInfo(GpifIconIds.Strings, "Violin")],
-        [46, new GpifMidiProgramInfo(GpifIconIds.Piano, "Harp")],
-        [47, new GpifMidiProgramInfo(GpifIconIds.Membraphone, "Timpani")],
-        [48, new GpifMidiProgramInfo(GpifIconIds.Strings, "Violin")],
-        [49, new GpifMidiProgramInfo(GpifIconIds.Strings, "Violin")],
-        [50, new GpifMidiProgramInfo(GpifIconIds.Strings, "Violin")],
-        [51, new GpifMidiProgramInfo(GpifIconIds.Strings, "Violin")],
-        [52, new GpifMidiProgramInfo(GpifIconIds.Vocal, "Voice")],
-        [53, new GpifMidiProgramInfo(GpifIconIds.Vocal, "Voice")],
-        [54, new GpifMidiProgramInfo(GpifIconIds.Vocal, "Voice")],
-        [55, new GpifMidiProgramInfo(GpifIconIds.Synth, "Pad Synthesizer")],
-        [56, new GpifMidiProgramInfo(GpifIconIds.Brass, "Trumpet")],
-        [57, new GpifMidiProgramInfo(GpifIconIds.Brass, "Trombone")],
-        [58, new GpifMidiProgramInfo(GpifIconIds.Brass, "Tuba")],
-        [59, new GpifMidiProgramInfo(GpifIconIds.Brass, "Trumpet")],
-        [60, new GpifMidiProgramInfo(GpifIconIds.Brass, "French Horn")],
-        [61, new GpifMidiProgramInfo(GpifIconIds.Brass, "Trumpet")],
-        [62, new GpifMidiProgramInfo(GpifIconIds.Brass, "Trumpet")],
-        [63, new GpifMidiProgramInfo(GpifIconIds.Brass, "Trumpet")],
-        [64, new GpifMidiProgramInfo(GpifIconIds.Reed, "Saxophone")],
-        [65, new GpifMidiProgramInfo(GpifIconIds.Reed, "Saxophone")],
-        [66, new GpifMidiProgramInfo(GpifIconIds.Reed, "Saxophone")],
-        [67, new GpifMidiProgramInfo(GpifIconIds.Reed, "Saxophone")],
-        [68, new GpifMidiProgramInfo(GpifIconIds.Reed, "Oboe")],
-        [69, new GpifMidiProgramInfo(GpifIconIds.Reed, "English Horn")],
-        [70, new GpifMidiProgramInfo(GpifIconIds.Reed, "Bassoon")],
-        [71, new GpifMidiProgramInfo(GpifIconIds.Reed, "Clarinet")],
-        [72, new GpifMidiProgramInfo(GpifIconIds.Reed, "Piccolo")],
-        [73, new GpifMidiProgramInfo(GpifIconIds.Woodwind, "Flute")],
-        [74, new GpifMidiProgramInfo(GpifIconIds.Woodwind, "Recorder")],
-        [75, new GpifMidiProgramInfo(GpifIconIds.Woodwind, "Flute")],
-        [76, new GpifMidiProgramInfo(GpifIconIds.Woodwind, "Recorder")],
-        [77, new GpifMidiProgramInfo(GpifIconIds.Woodwind, "Flute")],
-        [78, new GpifMidiProgramInfo(GpifIconIds.Woodwind, "Recorder")],
-        [79, new GpifMidiProgramInfo(GpifIconIds.Woodwind, "Flute")],
-        [80, new GpifMidiProgramInfo(GpifIconIds.Synth, "Lead Synthesizer")],
-        [81, new GpifMidiProgramInfo(GpifIconIds.Synth, "Lead Synthesizer")],
-        [82, new GpifMidiProgramInfo(GpifIconIds.Synth, "Lead Synthesizer")],
-        [83, new GpifMidiProgramInfo(GpifIconIds.Synth, "Lead Synthesizer")],
-        [84, new GpifMidiProgramInfo(GpifIconIds.Synth, "Lead Synthesizer")],
-        [85, new GpifMidiProgramInfo(GpifIconIds.Synth, "Lead Synthesizer")],
-        [86, new GpifMidiProgramInfo(GpifIconIds.Synth, "Lead Synthesizer")],
-        [87, new GpifMidiProgramInfo(GpifIconIds.Synth, "Lead Synthesizer")],
-        [88, new GpifMidiProgramInfo(GpifIconIds.Synth, "Pad Synthesizer")],
-        [89, new GpifMidiProgramInfo(GpifIconIds.Synth, "Pad Synthesizer")],
-        [90, new GpifMidiProgramInfo(GpifIconIds.Synth, "Pad Synthesizer")],
-        [91, new GpifMidiProgramInfo(GpifIconIds.Synth, "Pad Synthesizer")],
-        [92, new GpifMidiProgramInfo(GpifIconIds.Synth, "Pad Synthesizer")],
-        [93, new GpifMidiProgramInfo(GpifIconIds.Synth, "Pad Synthesizer")],
-        [94, new GpifMidiProgramInfo(GpifIconIds.Synth, "Pad Synthesizer")],
-        [95, new GpifMidiProgramInfo(GpifIconIds.Synth, "Pad Synthesizer")],
-        [96, new GpifMidiProgramInfo(GpifIconIds.Fx, "Pad Synthesizer")],
-        [97, new GpifMidiProgramInfo(GpifIconIds.Fx, "Pad Synthesizer")],
-        [98, new GpifMidiProgramInfo(GpifIconIds.Fx, "Pad Synthesizer")],
-        [99, new GpifMidiProgramInfo(GpifIconIds.Fx, "Pad Synthesizer")],
-        [100, new GpifMidiProgramInfo(GpifIconIds.Fx, "Lead Synthesizer")],
-        [101, new GpifMidiProgramInfo(GpifIconIds.Fx, "Lead Synthesizer")],
-        [102, new GpifMidiProgramInfo(GpifIconIds.Fx, "Lead Synthesizer")],
-        [103, new GpifMidiProgramInfo(GpifIconIds.Fx, "Trumpet")],
-        [104, new GpifMidiProgramInfo(GpifIconIds.ElectricGuitar, "Banjo")],
-        [105, new GpifMidiProgramInfo(GpifIconIds.Banjo, "Banjo")],
-        [106, new GpifMidiProgramInfo(GpifIconIds.Ukulele, "Ukulele")],
-        [107, new GpifMidiProgramInfo(GpifIconIds.Banjo, "Banjo")],
-        [108, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, "Xylophone")],
-        [109, new GpifMidiProgramInfo(GpifIconIds.Reed, "Bassoon")],
-        [110, new GpifMidiProgramInfo(GpifIconIds.Strings, "Violin")],
-        [111, new GpifMidiProgramInfo(GpifIconIds.Woodwind, "Flute")],
-        [112, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, "Xylophone")],
-        [113, new GpifMidiProgramInfo(GpifIconIds.Idiophone, "Celesta")],
-        [114, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, "Vibraphone")],
-        [115, new GpifMidiProgramInfo(GpifIconIds.Idiophone, "Xylophone")],
-        [116, new GpifMidiProgramInfo(GpifIconIds.Membraphone, "Xylophone")],
-        [117, new GpifMidiProgramInfo(GpifIconIds.Membraphone, "Xylophone")],
-        [118, new GpifMidiProgramInfo(GpifIconIds.Membraphone, "Xylophone")],
-        [119, new GpifMidiProgramInfo(GpifIconIds.Idiophone, "Celesta")],
-        [120, new GpifMidiProgramInfo(GpifIconIds.Fx, "Steel Guitar")],
-        [121, new GpifMidiProgramInfo(GpifIconIds.Fx, "Recorder")],
-        [122, new GpifMidiProgramInfo(GpifIconIds.Fx, "Recorder")],
-        [123, new GpifMidiProgramInfo(GpifIconIds.Fx, "Recorder")],
-        [124, new GpifMidiProgramInfo(GpifIconIds.Fx, "Recorder")],
-        [125, new GpifMidiProgramInfo(GpifIconIds.Fx, "Recorder")],
-        [126, new GpifMidiProgramInfo(GpifIconIds.Fx, "Recorder")],
-        [127, new GpifMidiProgramInfo(GpifIconIds.Fx, "Timpani")]
+        [0, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Acoustic Piano')],
+        [1, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Acoustic Piano')],
+        [2, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Electric Piano')],
+        [3, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Acoustic Piano')],
+        [4, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Electric Piano')],
+        [5, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Electric Piano')],
+        [6, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Harpsichord')],
+        [7, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Harpsichord')],
+        [8, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, 'Celesta')],
+        [9, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, 'Vibraphone')],
+        [10, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, 'Vibraphone')],
+        [11, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, 'Vibraphone')],
+        [12, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, 'Xylophone')],
+        [13, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, 'Xylophone')],
+        [14, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, 'Vibraphone')],
+        [15, new GpifMidiProgramInfo(GpifIconIds.Banjo, 'Banjo')],
+        [16, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Electric Organ')],
+        [17, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Electric Organ')],
+        [18, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Electric Organ')],
+        [19, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Electric Organ')],
+        [20, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Electric Organ')],
+        [21, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Electric Organ')],
+        [22, new GpifMidiProgramInfo(GpifIconIds.Woodwind, 'Recorder')],
+        [23, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Electric Organ')],
+        [24, new GpifMidiProgramInfo(GpifIconIds.ClassicalGuitar, 'Nylon Guitar')],
+        [25, new GpifMidiProgramInfo(GpifIconIds.SteelGuitar, 'Steel Guitar')],
+        [26, new GpifMidiProgramInfo(GpifIconIds.SteelGuitar, 'Electric Guitar')],
+        [27, new GpifMidiProgramInfo(GpifIconIds.ElectricGuitar, 'Electric Guitar')],
+        [28, new GpifMidiProgramInfo(GpifIconIds.ElectricGuitar, 'Electric Guitar')],
+        [29, new GpifMidiProgramInfo(GpifIconIds.ElectricGuitar, 'Electric Guitar')],
+        [30, new GpifMidiProgramInfo(GpifIconIds.SteelGuitar, 'Electric Guitar')],
+        [31, new GpifMidiProgramInfo(GpifIconIds.SteelGuitar, 'Electric Guitar')],
+        [32, new GpifMidiProgramInfo(GpifIconIds.Bass, 'Acoustic Bass')],
+        [33, new GpifMidiProgramInfo(GpifIconIds.Bass, 'Electric Bass')],
+        [34, new GpifMidiProgramInfo(GpifIconIds.Bass, 'Electric Bass')],
+        [35, new GpifMidiProgramInfo(GpifIconIds.Bass, 'Acoustic Bass')],
+        [36, new GpifMidiProgramInfo(GpifIconIds.Bass, 'Electric Bass')],
+        [37, new GpifMidiProgramInfo(GpifIconIds.Bass, 'Electric Bass')],
+        [38, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Synth Bass')],
+        [39, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Synth Bass')],
+        [40, new GpifMidiProgramInfo(GpifIconIds.Strings, 'Violin')],
+        [41, new GpifMidiProgramInfo(GpifIconIds.Strings, 'Viola')],
+        [42, new GpifMidiProgramInfo(GpifIconIds.Strings, 'Cello')],
+        [43, new GpifMidiProgramInfo(GpifIconIds.Strings, 'Contrabass')],
+        [44, new GpifMidiProgramInfo(GpifIconIds.Strings, 'Violin')],
+        [45, new GpifMidiProgramInfo(GpifIconIds.Strings, 'Violin')],
+        [46, new GpifMidiProgramInfo(GpifIconIds.Piano, 'Harp')],
+        [47, new GpifMidiProgramInfo(GpifIconIds.Membraphone, 'Timpani')],
+        [48, new GpifMidiProgramInfo(GpifIconIds.Strings, 'Violin')],
+        [49, new GpifMidiProgramInfo(GpifIconIds.Strings, 'Violin')],
+        [50, new GpifMidiProgramInfo(GpifIconIds.Strings, 'Violin')],
+        [51, new GpifMidiProgramInfo(GpifIconIds.Strings, 'Violin')],
+        [52, new GpifMidiProgramInfo(GpifIconIds.Vocal, 'Voice')],
+        [53, new GpifMidiProgramInfo(GpifIconIds.Vocal, 'Voice')],
+        [54, new GpifMidiProgramInfo(GpifIconIds.Vocal, 'Voice')],
+        [55, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Pad Synthesizer')],
+        [56, new GpifMidiProgramInfo(GpifIconIds.Brass, 'Trumpet')],
+        [57, new GpifMidiProgramInfo(GpifIconIds.Brass, 'Trombone')],
+        [58, new GpifMidiProgramInfo(GpifIconIds.Brass, 'Tuba')],
+        [59, new GpifMidiProgramInfo(GpifIconIds.Brass, 'Trumpet')],
+        [60, new GpifMidiProgramInfo(GpifIconIds.Brass, 'French Horn')],
+        [61, new GpifMidiProgramInfo(GpifIconIds.Brass, 'Trumpet')],
+        [62, new GpifMidiProgramInfo(GpifIconIds.Brass, 'Trumpet')],
+        [63, new GpifMidiProgramInfo(GpifIconIds.Brass, 'Trumpet')],
+        [64, new GpifMidiProgramInfo(GpifIconIds.Reed, 'Saxophone')],
+        [65, new GpifMidiProgramInfo(GpifIconIds.Reed, 'Saxophone')],
+        [66, new GpifMidiProgramInfo(GpifIconIds.Reed, 'Saxophone')],
+        [67, new GpifMidiProgramInfo(GpifIconIds.Reed, 'Saxophone')],
+        [68, new GpifMidiProgramInfo(GpifIconIds.Reed, 'Oboe')],
+        [69, new GpifMidiProgramInfo(GpifIconIds.Reed, 'English Horn')],
+        [70, new GpifMidiProgramInfo(GpifIconIds.Reed, 'Bassoon')],
+        [71, new GpifMidiProgramInfo(GpifIconIds.Reed, 'Clarinet')],
+        [72, new GpifMidiProgramInfo(GpifIconIds.Reed, 'Piccolo')],
+        [73, new GpifMidiProgramInfo(GpifIconIds.Woodwind, 'Flute')],
+        [74, new GpifMidiProgramInfo(GpifIconIds.Woodwind, 'Recorder')],
+        [75, new GpifMidiProgramInfo(GpifIconIds.Woodwind, 'Flute')],
+        [76, new GpifMidiProgramInfo(GpifIconIds.Woodwind, 'Recorder')],
+        [77, new GpifMidiProgramInfo(GpifIconIds.Woodwind, 'Flute')],
+        [78, new GpifMidiProgramInfo(GpifIconIds.Woodwind, 'Recorder')],
+        [79, new GpifMidiProgramInfo(GpifIconIds.Woodwind, 'Flute')],
+        [80, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Lead Synthesizer')],
+        [81, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Lead Synthesizer')],
+        [82, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Lead Synthesizer')],
+        [83, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Lead Synthesizer')],
+        [84, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Lead Synthesizer')],
+        [85, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Lead Synthesizer')],
+        [86, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Lead Synthesizer')],
+        [87, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Lead Synthesizer')],
+        [88, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Pad Synthesizer')],
+        [89, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Pad Synthesizer')],
+        [90, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Pad Synthesizer')],
+        [91, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Pad Synthesizer')],
+        [92, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Pad Synthesizer')],
+        [93, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Pad Synthesizer')],
+        [94, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Pad Synthesizer')],
+        [95, new GpifMidiProgramInfo(GpifIconIds.Synth, 'Pad Synthesizer')],
+        [96, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Pad Synthesizer')],
+        [97, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Pad Synthesizer')],
+        [98, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Pad Synthesizer')],
+        [99, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Pad Synthesizer')],
+        [100, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Lead Synthesizer')],
+        [101, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Lead Synthesizer')],
+        [102, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Lead Synthesizer')],
+        [103, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Trumpet')],
+        [104, new GpifMidiProgramInfo(GpifIconIds.ElectricGuitar, 'Banjo')],
+        [105, new GpifMidiProgramInfo(GpifIconIds.Banjo, 'Banjo')],
+        [106, new GpifMidiProgramInfo(GpifIconIds.Ukulele, 'Ukulele')],
+        [107, new GpifMidiProgramInfo(GpifIconIds.Banjo, 'Banjo')],
+        [108, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, 'Xylophone')],
+        [109, new GpifMidiProgramInfo(GpifIconIds.Reed, 'Bassoon')],
+        [110, new GpifMidiProgramInfo(GpifIconIds.Strings, 'Violin')],
+        [111, new GpifMidiProgramInfo(GpifIconIds.Woodwind, 'Flute')],
+        [112, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, 'Xylophone')],
+        [113, new GpifMidiProgramInfo(GpifIconIds.Idiophone, 'Celesta')],
+        [114, new GpifMidiProgramInfo(GpifIconIds.PitchedIdiophone, 'Vibraphone')],
+        [115, new GpifMidiProgramInfo(GpifIconIds.Idiophone, 'Xylophone')],
+        [116, new GpifMidiProgramInfo(GpifIconIds.Membraphone, 'Xylophone')],
+        [117, new GpifMidiProgramInfo(GpifIconIds.Membraphone, 'Xylophone')],
+        [118, new GpifMidiProgramInfo(GpifIconIds.Membraphone, 'Xylophone')],
+        [119, new GpifMidiProgramInfo(GpifIconIds.Idiophone, 'Celesta')],
+        [120, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Steel Guitar')],
+        [121, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Recorder')],
+        [122, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Recorder')],
+        [123, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Recorder')],
+        [124, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Recorder')],
+        [125, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Recorder')],
+        [126, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Recorder')],
+        [127, new GpifMidiProgramInfo(GpifIconIds.Fx, 'Timpani')]
     ]);
-    GpifWriter.DrumKitProgramInfo = new GpifMidiProgramInfo(GpifIconIds.PercussionKit, "Drums", "drumKit");
+    GpifWriter.DrumKitProgramInfo = new GpifMidiProgramInfo(GpifIconIds.PercussionKit, 'Drums', 'drumKit');
 
     /**
      * CRC-32 with reversed data and unreversed output
