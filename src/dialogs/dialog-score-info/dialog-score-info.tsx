@@ -127,8 +127,8 @@ export function DialogScoreInfo(props: ScoreInfoProps) {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onSave}>{t('Save')}</Button>
-        <Button onClick={onCancel}>{t('Cancel')}</Button>
+        <Button title={t('Save')} onClick={onSave}>{t('Save')}</Button>
+        <Button title={t('Cancel')} onClick={onCancel}>{t('Cancel')}</Button>
       </DialogActions>
     </Dialog>
   );

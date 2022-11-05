@@ -47,8 +47,8 @@ export default function DialogText(props: DialogTextProps) {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={cancel}>{t('Cancel')}</Button>
-        <Button onClick={save}>{t('Save')}</Button>
+        <Button title={t('Cancel')} onClick={cancel}>{t('Cancel')}</Button>
+        <Button title={t('Save')} onClick={save}>{t('Save')}</Button>
       </DialogActions>
     </Dialog>
   );

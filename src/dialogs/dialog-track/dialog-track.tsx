@@ -98,8 +98,8 @@ export default function DialogTrack(props: DialogTrackProps) {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={props.onClose}>{t('Cancel')}</Button>
-        <Button onClick={() => props.onSave({ name: trackName, capo, tuning })}>{t('Save')}</Button>
+        <Button title={t('Cancel')} onClick={props.onClose}>{t('Cancel')}</Button>
+        <Button title={t('Save')} onClick={() => props.onSave({ name: trackName, capo, tuning })}>{t('Save')}</Button>
       </DialogActions>
     </Dialog>
   );

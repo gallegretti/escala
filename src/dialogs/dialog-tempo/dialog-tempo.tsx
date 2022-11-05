@@ -45,8 +45,8 @@ export default function DialogTempo(props: DialogSetTepoProps) {
         />
       </DialogContent>
       <DialogActions>
-        <Button title="Cancel" onClick={cancel}>Cancel</Button>
-        <Button title="Save" onClick={save}>Save</Button>
+        <Button title={t('Cancel')} onClick={cancel}>{t('Cancel')}</Button>
+        <Button title={t('Save')} onClick={save}>{t('Save')}</Button>
       </DialogActions>
     </Dialog>
   );
