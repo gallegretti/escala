@@ -35,7 +35,7 @@ export default function DialogTrack(props: DialogTrackProps) {
   useEffect(() => {
     const currentTuning = props.currentTrack?.staves[0].stringTuning;
     if (currentTuning) {
-      setTuning(tunings.find((t) => t.name === currentTuning.name) ?? defaultTuning);
+      setTuning(tunings.find((availableTuning) => availableTuning.name === currentTuning.name) ?? defaultTuning);
     }
     setTrackName(props.currentTrack?.shortName ?? t('New Track'));
     setCapo(props.currentTrack?.staves[0].capo ?? 0);
@@ -78,8 +78,8 @@ export default function DialogTrack(props: DialogTrackProps) {
               onChange={onTuningChange}
               value={tuning}
             >
-              {tunings.map((t) => (
-                <MenuItem value={t as any} key={t.name}>{t.name}</MenuItem>
+              {tunings.map((availableTuning) => (
+                <MenuItem value={availableTuning as any} key={t.name}>{t.name}</MenuItem>
               ))}
             </Select>
           </FormControl>

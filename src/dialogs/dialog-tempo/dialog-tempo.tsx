@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button,
 } from '@mui/material';
@@ -16,6 +17,8 @@ export default function DialogTempo(props: DialogSetTepoProps) {
     setNewTempoValue(Number.parseInt(event.target.value, 10));
   };
 
+  const { t } = useTranslation();
+
   const cancel = () => {
     props.onClose();
   };
@@ -29,7 +32,7 @@ export default function DialogTempo(props: DialogSetTepoProps) {
       open={props.isOpen}
       onClose={props.onClose}
     >
-      <DialogTitle>Set tempo</DialogTitle>
+      <DialogTitle>{t('Set tempo')}</DialogTitle>
       <DialogContent>
         <TextField
           InputProps={{

@@ -264,6 +264,7 @@ const resources: Resource = {
       'Text': 'Texto',
       'Help': 'Ajuda',
       'Basics': 'Básico',
+      'Set tempo': 'Tempo',
     },
   },
 };
