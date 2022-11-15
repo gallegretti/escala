@@ -1,6 +1,6 @@
 # Escala
 
-Escala is a web based score editor. It uses [alphaTab](https://github.com/CoderLine/alphaTab) for loading scores and rendering. You can try it out [here](https://gallegretti.github.io/score-editor/).
+Escala is a web based score editor. It uses [alphaTab](https://github.com/CoderLine/alphaTab) for loading scores and rendering. You can try it out [here](https://gallegretti.github.io/escala/).
 
 # Features
 
