@@ -26,12 +26,13 @@ const DialogHelpContent = styled(DialogContent)({
   display: 'flex',
   overflowY: 'hidden',
   height: '600px',
-  width: '500px',
+  width: '600px',
 });
 
 const ContentWrapper = styled('div')({
   overflowY: 'auto',
   padding: '12px',
+  width: '100%',
 });
 
 export function DialogHelp(props: DialogHelpProps) {
@@ -50,6 +51,7 @@ export function DialogHelp(props: DialogHelpProps) {
   return (
     <Dialog
       className="score-info"
+      maxWidth={false}
       open={props.isOpen}
       onClose={props.onClose}
     >
