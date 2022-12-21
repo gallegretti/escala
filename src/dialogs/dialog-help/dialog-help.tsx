@@ -59,7 +59,7 @@ export function DialogHelp(props: DialogHelpProps) {
       <DialogHelpContent>
         <List>
           {menuOptions.map((option) => (
-            <ListItem disablePadding>
+            <ListItem key={option} disablePadding>
               <ListItemButton
                 onClick={() => setCurrentPage(option)}
                 selected={option === currentPage}
