@@ -67,7 +67,7 @@ export default function DialogTrack(props: DialogTrackProps) {
           value={trackName}
           onChange={onTrackNameChange}
         />
-        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', marginTop: '12px' }}>
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">{t('Tuning Preset')}</InputLabel>
             <Select<Tuning>
@@ -84,7 +84,7 @@ export default function DialogTrack(props: DialogTrackProps) {
             </Select>
           </FormControl>
           <TextField
-            style={{ width: '100px' }}
+            style={{ width: '100px', marginLeft: '12px' }}
             label={t('Capo')}
             type="number"
             InputProps={{
