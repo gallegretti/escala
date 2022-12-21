@@ -79,7 +79,7 @@ export default function DialogTrack(props: DialogTrackProps) {
               value={tuning}
             >
               {tunings.map((availableTuning) => (
-                <MenuItem value={availableTuning as any} key={t.name}>{t.name}</MenuItem>
+                <MenuItem value={availableTuning as any} key={availableTuning.name}>{availableTuning.name}</MenuItem>
               ))}
             </Select>
           </FormControl>
