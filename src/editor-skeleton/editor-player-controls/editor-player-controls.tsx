@@ -25,22 +25,24 @@ const EditorPlayerControlsDiv = styled('div')(({ theme }) => ({
   justifyContent: 'center',
   alignItems: 'center',
   height: '65px',
+  paddingLeft: '10px',
+  paddingRight: '10px',
   backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100],
 }));
 
 const EditorPlayerControlsLeft = styled('div')({
-  width: '33%',
+  width: '40%',
 });
 
 const EditorPlayerControlsMid = styled('div')({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '33%',
+  width: '20%',
 });
 
 const EditorPlayerControlsRight = styled('div')({
-  width: '33%',
+  width: '40%',
   gap: '10px',
   display: 'flex',
   justifyContent: 'right',
