@@ -6,6 +6,7 @@ import {
   DialogContent,
   TextField,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Chord } from '../../alphatab-types/alphatab-types';
 import ChordInput from './chord-input';
 
@@ -31,6 +32,8 @@ export default function DialogChord(props: DialogChordProps) {
   const updateChordName = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setChordName(event.target.value);
   };
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     setStrings(makeStringsInitialState(props.numberOfStrings));
@@ -66,7 +69,7 @@ export default function DialogChord(props: DialogChordProps) {
       <DialogContent>
         <TextField
           id="chord-name"
-          label="Chord Name"
+          label={t('Chord Name')}
           autoFocus
           type="text"
           value={chordName}
@@ -88,9 +91,9 @@ export default function DialogChord(props: DialogChordProps) {
           disabled={chordName.length === 0}
           id="chord-save"
           onClick={save}
-          title="Save"
+          title={t('Save')}
         >
-          Save
+          {t('Save')}
         </Button>
       </DialogActions>
     </Dialog>

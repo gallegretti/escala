@@ -206,6 +206,7 @@ const resources: Resource = {
       'Accentuated Note': 'Nota acentuada',
       'Heavy Accentuated Note': 'Nota muito acentuada',
       'Chord': 'Acorde',
+      'Chord Name': 'Nome do acorde',
       'Document': 'Documento',
       'Effects': 'Efeitos',
       'Beat': 'Batida',
