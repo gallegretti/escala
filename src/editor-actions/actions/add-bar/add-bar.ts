@@ -1,6 +1,9 @@
 import { EditorActionResult, EditorActionEventAddBar } from '../../editor-action-event';
 import EditorActionInterface from '../editor-action.interface';
 
+ * Adds a new bar after the given 'currentBar'.
+ * NOTE: Won't work if 'currentBar' is not the last one.
+ */
 class AddBarAction extends EditorActionInterface<EditorActionEventAddBar> {
   do(action: EditorActionEventAddBar): EditorActionResult {
     const { currentBar } = action.data;
@@ -34,6 +37,9 @@ class AddBarAction extends EditorActionInterface<EditorActionEventAddBar> {
     masterBarToRemove?.score.masterBars.splice(masterBarToRemove.index, 1);
     currentBar.masterBar.nextMasterBar = null;
     currentBar.nextBar = null;
+    currentBar.voices.forEach((voice) => {
+      voice.beats[voice.beats.length - 1].nextBeat = null
+    });
     currentBar?.finish(null as any, {} as any);
     return {
       requiresRerender: true,
