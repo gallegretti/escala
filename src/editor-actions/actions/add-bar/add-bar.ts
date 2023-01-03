@@ -1,6 +1,7 @@
 import { EditorActionResult, EditorActionEventAddBar } from '../../editor-action-event';
 import EditorActionInterface from '../editor-action.interface';
 
+/**
  * Adds a new bar after the given 'currentBar'.
  * NOTE: Won't work if 'currentBar' is not the last one.
  */
