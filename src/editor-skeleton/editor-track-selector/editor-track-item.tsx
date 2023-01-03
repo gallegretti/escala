@@ -1,5 +1,6 @@
 import React from 'react';
 import ExpandMoreGlyph from '@glyphs/generic/expand-more';
+import ExpandLessGlyph from '@glyphs/generic/expand-less';
 import {
   Collapse,
   ListItem,
@@ -36,6 +37,7 @@ export default function EditorTrackItem({
   onExpand,
   onRemove,
 }: EditorTrackItemProps) {
+  const ExpandGlyph = isExpanded ? ExpandLessGlyph : ExpandMoreGlyph;
   return (
     <>
       <ListItem
@@ -47,7 +49,7 @@ export default function EditorTrackItem({
           <ListItemStyled>
             {track.shortName || track.name || 'Unamed'}
           </ListItemStyled>
-          <ExpandMoreGlyph
+          <ExpandGlyph
             onClick={() => { onExpand(!isExpanded) }}
             extraSvgStyles={{ flexShrink: 0 }}
             selected={false}
@@ -58,7 +60,7 @@ export default function EditorTrackItem({
       <Collapse in={isExpanded}>
         <div style={{ paddingLeft: '16px', display: 'flex', gap: '10px' }}>
           <EditGlyph disabled={false} selected={false} onClick={onEdit} />
-          <DeleteGlyph disabled={!canDelete} selected={false} onClick={canDelete ? onRemove : undefined } />
+          <DeleteGlyph disabled={!canDelete} selected={false} onClick={canDelete ? onRemove : undefined} />
         </div>
       </Collapse>
     </>
