@@ -1,0 +1,25 @@
+name: E2E Test
+
+on: [pull_request]
+
+jobs:
+  test:
+    name: 🧪 E2E test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 'v16'
+
+      - name: Install 🔧
+        run: npm ci
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          start: npm run dev
+
