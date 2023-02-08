@@ -1,0 +1,21 @@
+name: Service Test
+
+on: [pull_request]
+
+jobs:
+  test:
+    name: 🧪 Unit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 'v16'
+
+      - name: Install 🔧
+        run: npm ci
+
+      - run: npm run service-test
