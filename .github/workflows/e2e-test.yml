@@ -4,7 +4,7 @@ on: [pull_request]
 
 jobs:
   test:
-    name: 🧪 E2E test
+    name: 🧪 E2E Test
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
