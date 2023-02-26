@@ -4,7 +4,7 @@ on: [pull_request]
 
 jobs:
   test:
-    name: 🧪 Unit
+    name: 🧪 Service Test
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
