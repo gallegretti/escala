@@ -16,9 +16,18 @@ export default function StaccatoGlyph(props: DynamicGlyphProps) {
         width="10px"
         style={baseSvgStyle(props)}
       >
-        <path d="M7,6 L7,24" stroke={color} strokeWidth="0.96" style={{ fill: 'none' }} />
-        <text fill={color} style={{ transform: 'translate(0px, 24px)', fontSize: genericDurationFontSize }}></text>
-        <circle cx="4" cy="30" r="2" strokeWidth="1" fill={color} />
+        <text fill={color} style={{ transform: 'translate(0px, 24px)', fontSize: genericDurationFontSize }}>
+          {
+            // https://w3c.github.io/smufl/latest/tables/individual-notes.html
+            '\uE1D5'
+          }
+        </text>
+        <text fill={color} style={{ transform: 'translate(4px, 30px)', fontSize: genericDurationFontSize }}>
+          {
+            // https://w3c.github.io/smufl/latest/tables/articulation.html#articulation-ue4a0ue4bf
+            '\uE4A3'
+          }
+        </text>
       </svg>
     </Tooltip>
   );
