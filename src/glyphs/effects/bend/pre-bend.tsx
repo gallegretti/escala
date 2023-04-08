@@ -13,7 +13,7 @@ export default function PreBendGlyph(props: BaseGlyphProps) {
         height="30px"
         width="10px"
         onClick={props.onClick}
-        style={baseSvgStyle({ disabled: props.disabled })}
+        style={baseSvgStyle(props)}
       >
         <path d="M 0 24 C 4 24 8 24 8 5" stroke={color} style={{ fill: 'none' }} />
         <path d="M 8 4 L 6 9 L 10 9 z" fill={color} style={{ stroke: 'none' }} />
