@@ -1,1 +1,1 @@
-export type BendType = 'half' | 'full' | null;
+export type BendType = 'quarter' | 'half' | 'full' | null;

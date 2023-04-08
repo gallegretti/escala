@@ -7,6 +7,7 @@ import StyledPopper from '../styled-popper';
 interface GenericBendButtonProps {
   currentBendType: BendType;
   setCurrentBendType: (bendType: BendType) => void;
+  quarter: React.ComponentType<BaseGlyphProps>;
   half: React.ComponentType<BaseGlyphProps>;
   full: React.ComponentType<BaseGlyphProps>;
   default: React.ComponentType<BaseGlyphProps>;
@@ -43,6 +44,8 @@ export default function GenericBendButton(props: GenericBendButtonProps) {
 
   return (
     <>
+      {props.currentBendType === 'quarter'
+        && <props.quarter {...commonButtonProps} selected />}
       {props.currentBendType === 'half'
         && <props.half {...commonButtonProps} selected />}
       {props.currentBendType === 'full'
@@ -52,6 +55,11 @@ export default function GenericBendButton(props: GenericBendButtonProps) {
       {props.isPopperOpen && anchorElem
         && (
           <StyledPopper modifiers={bendPopperModifiers} open anchorEl={anchorElem} disablePortal>
+            <props.quarter
+              selected={props.currentBendType === 'quarter'}
+              disabled={false}
+              onClick={() => { props.setCurrentBendType('quarter'); }}
+            />
             <props.half
               selected={props.currentBendType === 'half'}
               disabled={false}

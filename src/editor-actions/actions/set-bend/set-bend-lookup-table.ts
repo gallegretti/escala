@@ -1,52 +1,91 @@
-/* eslint-disable max-len */
 import { BendState } from '../../../editor-skeleton/editor-controls/editor-controls';
 import { BendType } from '../../../alphatab-types/bend-type';
 import { BendPoint, Note } from '../../../alphatab-types/alphatab-types';
 
-const mapping: Record<string, () => BendPoint[]> = {
-  // All off
-  'null,null,null': () => [],
-  // One half
-  'half,null,null': () => [new alphaTab.model.BendPoint(0, 2), new alphaTab.model.BendPoint(60, 2)],
-  'null,half,null': () => [new alphaTab.model.BendPoint(0, 0), new alphaTab.model.BendPoint(30, 2), new alphaTab.model.BendPoint(60, 2)],
-  'null,null,half': () => [new alphaTab.model.BendPoint(0, 2), new alphaTab.model.BendPoint(60, 2)],
-  // One full
-  'full,null,null': () => [new alphaTab.model.BendPoint(0, 4), new alphaTab.model.BendPoint(60, 4)],
-  'null,full,null': () => [new alphaTab.model.BendPoint(0, 0), new alphaTab.model.BendPoint(30, 4), new alphaTab.model.BendPoint(60, 4)],
-  'null,null,full': () => [new alphaTab.model.BendPoint(0, 0), new alphaTab.model.BendPoint(60, 0)],
-  // Two half
-  'half,half,null': () => [new alphaTab.model.BendPoint(0, 2), new alphaTab.model.BendPoint(60, 2)],
-  'null,half,half': () => [new alphaTab.model.BendPoint(0, 0), new alphaTab.model.BendPoint(30, 2), new alphaTab.model.BendPoint(60, 2)],
-  'half,null,half': () => [new alphaTab.model.BendPoint(0, 2), new alphaTab.model.BendPoint(60, 2)],
-  // Two full
-  'full,full,null': () => [new alphaTab.model.BendPoint(0, 4), new alphaTab.model.BendPoint(60, 4)],
-  'null,full,full': () => [new alphaTab.model.BendPoint(0, 0), new alphaTab.model.BendPoint(20, 4), new alphaTab.model.BendPoint(40, 4), new alphaTab.model.BendPoint(60, 0)], // OK
-  'full,null,full': () => [new alphaTab.model.BendPoint(0, 4), new alphaTab.model.BendPoint(20, 4), new alphaTab.model.BendPoint(40, 0), new alphaTab.model.BendPoint(60, 0)], // OK
-  // One half, one full
-  'half,full,null': () => [new alphaTab.model.BendPoint(0, 2), new alphaTab.model.BendPoint(30, 2), new alphaTab.model.BendPoint(60, 4)],
-  'null,half,full': () => [new alphaTab.model.BendPoint(0, 0), new alphaTab.model.BendPoint(30, 2), new alphaTab.model.BendPoint(60, 0)],
-  'full,null,half': () => [new alphaTab.model.BendPoint(0, 4), new alphaTab.model.BendPoint(20, 4), new alphaTab.model.BendPoint(40, 2), new alphaTab.model.BendPoint(60, 2)],
-  'half,null,full': () => [new alphaTab.model.BendPoint(0, 2), new alphaTab.model.BendPoint(20, 2), new alphaTab.model.BendPoint(40, 0), new alphaTab.model.BendPoint(60, 0)],
-  'full,half,null': () => [new alphaTab.model.BendPoint(0, 4), new alphaTab.model.BendPoint(20, 4), new alphaTab.model.BendPoint(40, 2), new alphaTab.model.BendPoint(60, 2)],
-  'null,full,half': () => [new alphaTab.model.BendPoint(0, 0), new alphaTab.model.BendPoint(15, 4), new alphaTab.model.BendPoint(30, 4), new alphaTab.model.BendPoint(45, 2), new alphaTab.model.BendPoint(60, 2)], // OK
-  // Two half, one full
-  'half,half,full': () => [new alphaTab.model.BendPoint(0, 2), new alphaTab.model.BendPoint(20, 2), new alphaTab.model.BendPoint(40, 2), new alphaTab.model.BendPoint(60, 0)],
-  'half,full,half': () => [new alphaTab.model.BendPoint(0, 2), new alphaTab.model.BendPoint(15, 2), new alphaTab.model.BendPoint(30, 4), new alphaTab.model.BendPoint(45, 4), new alphaTab.model.BendPoint(60, 2)],
-  'full,half,half': () => [new alphaTab.model.BendPoint(0, 4), new alphaTab.model.BendPoint(15, 4), new alphaTab.model.BendPoint(30, 2), new alphaTab.model.BendPoint(45, 2), new alphaTab.model.BendPoint(60, 2)],
-  // Two full, one half
-  'full,full,half': () => [new alphaTab.model.BendPoint(0, 4), new alphaTab.model.BendPoint(15, 4), new alphaTab.model.BendPoint(30, 4), new alphaTab.model.BendPoint(45, 2), new alphaTab.model.BendPoint(60, 2)],
-  'full,half,full': () => [new alphaTab.model.BendPoint(0, 4), new alphaTab.model.BendPoint(15, 4), new alphaTab.model.BendPoint(30, 4), new alphaTab.model.BendPoint(45, 2), new alphaTab.model.BendPoint(60, 2)],
-  'half,full,full': () => [new alphaTab.model.BendPoint(0, 4), new alphaTab.model.BendPoint(10, 4), new alphaTab.model.BendPoint(20, 2), new alphaTab.model.BendPoint(30, 2), new alphaTab.model.BendPoint(40, 0), new alphaTab.model.BendPoint(50, 0), new alphaTab.model.BendPoint(60, 0)],
-  // Three full
-  'full,full,full': () => [new alphaTab.model.BendPoint(0, 4), new alphaTab.model.BendPoint(20, 4), new alphaTab.model.BendPoint(40, 0), new alphaTab.model.BendPoint(60, 0)],
-  // Three half
-  'half,half,half': () => [new alphaTab.model.BendPoint(0, 2), new alphaTab.model.BendPoint(60, 2)],
-};
+function bendValue(bendType: BendType): number {
+  if (bendType === 'quarter') {
+    return 1;
+  }
+  if (bendType === 'half') {
+    return 2;
+  }
+  if (bendType === 'full') {
+    return 4;
+  }
+  return 0;
+}
+
+function bendPoints(...numbers: number[]): BendPoint[] {
+  const points: BendPoint[] = [];
+  const step = 60 / (numbers.length - 1);
+  numbers.forEach((number, i) => {
+    points.push(new alphaTab.model.BendPoint(i * step, number));
+  });
+  return points;
+}
 
 export function getBendPoints(state: BendState): BendPoint[] {
-  const key = `${state.preBend},${state.bend},${state.release}`;
-  return mapping[key]();
+  // Zero selected
+  if (state.preBend === null && state.bend === null && state.release === null) {
+    return [];
+  }
+
+  // One selected
+  if (state.preBend !== null && state.bend === null && state.release === null) {
+    return bendPoints(bendValue(state.preBend), bendValue(state.preBend));
+  }
+  if (state.preBend === null && state.bend !== null && state.release === null) {
+    return bendPoints(0, bendValue(state.bend), bendValue(state.bend));
+  }
+  if (state.preBend === null && state.bend === null && state.release !== null) {
+    return [];
+  }
+
+  // Two selected
+  if (state.preBend === null && state.bend !== null && state.release !== null) {
+    const release = Math.max(bendValue(state.bend) - bendValue(state.release), 0);
+    return bendPoints(0, bendValue(state.bend), bendValue(state.bend), release, release);
+  }
+  if (state.preBend !== null && state.bend !== null && state.release === null) {
+    if (state.preBend === state.bend) {
+      return bendPoints(bendValue(state.preBend), bendValue(state.bend));
+    }
+    return bendPoints(bendValue(state.preBend), bendValue(state.preBend), bendValue(state.bend), bendValue(state.bend));
+  }
+  if (state.preBend !== null && state.bend === null && state.release !== null) {
+    const release = Math.max(bendValue(state.preBend) - bendValue(state.release), 0);
+    return bendPoints(bendValue(state.preBend), bendValue(state.preBend), release, release);
+  }
+
+  // Three selected
+  if (state.preBend !== null && state.bend !== null && state.release !== null) {
+    const release = Math.max(bendValue(state.bend) - bendValue(state.release), 0);
+    return bendPoints(bendValue(state.preBend), bendValue(state.preBend), bendValue(state.bend), bendValue(state.bend), release);
+  }
+
+  return [];
 }
+
+function makeLookupTable() {
+  const lookupTable: Record<string, () => BendPoint[]> = {};
+  const bendType: BendType[] = [null, 'quarter', 'half', 'full'];
+  /* eslint-disable no-restricted-syntax */
+  for (const preBend of bendType) {
+    for (const bend of bendType) {
+      for (const release of bendType) {
+        lookupTable[`${preBend},${bend},${release}`] = () => getBendPoints({
+          preBend,
+          bend,
+          release,
+        });
+      }
+    }
+  }
+  /* eslint-enable no-restricted-syntax */
+  return lookupTable;
+}
+
+const lookupTable = makeLookupTable();
 
 export function getBendState(note: Note): BendState {
   // By default we try to use the stored bend state (if it was set on the UI)
@@ -54,7 +93,8 @@ export function getBendState(note: Note): BendState {
     return note.bendState;
   }
   // Else, fall back to detecting the current bend state from the bend points
-  const entry = Object.entries(mapping).find(([key, optionBendpoints]) => JSON.stringify(optionBendpoints()) === JSON.stringify(note.bendPoints));
+  const entry = Object.entries(lookupTable)
+    .find(([key, optionBendpoints]) => JSON.stringify(optionBendpoints()) === JSON.stringify(note.bendPoints));
   if (!entry) {
     return {
       bend: null,
