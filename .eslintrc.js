@@ -36,7 +36,7 @@ module.exports = {
     'react/jsx-filename-extension': [1, { extensions: ['.tsx'] }],
     'react/require-default-props': 'off',
     'react/jsx-props-no-spreading': 'off',
-    'max-len': ['error', { code: 120 }],
+    'max-len': ['error', { code: 130 }],
     'react/destructuring-assignment': 'off',
     'class-methods-use-this': 'off',
     'no-param-reassign': 'off',
