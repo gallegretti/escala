@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
 import { styled } from '@mui/material';
+import {
+  CoreSettings, LogLevel, PlayerSettings, Settings,
+} from '@coderline/alphatab';
 import { AlphaTabApi, PlayerStateChangedEventArgs, RenderFinishedEventArgs } from '../../alphatab-types/alphatab-types';
 
 interface AlphaTabViewportProps {
@@ -53,44 +56,45 @@ const AlphaTabContainer = styled('div')`
 export default function AlphaTabViewport(props: AlphaTabViewportProps) {
   useEffect(() => {
     const main = document.getElementById('alphaTab');
-    const settings = {
-      file: 'samples/simple-2.gp',
+    const settings: Partial<Settings> = {
       player: {
         enablePlayer: true,
         enableCursor: true,
         enableUserInteraction: true,
-        soundfont: './alphatab/soundfont/sonivox.sf2',
-      },
+        soundFont: './alphatab/soundfont/sonivox.sf2',
+        scrollElement: document.getElementById('alphatab-container'),
+      } as PlayerSettings,
       core: {
+        file: 'samples/simple-2.gp',
         includeNoteBounds: true,
-        logLevel: 2,
-      },
+        logLevel: LogLevel.Info,
+      } as CoreSettings,
     };
-    const newApi = new alphaTab.AlphaTabApi(main!, settings);
+    const alphaTabApi = new alphaTab.AlphaTabApi(main!, settings);
     // Setup observables
     if (props.playerStateChanged) {
-      newApi.playerStateChanged.on(props.playerStateChanged);
+      alphaTabApi.playerStateChanged.on(props.playerStateChanged);
     }
     if (props.renderFinished) {
-      newApi.renderFinished.on(props.renderFinished);
+      alphaTabApi.renderFinished.on(props.renderFinished);
     }
     if (props.apiReady) {
-      props.apiReady(newApi);
+      props.apiReady(alphaTabApi);
     }
     return function cleanup() {
       // Remove observables
       if (props.playerStateChanged) {
-        newApi.playerStateChanged.off(props.playerStateChanged);
+        alphaTabApi.playerStateChanged.off(props.playerStateChanged);
       }
       if (props.renderFinished) {
-        newApi.renderFinished.off(props.renderFinished);
+        alphaTabApi.renderFinished.off(props.renderFinished);
       }
-      newApi.destroy();
+      alphaTabApi.destroy();
     };
   }, []);
 
   return (
-    <AlphaTabContainer>
+    <AlphaTabContainer id="alphatab-container">
       <div id="alphaTab">
         {props.children}
       </div>
