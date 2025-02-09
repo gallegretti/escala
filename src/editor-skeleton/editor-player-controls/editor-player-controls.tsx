@@ -6,6 +6,7 @@ import MetronomeGlyph from '@glyphs/player-controls/metronome';
 import RepeatGlyph from '@glyphs/player-controls/repeat';
 import VolumeControlComponent from './volume-control';
 import EditorPlayerSpeedComponent from './editor-player-speed';
+import AudioMixerGlyph from '@glyphs/player-controls/audio-mixer';
 
 interface EditorPlayerControlsProps {
   playPause: () => void;
@@ -13,6 +14,7 @@ interface EditorPlayerControlsProps {
   isCountIn: boolean;
   isMetronome: boolean;
   isLooping: boolean;
+  onOpenVolumeMixer: () => void;
   onLoopingChange: (isLooping: boolean) => void;
   onCountInChange: (countIn: boolean) => void;
   onMetronomeChange: (metronome: boolean) => void;
@@ -65,7 +67,9 @@ export default function EditorPlayerControls(props: EditorPlayerControlsProps) {
 
   return (
     <EditorPlayerControlsDiv>
-      <EditorPlayerControlsLeft />
+      <EditorPlayerControlsLeft>
+        <AudioMixerGlyph onClick={props.onOpenVolumeMixer} selected={false} disabled={false} />
+      </EditorPlayerControlsLeft>
       <EditorPlayerControlsMid>
         <PlayPauseGlyph selected={props.isPlaying} onClick={props.playPause} disabled={false} />
       </EditorPlayerControlsMid>
