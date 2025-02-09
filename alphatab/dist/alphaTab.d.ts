@@ -84,11 +84,6 @@ declare class CoreSettings {
      * @target web
      */
     constructor();
-    /**
-     * @target web
-     */
-    static ensureFullUrl(relativeUrl: string | null): string;
-    private static appendScriptName;
 }
 
 /**
@@ -343,6 +338,19 @@ declare enum StaveProfile {
 }
 
 /**
+ * Lists the different modes in which the staves and systems are arranged.
+ */
+declare enum SystemsLayoutMode {
+    /**
+     * Use the automatic alignment system provided by alphaTab (default)
+     */
+    Automatic = 0,
+    /**
+     * Use the systems layout and sizing information stored from the score model.
+     */
+    UseModelLayout = 1
+}
+/**
  * The display settings control how the general layout and display of alphaTab is done.
  * @json
  */
@@ -380,6 +388,11 @@ declare class DisplaySettings {
      */
     barCountPerPartial: number;
     /**
+     * Whether the last system (row) should be also justified to the whole width of the music sheet.
+     * (applies only for page layout).
+     */
+    justifyLastSystem: boolean;
+    /**
      * Gets or sets the resources used during rendering. This defines all fonts and colors used.
      * @json_partial_names
      */
@@ -388,6 +401,10 @@ declare class DisplaySettings {
      * Gets or sets the padding between the music notation and the border.
      */
     padding: number[] | null;
+    /**
+     * Gets how the systems should be layed out.
+     */
+    systemsLayoutMode: SystemsLayoutMode;
 }
 
 /**
@@ -808,6 +825,21 @@ declare class SlidePlaybackSettings {
     shiftSlideDurationRatio: number;
 }
 /**
+ * Lists the different modes how alphaTab will play the generated audio.
+ * @target web
+ */
+declare enum PlayerOutputMode {
+    /**
+     * If audio worklets are available in the browser, they will be used for playing the audio.
+     * It will fallback to the ScriptProcessor output if unavailable.
+     */
+    WebAudioAudioWorklets = 0,
+    /**
+     * Uses the legacy ScriptProcessor output which might perform worse.
+     */
+    WebAudioScriptProcessor = 1
+}
+/**
  * The player settings control how the audio playback and UI is behaving.
  * @json
  */
@@ -822,6 +854,11 @@ declare class PlayerSettings {
      * @json_read_only
      */
     scrollElement: string | HTMLElement;
+    /**
+     * Gets or sets which output mode alphaTab should use.
+     * @target web
+     */
+    outputMode: PlayerOutputMode;
     /**
      * Gets or sets whether the player should be enabled.
      */
@@ -1019,141 +1056,44 @@ declare class FileLoadError extends AlphaTabError {
 }
 
 /**
- * Represents a writer where binary data can be written to.
+ * Represents a stream of binary data that can be read from.
  */
-interface IWriteable {
+interface IReadable {
     /**
-     * Gets the current number of written bytes.
+     * Gets or sets the current read position relative in the stream.
      */
-    readonly bytesWritten: number;
+    position: number;
     /**
-     * Write a single byte to the stream.
-     * @param value The value to write.
+     * Gets the total number of bytes contained in the stream.
      */
-    writeByte(value: number): void;
+    readonly length: number;
     /**
-     * Write data from the given buffer.
-     * @param buffer The buffer to get the data from.
-     * @param offset The offset where to start reading the data.
-     * @param count The number of bytes to write
+     * Resets the stream for reading the data from the beginning.
      */
-    write(buffer: Uint8Array, offset: number, count: number): void;
-}
-
-/**
- * Lists all midi events.
- */
-declare enum MidiEventType {
+    reset(): void;
     /**
-     * A per note pitch bend. (Midi 2.0)
+     * Skip the given number of bytes.
+     * @param offset The number of bytes to skip.
      */
-    PerNotePitchBend = 96,
+    skip(offset: number): void;
     /**
-     * A note is released.
+     * Read a single byte from the data stream.
+     * @returns The value of the next byte or -1 if there is no more data.
      */
-    NoteOff = 128,
+    readByte(): number;
     /**
-     * A note is started.
+     * Reads the given number of bytes from the stream into the given buffer.
+     * @param buffer The buffer to fill.
+     * @param offset The offset in the buffer where to start writing.
+     * @param count The number of bytes to read.
+     * @returns
      */
-    NoteOn = 144,
+    read(buffer: Uint8Array, offset: number, count: number): number;
     /**
-     * The pressure that was used to play the note.
+     * Reads the remaining data.
+     * @returns
      */
-    NoteAftertouch = 160,
-    /**
-     * Change of a midi controller
-     */
-    Controller = 176,
-    /**
-     * Change of a midi program
-     */
-    ProgramChange = 192,
-    /**
-     * The pressure that should be applied to the whole channel.
-     */
-    ChannelAftertouch = 208,
-    /**
-     * A change of the audio pitch.
-     */
-    PitchBend = 224,
-    /**
-     * A System Exclusive event.
-     */
-    SystemExclusive = 240,
-    /**
-     * A System Exclusive event.
-     */
-    SystemExclusive2 = 247,
-    /**
-     * A meta event. See `MetaEventType` for details.
-     */
-    Meta = 255
-}
-/**
- * Represents a midi event.
- */
-declare class MidiEvent {
-    /**
-     * Gets or sets the track to which the midi event belongs.
-     */
-    track: number;
-    /**
-     * Gets or sets the raw midi message.
-     */
-    message: number;
-    /**
-     * Gets or sets the absolute tick of this midi event.
-     */
-    tick: number;
-    get channel(): number;
-    get command(): MidiEventType;
-    get data1(): number;
-    set data1(value: number);
-    get data2(): number;
-    set data2(value: number);
-    /**
-     * Initializes a new instance of the {@link MidiEvent} class.
-     * @param track The track this event belongs to.
-     * @param tick The absolute midi ticks of this event.
-     * @param status The status information of this event.
-     * @param data1 The first data component of this midi event.
-     * @param data2 The second data component of this midi event.
-     */
-    constructor(track: number, tick: number, status: number, data1: number, data2: number);
-    /**
-     * Writes the midi event as binary into the given stream.
-     * @param s The stream to write to.
-     */
-    writeTo(s: IWriteable): void;
-}
-
-/**
- * Represents a midi file with a single track that can be played via {@link AlphaSynth}
- */
-declare class MidiFile {
-    /**
-     * Gets or sets the division per quarter notes.
-     */
-    division: number;
-    /**
-     * Gets a list of midi events sorted by time.
-     */
-    readonly events: MidiEvent[];
-    /**
-     * Adds the given midi event a the correct time position into the file.
-     */
-    addEvent(e: MidiEvent): void;
-    /**
-     * Writes the midi file into a binary format.
-     * @returns The binary midi file.
-     */
-    toBinary(): Uint8Array;
-    /**
-     * Writes the midi file as binary into the given stream.
-     * @returns The stream to write to.
-     */
-    writeTo(s: IWriteable): void;
-    static writeVariableInt(s: IWriteable, value: number): void;
+    readAll(): Uint8Array;
 }
 
 /**
@@ -1305,161 +1245,164 @@ declare enum Clef {
 }
 
 /**
- * Lists all types of fermatas
+ * Lists all ottavia.
  */
-declare enum FermataType {
+declare enum Ottavia {
     /**
-     * A short fermata (triangle symbol)
+     * 2 octaves higher
      */
-    Short = 0,
+    _15ma = 0,
     /**
-     * A medium fermata (round symbol)
+     * 1 octave higher
      */
-    Medium = 1,
+    _8va = 1,
     /**
-     * A long fermata (rectangular symbol)
+     * Normal
      */
-    Long = 2
+    Regular = 2,
+    /**
+     * 1 octave lower
+     */
+    _8vb = 3,
+    /**
+     * 2 octaves lower.
+     */
+    _15mb = 4
 }
+
 /**
- * Represents a fermata.
+ * Lists all simile mark types as they are assigned to bars.
+ */
+declare enum SimileMark {
+    /**
+     * No simile mark is applied
+     */
+    None = 0,
+    /**
+     * A simple simile mark. The previous bar is repeated.
+     */
+    Simple = 1,
+    /**
+     * A double simile mark. This value is assigned to the first
+     * bar of the 2 repeat bars.
+     */
+    FirstOfDouble = 2,
+    /**
+     * A double simile mark. This value is assigned to the second
+     * bar of the 2 repeat bars.
+     */
+    SecondOfDouble = 3
+}
+
+/**
+ * A voice represents a group of beats
+ * that can be played during a bar.
  * @json
  * @json_strict
  */
-declare class Fermata {
+declare class Voice {
+    private _beatLookup;
+    private static _globalBarId;
     /**
-     * Gets or sets the type of fermata.
+     * Gets or sets the unique id of this bar.
      */
-    type: FermataType;
+    id: number;
     /**
-     * Gets or sets the actual lenght of the fermata.
+     * Gets or sets the zero-based index of this voice within the bar.
+     * @json_ignore
      */
-    length: number;
+    index: number;
+    /**
+     * Gets or sets the reference to the bar this voice belongs to.
+     * @json_ignore
+     */
+    bar: Bar;
+    /**
+     * Gets or sets the list of beats contained in this voice.
+     * @json_add addBeat
+     */
+    beats: Beat[];
+    /**
+     * Gets or sets a value indicating whether this voice is empty.
+     */
+    isEmpty: boolean;
+    insertBeat(after: Beat, newBeat: Beat): void;
+    addBeat(beat: Beat): void;
+    private chain;
+    addGraceBeat(beat: Beat): void;
+    getBeatAtPlaybackStart(playbackStart: number): Beat | null;
+    finish(settings: Settings, sharedDataBag?: Map<string, unknown> | null): void;
+    calculateDuration(): number;
 }
 
 /**
- * This public enumeration lists all available key signatures
- */
-declare enum KeySignature {
-    /**
-     * Cb (7 flats)
-     */
-    Cb = -7,
-    /**
-     * Gb (6 flats)
-     */
-    Gb = -6,
-    /**
-     * Db (5 flats)
-     */
-    Db = -5,
-    /**
-     * Ab (4 flats)
-     */
-    Ab = -4,
-    /**
-     * Eb (3 flats)
-     */
-    Eb = -3,
-    /**
-     * Bb (2 flats)
-     */
-    Bb = -2,
-    /**
-     * F (1 flat)
-     */
-    F = -1,
-    /**
-     * C (no signs)
-     */
-    C = 0,
-    /**
-     * G (1 sharp)
-     */
-    G = 1,
-    /**
-     * D (2 sharp)
-     */
-    D = 2,
-    /**
-     * A (3 sharp)
-     */
-    A = 3,
-    /**
-     * E (4 sharp)
-     */
-    E = 4,
-    /**
-     * B (5 sharp)
-     */
-    B = 5,
-    /**
-     * F# (6 sharp)
-     */
-    FSharp = 6,
-    /**
-     * C# (7 sharp)
-     */
-    CSharp = 7
-}
-
-/**
- * This public enumeration lists all available types of KeySignatures
- */
-declare enum KeySignatureType {
-    /**
-     * Major
-     */
-    Major = 0,
-    /**
-     * Minor
-     */
-    Minor = 1
-}
-
-/**
- * This public class can store the information about a group of measures which are repeated
- */
-declare class RepeatGroup {
-    /**
-     * All masterbars repeated within this group
-     */
-    masterBars: MasterBar[];
-    /**
-     * the masterbars which opens the group.
-     */
-    opening: MasterBar | null;
-    /**
-     * a list of masterbars which open the group.
-     * @deprecated There can only be one opening, use the opening property instead
-     */
-    get openings(): MasterBar[];
-    /**
-     * a list of masterbars which close the group.
-     */
-    closings: MasterBar[];
-    /**
-     * Gets whether this repeat group is really opened as a repeat.
-     */
-    get isOpened(): boolean;
-    /**
-     * true if the repeat group was closed well
-     */
-    isClosed: boolean;
-    addMasterBar(masterBar: MasterBar): void;
-}
-
-/**
- * This class represents the rendering stylesheet.
- * It contains settings which control the display of the score when rendered.
+ * A bar is a single block within a track, also known as Measure.
  * @json
  * @json_strict
  */
-declare class RenderStylesheet {
+declare class Bar {
+    private static _globalBarId;
     /**
-     * Gets or sets whether dynamics are hidden.
+     * Gets or sets the unique id of this bar.
      */
-    hideDynamics: boolean;
+    id: number;
+    /**
+     * Gets or sets the zero-based index of this bar within the staff.
+     * @json_ignore
+     */
+    index: number;
+    /**
+     * Gets or sets the next bar that comes after this bar.
+     * @json_ignore
+     */
+    nextBar: Bar | null;
+    /**
+     * Gets or sets the previous bar that comes before this bar.
+     * @json_ignore
+     */
+    previousBar: Bar | null;
+    /**
+     * Gets or sets the clef on this bar.
+     */
+    clef: Clef;
+    /**
+     * Gets or sets the ottava applied to the clef.
+     */
+    clefOttava: Ottavia;
+    /**
+     * Gets or sets the reference to the parent staff.
+     * @json_ignore
+     */
+    staff: Staff;
+    /**
+     * Gets or sets the list of voices contained in this bar.
+     * @json_add addVoice
+     */
+    voices: Voice[];
+    /**
+     * Gets or sets the simile mark on this bar.
+     */
+    simileMark: SimileMark;
+    /**
+     * Gets a value indicating whether this bar contains multiple voices with notes.
+     * @json_ignore
+     */
+    isMultiVoice: boolean;
+    /**
+     * A relative scale for the size of the bar when displayed. The scale is relative
+     * within a single line (system/stave group). The sum of all scales in one line make the total width,
+     * and then this individual scale gives the relative size.
+     */
+    displayScale: number;
+    /**
+     * An absolute width of the bar to use when displaying in single track display scenarios.
+     */
+    displayWidth: number;
+    get masterBar(): MasterBar;
+    get isEmpty(): boolean;
+    addVoice(voice: Voice): void;
+    finish(settings: Settings, sharedDataBag?: Map<string, unknown> | null): void;
+    calculateDuration(): number;
 }
 
 /**
@@ -1724,6 +1667,7 @@ interface ICanvas {
     lineTo(x: number, y: number): void;
     bezierCurveTo(cp1X: number, cp1Y: number, cp2X: number, cp2Y: number, x: number, y: number): void;
     quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void;
+    destroy(): void;
 }
 
 /**
@@ -1858,6 +1802,16 @@ declare class Track {
      */
     shortName: string;
     /**
+     * Defines how many bars are placed into the systems (rows) when displaying
+     * the track unless a value is set in the systemsLayout.
+     */
+    defaultSystemsLayout: number;
+    /**
+     * Defines how many bars are placed into the systems (rows) when displaying
+     * the track.
+     */
+    systemsLayout: number[];
+    /**
      * Gets or sets a mapping on which staff liens particular percussion instruments
      * should be shown.
      */
@@ -1866,407 +1820,6 @@ declare class Track {
     addStaff(staff: Staff): void;
     finish(settings: Settings, sharedDataBag?: Map<string, unknown> | null): void;
     applyLyrics(lyrics: Lyrics[]): void;
-}
-
-/**
- * The score is the root node of the complete
- * model. It stores the basic information of
- * a song and stores the sub components.
- * @json
- * @json_strict
- */
-declare class Score {
-    private _currentRepeatGroup;
-    private _openedRepeatGroups;
-    private _properlyOpenedRepeatGroups;
-    /**
-     * The album of this song.
-     */
-    album: string;
-    /**
-     * The artist who performs this song.
-     */
-    artist: string;
-    /**
-     * The owner of the copyright of this song.
-     */
-    copyright: string;
-    /**
-     * Additional instructions
-     */
-    instructions: string;
-    /**
-     * The author of the music.
-     */
-    music: string;
-    /**
-     * Some additional notes about the song.
-     */
-    notices: string;
-    /**
-     * The subtitle of the song.
-     */
-    subTitle: string;
-    /**
-     * The title of the song.
-     */
-    title: string;
-    /**
-     * The author of the song lyrics
-     */
-    words: string;
-    /**
-     * The author of this tablature.
-     */
-    tab: string;
-    /**
-     * Gets or sets the global tempo of the song in BPM. The tempo might change via {@link MasterBar.tempo}.
-     */
-    tempo: number;
-    /**
-     * Gets or sets the name/label of the tempo.
-     */
-    tempoLabel: string;
-    /**
-     * Gets or sets a list of all masterbars contained in this song.
-     * @json_add addMasterBar
-     */
-    masterBars: MasterBar[];
-    /**
-     * Gets or sets a list of all tracks contained in this song.
-     * @json_add addTrack
-     */
-    tracks: Track[];
-    /**
-     * Gets or sets the rendering stylesheet for this song.
-     */
-    stylesheet: RenderStylesheet;
-    rebuildRepeatGroups(): void;
-    addMasterBar(bar: MasterBar): void;
-    /**
-     * Adds the given bar correctly into the current repeat group setup.
-     * @param bar
-     */
-    private addMasterBarToRepeatGroups;
-    addTrack(track: Track): void;
-    finish(settings: Settings): void;
-}
-
-/**
- * This public class is used to describe the beginning of a
- * section within a song. It acts like a marker.
- * @json
- * @json_strict
- */
-declare class Section {
-    /**
-     * Gets or sets the marker ID for this section.
-     */
-    marker: string;
-    /**
-     * Gets or sets the descriptional text of this section.
-     */
-    text: string;
-}
-
-/**
- * This public enumeration lists all feels of triplets.
- */
-declare enum TripletFeel {
-    /**
-     * No triplet feel
-     */
-    NoTripletFeel = 0,
-    /**
-     * Triplet 16th
-     */
-    Triplet16th = 1,
-    /**
-     * Triplet 8th
-     */
-    Triplet8th = 2,
-    /**
-     * Dotted 16th
-     */
-    Dotted16th = 3,
-    /**
-     * Dotted 8th
-     */
-    Dotted8th = 4,
-    /**
-     * Scottish 16th
-     */
-    Scottish16th = 5,
-    /**
-     * Scottish 8th
-     */
-    Scottish8th = 6
-}
-
-/**
- * The MasterBar stores information about a bar which affects
- * all tracks.
- * @json
- * @json_strict
- */
-declare class MasterBar {
-    static readonly MaxAlternateEndings: number;
-    /**
-     * Gets or sets the bitflag for the alternate endings. Each bit defines for which repeat counts
-     * the bar is played.
-     */
-    alternateEndings: number;
-    /**
-     * Gets or sets the next masterbar in the song.
-     * @json_ignore
-     */
-    nextMasterBar: MasterBar | null;
-    /**
-     * Gets or sets the next masterbar in the song.
-     * @json_ignore
-     */
-    previousMasterBar: MasterBar | null;
-    /**
-     * Gets the zero based index of the masterbar.
-     * @json_ignore
-     */
-    index: number;
-    /**
-     * Gets or sets the key signature used on all bars.
-     */
-    keySignature: KeySignature;
-    /**
-     * Gets or sets the type of key signature (major/minor)
-     */
-    keySignatureType: KeySignatureType;
-    /**
-     * Gets or sets whether a double bar is shown for this masterbar.
-     */
-    isDoubleBar: boolean;
-    /**
-     * Gets or sets whether a repeat section starts on this masterbar.
-     */
-    isRepeatStart: boolean;
-    get isRepeatEnd(): boolean;
-    /**
-     * Gets or sets the number of repeats for the current repeat section.
-     */
-    repeatCount: number;
-    /**
-     * Gets or sets the repeat group this bar belongs to.
-     * @json_ignore
-     */
-    repeatGroup: RepeatGroup;
-    /**
-     * Gets or sets the time signature numerator.
-     */
-    timeSignatureNumerator: number;
-    /**
-     * Gets or sets the time signature denominiator.
-     */
-    timeSignatureDenominator: number;
-    /**
-     * Gets or sets whether this is bar has a common time signature.
-     */
-    timeSignatureCommon: boolean;
-    /**
-     * Gets or sets the triplet feel that is valid for this bar.
-     */
-    tripletFeel: TripletFeel;
-    /**
-     * Gets or sets the new section information for this bar.
-     */
-    section: Section | null;
-    get isSectionStart(): boolean;
-    /**
-     * Gets or sets the tempo automation for this bar.
-     */
-    tempoAutomation: Automation | null;
-    /**
-     * Gets or sets the reference to the score this song belongs to.
-     * @json_ignore
-     */
-    score: Score;
-    /**
-     * Gets or sets the fermatas for this bar. The key is the offset of the fermata in midi ticks.
-     * @json_add addFermata
-     */
-    fermata: Map<number, Fermata>;
-    /**
-     * The timeline position of the voice within the whole score. (unit: midi ticks)
-     */
-    start: number;
-    /**
-     * Gets or sets a value indicating whether the master bar is an anacrusis (aka. pickup bar)
-     */
-    isAnacrusis: boolean;
-    /**
-     * Calculates the time spent in this bar. (unit: midi ticks)
-     */
-    calculateDuration(respectAnacrusis?: boolean): number;
-    /**
-     * Adds a fermata to the masterbar.
-     * @param offset The offset of the fermata within the bar in midi ticks.
-     * @param fermata The fermata.
-     */
-    addFermata(offset: number, fermata: Fermata): void;
-    /**
-     * Gets the fermata for a given beat.
-     * @param beat The beat to get the fermata for.
-     * @returns
-     */
-    getFermata(beat: Beat): Fermata | null;
-}
-
-/**
- * Lists all ottavia.
- */
-declare enum Ottavia {
-    /**
-     * 2 octaves higher
-     */
-    _15ma = 0,
-    /**
-     * 1 octave higher
-     */
-    _8va = 1,
-    /**
-     * Normal
-     */
-    Regular = 2,
-    /**
-     * 1 octave lower
-     */
-    _8vb = 3,
-    /**
-     * 2 octaves lower.
-     */
-    _15mb = 4
-}
-
-/**
- * Lists all simile mark types as they are assigned to bars.
- */
-declare enum SimileMark {
-    /**
-     * No simile mark is applied
-     */
-    None = 0,
-    /**
-     * A simple simile mark. The previous bar is repeated.
-     */
-    Simple = 1,
-    /**
-     * A double simile mark. This value is assigned to the first
-     * bar of the 2 repeat bars.
-     */
-    FirstOfDouble = 2,
-    /**
-     * A double simile mark. This value is assigned to the second
-     * bar of the 2 repeat bars.
-     */
-    SecondOfDouble = 3
-}
-
-/**
- * A voice represents a group of beats
- * that can be played during a bar.
- * @json
- * @json_strict
- */
-declare class Voice {
-    private _beatLookup;
-    private static _globalBarId;
-    /**
-     * Gets or sets the unique id of this bar.
-     */
-    id: number;
-    /**
-     * Gets or sets the zero-based index of this voice within the bar.
-     * @json_ignore
-     */
-    index: number;
-    /**
-     * Gets or sets the reference to the bar this voice belongs to.
-     * @json_ignore
-     */
-    bar: Bar;
-    /**
-     * Gets or sets the list of beats contained in this voice.
-     * @json_add addBeat
-     */
-    beats: Beat[];
-    /**
-     * Gets or sets a value indicating whether this voice is empty.
-     */
-    isEmpty: boolean;
-    insertBeat(after: Beat, newBeat: Beat): void;
-    addBeat(beat: Beat): void;
-    private chain;
-    addGraceBeat(beat: Beat): void;
-    getBeatAtPlaybackStart(playbackStart: number): Beat | null;
-    finish(settings: Settings, sharedDataBag?: Map<string, unknown> | null): void;
-    calculateDuration(): number;
-}
-
-/**
- * A bar is a single block within a track, also known as Measure.
- * @json
- * @json_strict
- */
-declare class Bar {
-    private static _globalBarId;
-    /**
-     * Gets or sets the unique id of this bar.
-     */
-    id: number;
-    /**
-     * Gets or sets the zero-based index of this bar within the staff.
-     * @json_ignore
-     */
-    index: number;
-    /**
-     * Gets or sets the next bar that comes after this bar.
-     * @json_ignore
-     */
-    nextBar: Bar | null;
-    /**
-     * Gets or sets the previous bar that comes before this bar.
-     * @json_ignore
-     */
-    previousBar: Bar | null;
-    /**
-     * Gets or sets the clef on this bar.
-     */
-    clef: Clef;
-    /**
-     * Gets or sets the ottava applied to the clef.
-     */
-    clefOttava: Ottavia;
-    /**
-     * Gets or sets the reference to the parent staff.
-     * @json_ignore
-     */
-    staff: Staff;
-    /**
-     * Gets or sets the list of voices contained in this bar.
-     * @json_add addVoice
-     */
-    voices: Voice[];
-    /**
-     * Gets or sets the simile mark on this bar.
-     */
-    simileMark: SimileMark;
-    /**
-     * Gets a value indicating whether this bar contains multiple voices with notes.
-     * @json_ignore
-     */
-    isMultiVoice: boolean;
-    get masterBar(): MasterBar;
-    get isEmpty(): boolean;
-    addVoice(voice: Voice): void;
-    finish(settings: Settings, sharedDataBag?: Map<string, unknown> | null): void;
-    calculateDuration(): number;
 }
 
 /**
@@ -2355,7 +1908,7 @@ declare class Staff {
      * Gets or sets a list of all chords defined for this staff. {@link Beat.chordId} refers to entries in this lookup.
      * @json_add addChord
      */
-    chords: Map<string, Chord>;
+    chords: Map<string, Chord> | null;
     /**
      * Gets or sets the fret on which a capo is set.
      */
@@ -2450,6 +2003,10 @@ declare class Chord {
      * Gets or sets whether the fingering is shown below the chord diagram.
      */
     showFingering: boolean;
+    /**
+     * Gets a unique id for this chord based on its properties.
+     */
+    get uniqueId(): string;
 }
 
 /**
@@ -2506,6 +2063,39 @@ declare enum DynamicValue {
      * fortississimo (very very loud)
      */
     FFF = 7
+}
+
+/**
+ * Lists all types of fermatas
+ */
+declare enum FermataType {
+    /**
+     * A short fermata (triangle symbol)
+     */
+    Short = 0,
+    /**
+     * A medium fermata (round symbol)
+     */
+    Medium = 1,
+    /**
+     * A long fermata (rectangular symbol)
+     */
+    Long = 2
+}
+/**
+ * Represents a fermata.
+ * @json
+ * @json_strict
+ */
+declare class Fermata {
+    /**
+     * Gets or sets the type of fermata.
+     */
+    type: FermataType;
+    /**
+     * Gets or sets the actual lenght of the fermata.
+     */
+    length: number;
 }
 
 /**
@@ -2813,7 +2403,7 @@ declare class Note {
      * @clone_add addBendPoint
      * @json_add addBendPoint
      */
-    bendPoints: BendPoint[];
+    bendPoints: BendPoint[] | null;
     /**
      * Gets or sets the bend point with the highest bend value.
      * @clone_ignore
@@ -2824,6 +2414,7 @@ declare class Note {
     get isStringed(): boolean;
     /**
      * Gets or sets the fret on which this note is played on the instrument.
+     * 0 is the nut.
      */
     fret: number;
     /**
@@ -3141,6 +2732,13 @@ declare class Note {
     static getStringTuning(staff: Staff, noteString: number): number;
     get realValue(): number;
     get realValueWithoutHarmonic(): number;
+    /**
+     * Calculates the real note value of this note as midi key respecting the given options.
+     * @param applyTranspositionPitch Whether or not to apply the transposition pitch of the current staff.
+     * @param applyHarmonic Whether or not to apply harmonic pitches to the note.
+     * @returns The calculated note value as midi key.
+     */
+    calculateRealValue(applyTranspositionPitch: boolean, applyHarmonic: boolean): number;
     get harmonicPitch(): number;
     get initialBendValue(): number;
     get displayValue(): number;
@@ -3494,7 +3092,7 @@ declare class Beat {
      * @json_add addWhammyBarPoint
      * @clone_add addWhammyBarPoint
      */
-    whammyBarPoints: BendPoint[];
+    whammyBarPoints: BendPoint[] | null;
     /**
      * Gets or sets the highest point with for the highest whammy bar value.
      * @json_ignore
@@ -3629,637 +3227,568 @@ declare class Beat {
 }
 
 /**
- * Represents the time period, for which all bars of a {@link MasterBar} are played.
+ * This public enumeration lists all available key signatures
  */
-declare class MasterBarTickLookup {
+declare enum KeySignature {
     /**
-     * Gets or sets the start time in midi ticks at which the MasterBar is played.
+     * Cb (7 flats)
      */
-    start: number;
+    Cb = -7,
     /**
-     * Gets or sets the end time in midi ticks at which the MasterBar is played.
+     * Gb (6 flats)
      */
-    end: number;
+    Gb = -6,
     /**
-     * Gets or sets the current tempo when the MasterBar is played.
+     * Db (5 flats)
      */
-    tempo: number;
+    Db = -5,
     /**
-     * Gets or sets the MasterBar which is played.
+     * Ab (4 flats)
      */
-    masterBar: MasterBar;
+    Ab = -4,
     /**
-     * Gets or sets the list of {@link BeatTickLookup} object which define the durations
-     * for all {@link Beats} played within the period of this MasterBar.
+     * Eb (3 flats)
      */
-    beats: BeatTickLookup[];
+    Eb = -3,
     /**
-     * Gets or sets the {@link MasterBarTickLookup} of the next masterbar in the {@link Score}
+     * Bb (2 flats)
      */
-    nextMasterBar: MasterBarTickLookup | null;
+    Bb = -2,
     /**
-     * Performs the neccessary finalization steps after all information was written.
+     * F (1 flat)
      */
-    finish(): void;
+    F = -1,
     /**
-     * Adds a new {@link BeatTickLookup} to the list of played beats during this MasterBar period.
-     * @param beat
+     * C (no signs)
      */
-    addBeat(beat: BeatTickLookup): void;
+    C = 0,
+    /**
+     * G (1 sharp)
+     */
+    G = 1,
+    /**
+     * D (2 sharp)
+     */
+    D = 2,
+    /**
+     * A (3 sharp)
+     */
+    A = 3,
+    /**
+     * E (4 sharp)
+     */
+    E = 4,
+    /**
+     * B (5 sharp)
+     */
+    B = 5,
+    /**
+     * F# (6 sharp)
+     */
+    FSharp = 6,
+    /**
+     * C# (7 sharp)
+     */
+    CSharp = 7
 }
 
 /**
- * Represents the time period, for which a {@link Beat} is played.
+ * This public enumeration lists all available types of KeySignatures
  */
-declare class BeatTickLookup {
-    private _highlightedBeats;
+declare enum KeySignatureType {
     /**
-     * Gets or sets the index of the lookup within the parent MasterBarTickLookup.
+     * Major
+     */
+    Major = 0,
+    /**
+     * Minor
+     */
+    Minor = 1
+}
+
+/**
+ * This public class can store the information about a group of measures which are repeated
+ */
+declare class RepeatGroup {
+    /**
+     * All masterbars repeated within this group
+     */
+    masterBars: MasterBar[];
+    /**
+     * the masterbars which opens the group.
+     */
+    opening: MasterBar | null;
+    /**
+     * a list of masterbars which open the group.
+     * @deprecated There can only be one opening, use the opening property instead
+     */
+    get openings(): MasterBar[];
+    /**
+     * a list of masterbars which close the group.
+     */
+    closings: MasterBar[];
+    /**
+     * Gets whether this repeat group is really opened as a repeat.
+     */
+    get isOpened(): boolean;
+    /**
+     * true if the repeat group was closed well
+     */
+    isClosed: boolean;
+    addMasterBar(masterBar: MasterBar): void;
+}
+
+/**
+ * This public class is used to describe the beginning of a
+ * section within a song. It acts like a marker.
+ * @json
+ * @json_strict
+ */
+declare class Section {
+    /**
+     * Gets or sets the marker ID for this section.
+     */
+    marker: string;
+    /**
+     * Gets or sets the descriptional text of this section.
+     */
+    text: string;
+}
+
+/**
+ * This public enumeration lists all feels of triplets.
+ */
+declare enum TripletFeel {
+    /**
+     * No triplet feel
+     */
+    NoTripletFeel = 0,
+    /**
+     * Triplet 16th
+     */
+    Triplet16th = 1,
+    /**
+     * Triplet 8th
+     */
+    Triplet8th = 2,
+    /**
+     * Dotted 16th
+     */
+    Dotted16th = 3,
+    /**
+     * Dotted 8th
+     */
+    Dotted8th = 4,
+    /**
+     * Scottish 16th
+     */
+    Scottish16th = 5,
+    /**
+     * Scottish 8th
+     */
+    Scottish8th = 6
+}
+
+/**
+ * The MasterBar stores information about a bar which affects
+ * all tracks.
+ * @json
+ * @json_strict
+ */
+declare class MasterBar {
+    static readonly MaxAlternateEndings: number;
+    /**
+     * Gets or sets the bitflag for the alternate endings. Each bit defines for which repeat counts
+     * the bar is played.
+     */
+    alternateEndings: number;
+    /**
+     * Gets or sets the next masterbar in the song.
+     * @json_ignore
+     */
+    nextMasterBar: MasterBar | null;
+    /**
+     * Gets or sets the next masterbar in the song.
+     * @json_ignore
+     */
+    previousMasterBar: MasterBar | null;
+    /**
+     * Gets the zero based index of the masterbar.
+     * @json_ignore
      */
     index: number;
     /**
-     * Gets or sets the parent MasterBarTickLookup to which this beat lookup belongs to.
+     * Gets or sets the key signature used on all bars.
      */
-    masterBar: MasterBarTickLookup;
+    keySignature: KeySignature;
     /**
-     * Gets or sets the start time in midi ticks at which the given beat is played.
+     * Gets or sets the type of key signature (major/minor)
+     */
+    keySignatureType: KeySignatureType;
+    /**
+     * Gets or sets whether a double bar is shown for this masterbar.
+     */
+    isDoubleBar: boolean;
+    /**
+     * Gets or sets whether a repeat section starts on this masterbar.
+     */
+    isRepeatStart: boolean;
+    get isRepeatEnd(): boolean;
+    /**
+     * Gets or sets the number of repeats for the current repeat section.
+     */
+    repeatCount: number;
+    /**
+     * Gets or sets the repeat group this bar belongs to.
+     * @json_ignore
+     */
+    repeatGroup: RepeatGroup;
+    /**
+     * Gets or sets the time signature numerator.
+     */
+    timeSignatureNumerator: number;
+    /**
+     * Gets or sets the time signature denominiator.
+     */
+    timeSignatureDenominator: number;
+    /**
+     * Gets or sets whether this is bar has a common time signature.
+     */
+    timeSignatureCommon: boolean;
+    /**
+     * Gets or sets the triplet feel that is valid for this bar.
+     */
+    tripletFeel: TripletFeel;
+    /**
+     * Gets or sets the new section information for this bar.
+     */
+    section: Section | null;
+    get isSectionStart(): boolean;
+    /**
+     * Gets or sets the tempo automation for this bar.
+     */
+    tempoAutomation: Automation | null;
+    /**
+     * Gets or sets the reference to the score this song belongs to.
+     * @json_ignore
+     */
+    score: Score;
+    /**
+     * Gets or sets the fermatas for this bar. The key is the offset of the fermata in midi ticks.
+     * @json_add addFermata
+     */
+    fermata: Map<number, Fermata> | null;
+    /**
+     * The timeline position of the voice within the whole score. (unit: midi ticks)
      */
     start: number;
     /**
-     * Gets or sets the end time in midi ticks at which the given beat is played.
+     * Gets or sets a value indicating whether the master bar is an anacrusis (aka. pickup bar)
      */
-    end: number;
+    isAnacrusis: boolean;
     /**
-     * Gets or sets the beat which is played.
+     * Gets a percentual scale for the size of the bars when displayed in a multi-track layout.
      */
-    beat: Beat;
+    displayScale: number;
     /**
-     * Gets or sets whether the beat is the placeholder beat for an empty bar.
+     * An absolute width of the bar to use when displaying in a multi-track layout.
      */
-    isEmptyBar: boolean;
+    displayWidth: number;
     /**
-     * Gets or sets a list of all beats that should be highlighted when
-     * the beat of this lookup starts playing.
+     * Calculates the time spent in this bar. (unit: midi ticks)
      */
-    beatsToHighlight: Beat[];
-    highlightBeat(beat: Beat): void;
+    calculateDuration(respectAnacrusis?: boolean): number;
+    /**
+     * Adds a fermata to the masterbar.
+     * @param offset The offset of the fermata within the bar in midi ticks.
+     * @param fermata The fermata.
+     */
+    addFermata(offset: number, fermata: Fermata): void;
+    /**
+     * Gets the fermata for a given beat.
+     * @param beat The beat to get the fermata for.
+     * @returns
+     */
+    getFermata(beat: Beat): Fermata | null;
 }
 
 /**
- * Represents the results of searching the currently played beat.
- * @see MidiTickLookup.FindBeat
+ * This class represents the rendering stylesheet.
+ * It contains settings which control the display of the score when rendered.
+ * @json
+ * @json_strict
  */
-declare class MidiTickLookupFindBeatResult {
+declare class RenderStylesheet {
     /**
-     * Gets or sets the beat that is currently played.
+     * Gets or sets whether dynamics are hidden.
      */
-    get currentBeat(): Beat;
-    /**
-     * Gets or sets the beat that will be played next.
-     */
-    get nextBeat(): Beat | null;
-    /**
-     * Gets or sets the duration in milliseconds how long this beat is playing.
-     */
-    duration: number;
-    /**
-     * Gets or sets the duration in midi ticks for how long this tick lookup is valid
-     * starting at the `currentBeatLookup.start`
-     */
-    tickDuration: number;
-    /**
-     * Gets or sets the beats ot highlight along the current beat.
-     */
-    beatsToHighlight: Beat[];
-    /**
-     * Gets or sets the underlying beat lookup which
-     * was used for building this MidiTickLookupFindBeatResult.
-     */
-    currentBeatLookup: BeatTickLookup;
-    /**
-     * Gets or sets the beat lookup for the next beat.
-     */
-    nextBeatLookup: BeatTickLookup | null;
-}
-/**
- * This class holds all information about when {@link MasterBar}s and {@link Beat}s are played.
- */
-declare class MidiTickLookup {
-    private _currentMasterBar;
-    /**
-     * Gets a dictionary of all master bars played. The index is the index equals to {@link MasterBar.index}.
-     * This lookup only contains the first time a MasterBar is played. For a whole sequence of the song refer to {@link MasterBars}.
-     * @internal
-     */
-    readonly masterBarLookup: Map<number, MasterBarTickLookup>;
-    /**
-     * Gets a list of all {@link MasterBarTickLookup} sorted by time.
-     * @internal
-     */
-    readonly masterBars: MasterBarTickLookup[];
-    /**
-     * Performs the neccessary finalization steps after all information was written.
-     * @internal
-     */
-    finish(): void;
-    /**
-     * Finds the currently played beat given a list of tracks and the current time.
-     * @param tracks The tracks in which to search the played beat for.
-     * @param tick The current time in midi ticks.
-     * @returns The information about the current beat or null if no beat could be found.
-     */
-    findBeat(tracks: Track[], tick: number, currentBeatHint?: MidiTickLookupFindBeatResult | null): MidiTickLookupFindBeatResult | null;
-    private findBeatFast;
-    private findBeatSlow;
-    private createResult;
-    private findNextBeat;
-    private findMasterBar;
-    /**
-     * Gets the {@link MasterBarTickLookup} for a given masterbar at which the masterbar is played the first time.
-     * @param bar The masterbar to find the time period for.
-     * @returns A {@link MasterBarTickLookup} containing the details about the first time the {@link MasterBar} is played.
-     */
-    getMasterBar(bar: MasterBar): MasterBarTickLookup;
-    /**
-     * Gets the start time in midi ticks for a given masterbar at which the masterbar is played the first time.
-     * @param bar The masterbar to find the time period for.
-     * @returns The time in midi ticks at which the masterbar is played the first time or 0 if the masterbar is not contained
-     */
-    getMasterBarStart(bar: MasterBar): number;
-    /**
-     * Adds a new {@link MasterBarTickLookup} to the lookup table.
-     * @param masterBar The item to add.
-     */
-    addMasterBar(masterBar: MasterBarTickLookup): void;
-    /**
-     * Adds the given {@link BeatTickLookup} to the current {@link MidiTickLookup}.
-     * @param beat The lookup to add.
-     */
-    addBeat(beat: BeatTickLookup): void;
+    hideDynamics: boolean;
 }
 
 /**
- * Represents a range of the song that should be played.
+ * The score is the root node of the complete
+ * model. It stores the basic information of
+ * a song and stores the sub components.
+ * @json
+ * @json_strict
  */
-declare class PlaybackRange {
+declare class Score {
+    private _currentRepeatGroup;
+    private _openedRepeatGroups;
+    private _properlyOpenedRepeatGroups;
     /**
-     * The position in midi ticks from where the song should start.
+     * The album of this song.
      */
-    startTick: number;
+    album: string;
     /**
-     * The position in midi ticks to where the song should be played.
+     * The artist who performs this song.
      */
-    endTick: number;
+    artist: string;
+    /**
+     * The owner of the copyright of this song.
+     */
+    copyright: string;
+    /**
+     * Additional instructions
+     */
+    instructions: string;
+    /**
+     * The author of the music.
+     */
+    music: string;
+    /**
+     * Some additional notes about the song.
+     */
+    notices: string;
+    /**
+     * The subtitle of the song.
+     */
+    subTitle: string;
+    /**
+     * The title of the song.
+     */
+    title: string;
+    /**
+     * The author of the song lyrics
+     */
+    words: string;
+    /**
+     * The author of this tablature.
+     */
+    tab: string;
+    /**
+     * Gets or sets the global tempo of the song in BPM. The tempo might change via {@link MasterBar.tempo}.
+     */
+    tempo: number;
+    /**
+     * Gets or sets the name/label of the tempo.
+     */
+    tempoLabel: string;
+    /**
+     * Gets or sets a list of all masterbars contained in this song.
+     * @json_add addMasterBar
+     */
+    masterBars: MasterBar[];
+    /**
+     * Gets or sets a list of all tracks contained in this song.
+     * @json_add addTrack
+     */
+    tracks: Track[];
+    /**
+     * Defines how many bars are placed into the systems (rows) when displaying
+     * multiple tracks unless a value is set in the systemsLayout.
+     */
+    defaultSystemsLayout: number;
+    /**
+     * Defines how many bars are placed into the systems (rows) when displaying
+     * multiple tracks.
+     */
+    systemsLayout: number[];
+    /**
+     * Gets or sets the rendering stylesheet for this song.
+     */
+    stylesheet: RenderStylesheet;
+    rebuildRepeatGroups(): void;
+    addMasterBar(bar: MasterBar): void;
+    /**
+     * Adds the given bar correctly into the current repeat group setup.
+     * @param bar
+     */
+    private addMasterBarToRepeatGroups;
+    addTrack(track: Track): void;
+    finish(settings: Settings): void;
 }
 
 /**
- * Lists the different states of the player
+ * This is the base public class for creating new song importers which
+ * enable reading scores from any binary datasource
  */
-declare enum PlayerState {
+declare abstract class ScoreImporter {
+    protected data: IReadable;
+    protected settings: Settings;
     /**
-     * Player is paused
+     * Initializes the importer with the given data and settings.
      */
-    Paused = 0,
+    init(data: IReadable, settings: Settings): void;
+    abstract get name(): string;
     /**
-     * Player is playing
+     * Reads the {@link Score} contained in the data.
+     * @returns The score that was contained in the data.
      */
-    Playing = 1
+    abstract readScore(): Score;
 }
 
 /**
- * Represents the info when the player state changes.
+ * Lists the different position modes for {@link BarRendererBase.getBeatX}
  */
-declare class PlayerStateChangedEventArgs {
+declare enum BeatXPosition {
     /**
-     * The new state of the player.
+     * Gets the pre-notes position which is located before the accidentals
      */
-    readonly state: PlayerState;
+    PreNotes = 0,
     /**
-     * Gets a value indicating whether the playback was stopped or only paused.
-     * @returns true if the playback was stopped, false if the playback was started or paused
+     * Gets the on-notes position which is located after the accidentals but before the note heads.
      */
-    readonly stopped: boolean;
+    OnNotes = 1,
     /**
-     * Initializes a new instance of the {@link PlayerStateChangedEventArgs} class.
-     * @param state The state.
+     * Gets the middle-notes position which is located after in the middle the note heads.
      */
-    constructor(state: PlayerState, stopped: boolean);
+    MiddleNotes = 2,
+    /**
+     * Gets position of the stem for this beat
+     */
+    Stem = 3,
+    /**
+     * Get the post-notes position which is located at after the note heads.
+     */
+    PostNotes = 4,
+    /**
+     * Get the end-beat position which is located at the end of the beat. This position is almost
+     * equal to the pre-notes position of the next beat.
+     */
+    EndBeat = 5
 }
 
 /**
- * Represents the info when the playback range changed.
+ * A glyph is a single symbol which can be added to a GlyphBarRenderer for automated
+ * layouting and drawing of stacked symbols.
  */
-declare class PlaybackRangeChangedEventArgs {
-    /**
-     * The new playback range.
-     */
-    readonly playbackRange: PlaybackRange | null;
-    /**
-     * Initializes a new instance of the {@link PlaybackRangeChangedEventArgs} class.
-     * @param range The range.
-     */
-    constructor(playbackRange: PlaybackRange | null);
-}
-
-/**
- * Represents the info when the time in the synthesizer changes.
- */
-declare class PositionChangedEventArgs {
-    /**
-     * Gets a value indicating whether the position changed because of time seeking.
-     */
-    isSeek: boolean;
-    /**
-     * Gets the current time in milliseconds.
-     */
-    readonly currentTime: number;
-    /**
-     * Gets the length of the played song in milliseconds.
-     */
-    readonly endTime: number;
-    /**
-     * Gets the current time in midi ticks.
-     */
-    readonly currentTick: number;
-    /**
-     * Gets the length of the played song in midi ticks.
-     */
-    readonly endTick: number;
-    /**
-     * Initializes a new instance of the {@link PositionChangedEventArgs} class.
-     * @param currentTime The current time.
-     * @param endTime The end time.
-     * @param currentTick The current tick.
-     * @param endTick The end tick.
-     * @param isSeek Whether the time was seeked.
-     */
-    constructor(currentTime: number, endTime: number, currentTick: number, endTick: number, isSeek: boolean);
-}
-
-interface IEventEmitter {
-    on(value: () => void): void;
-    off(value: () => void): void;
-}
-/**
- * @partial
- */
-interface IEventEmitterOfT<T> {
-    on(value: (arg: T) => void): void;
-    off(value: (arg: T) => void): void;
-}
-
-/**
- * Represents the info when the synthesizer played certain midi events.
- */
-declare class MidiEventsPlayedEventArgs {
-    /**
-     * Gets the events which were played.
-     */
-    readonly events: MidiEvent[];
-    /**
-     * Initializes a new instance of the {@link MidiEventsPlayedEventArgs} class.
-     * @param events The events which were played.
-     */
-    constructor(events: MidiEvent[]);
-}
-
-/**
- * The public API interface for interacting with the synthesizer.
- */
-interface IAlphaSynth {
-    /**
-     * Gets or sets whether the synthesizer is ready for interaction. (output and worker are initialized)
-     */
-    readonly isReady: boolean;
-    /**
-     * Gets or sets whether the synthesizer is ready for playback. (output, worker are initialized, soundfont and midi are loaded)
-     */
-    readonly isReadyForPlayback: boolean;
-    /**
-     * Gets the current player state.
-     */
-    readonly state: PlayerState;
-    /**
-     * Gets or sets the loging level.
-     */
-    logLevel: LogLevel;
-    /**
-     * Gets or sets the current master volume as percentage. (range: 0.0-3.0, default 1.0)
-     */
-    masterVolume: number;
-    /**
-     * Gets or sets the metronome volume. (range: 0.0-3.0, default 0.0)
-     */
-    metronomeVolume: number;
-    /**
-     * Gets or sets the current playback speed as percentage. (range: 0.125-8.0, default: 1.0)
-     */
-    playbackSpeed: number;
-    /**
-     * Gets or sets the position within the song in midi ticks.
-     */
-    tickPosition: number;
-    /**
-     * Gets or sets the position within the song in milliseconds.
-     */
-    timePosition: number;
-    /**
-     * Gets or sets the range of the song that should be played. Set this to null
-     * to play the whole song.
-     */
-    playbackRange: PlaybackRange | null;
-    /**
-     * Gets or sets whether the playback should automatically restart after it finished.
-     */
-    isLooping: boolean;
-    /**
-     * Gets or sets volume of the metronome during count-in. (range: 0.0-3.0, default 0.0 - no count in)
-     */
-    countInVolume: number;
-    /**
-     * Gets or sets the midi events which will trigger the `midiEventsPlayed` event.
-     * To subscribe to Metronome events use the `SystemExclusiveEvent2` event type and check against `event.isMetronome`
-     */
-    midiEventsPlayedFilter: MidiEventType[];
-    /**
-     * Destroys the synthesizer and all related components
-     */
-    destroy(): void;
-    /**
-     * Starts the playback if possible
-     * @returns true if the playback was started, otherwise false. Reasons for not starting can be that the player is not ready or already playing.
-     */
-    play(): boolean;
-    /**
-     * Pauses the playback if was running
-     */
-    pause(): void;
-    /**
-     * Starts the playback if possible, pauses the playback if was running
-     */
-    playPause(): void;
-    /**
-     * Stopps the playback
-     */
-    stop(): void;
-    /**
-     * Stops any ongoing playback and plays the given midi file instead.
-     * @param midi The midi file to play
-     */
-    playOneTimeMidiFile(midi: MidiFile): void;
-    /**
-     * Loads a soundfont from the given data
-     * @param data a byte array to load the data from
-     * @param append Whether to fully replace or append the data from the given soundfont.
-     */
-    loadSoundFont(data: Uint8Array, append: boolean): void;
-    /**
-     * Resets all loaded soundfonts as if they were not loaded.
-     */
-    resetSoundFonts(): void;
-    /**
-     * Loads the given midi file structure.
-     * @param midi
-     */
-    loadMidiFile(midi: MidiFile): void;
-    /**
-     * Sets the mute state of a channel.
-     * @param channel The channel number
-     * @param mute true if the channel should be muted, otherwise false.
-     */
-    setChannelMute(channel: number, mute: boolean): void;
-    /**
-     * Resets the mute/solo state of all channels
-     */
-    resetChannelStates(): void;
-    /**
-     * Gets the solo state of a channel.
-     * @param channel The channel number
-     * @param solo true if the channel should be played solo, otherwise false.
-     */
-    setChannelSolo(channel: number, solo: boolean): void;
-    /**
-     * Gets or sets the current and initial volume of the given channel.
-     * @param channel The channel number.
-     * @param volume The volume of of the channel (0.0-1.0)
-     */
-    setChannelVolume(channel: number, volume: number): void;
-    /**
-     * This event is fired when the player is ready to be interacted with.
-     */
-    readonly ready: IEventEmitter;
-    /**
-     * This event is fired when all required data for playback is loaded and ready.
-     */
-    readonly readyForPlayback: IEventEmitter;
-    /**
-     * This event is fired when the playback of the whole song finished.
-     */
-    readonly finished: IEventEmitter;
-    /**
-     * This event is fired when the SoundFont needed for playback was loaded.
-     */
-    readonly soundFontLoaded: IEventEmitter;
-    /**
-     * This event is fired when the loading of the SoundFont failed.
-     */
-    readonly soundFontLoadFailed: IEventEmitterOfT<Error>;
-    /**
-     * This event is fired when the Midi file needed for playback was loaded.
-     */
-    readonly midiLoaded: IEventEmitterOfT<PositionChangedEventArgs>;
-    /**
-     * This event is fired when the loading of the Midi file failed.
-     */
-    readonly midiLoadFailed: IEventEmitterOfT<Error>;
-    /**
-     * This event is fired when the playback state changed.
-     */
-    readonly stateChanged: IEventEmitterOfT<PlayerStateChangedEventArgs>;
-    /**
-     * This event is fired when the current playback position of/ the song changed.
-     */
-    readonly positionChanged: IEventEmitterOfT<PositionChangedEventArgs>;
-    /**
-     * The event is fired when certain midi events were sent to the audio output device for playback.
-     */
-    readonly midiEventsPlayed: IEventEmitterOfT<MidiEventsPlayedEventArgs>;
-    /**
-     * The event is fired when the playback range within the player was updated.
-     */
-    readonly playbackRangeChanged: IEventEmitterOfT<PlaybackRangeChangedEventArgs>;
-}
-
-/**
- * This interface represents the information about a mouse event that occured on the UI.
- */
-interface IMouseEventArgs {
-    /**
-     * Gets a value indicating whether the left mouse button was pressed.
-     */
-    readonly isLeftMouseButton: boolean;
-    /**
-     * Gets the X-position of the cursor at the time of the event relative to the given UI container.
-     * @param relativeTo The UI element to which the relative position should be calculated.
-     * @returns The relative X-position of the cursor to the given UI container at the time the event occured.
-     */
-    getX(relativeTo: IContainer): number;
-    /**
-     * Gets the Y-position of the cursor at the time of the event relative to the given UI container.
-     * @param relativeTo The UI element to which the relative position should be calculated.
-     * @returns The relative Y-position of the cursor to the given UI container at the time the event occured.
-     */
-    getY(relativeTo: IContainer): number;
-    /**
-     * If called, the original mouse action is prevented and the event is flagged as handled.
-     */
-    preventDefault(): void;
-}
-
-/**
- * This interface represents a container control in the UI layer.
- */
-interface IContainer {
-    /**
-     * Gets or sets the width of the control.
-     */
-    width: number;
-    /**
-     * Gets or sets the height of the control.
-     */
-    height: number;
-    /**
-     * Gets a value indicating whether the control is visible.
-     */
-    readonly isVisible: boolean;
-    /**
-     * Gets or sets the horizontal scroll offset of this control if it is scrollable.
-     */
-    scrollLeft: number;
-    /**
-     * Gets or sets the vertical scroll offset of this control if it is scrollable.
-     */
-    scrollTop: number;
-    /**
-     * Adds the given child control to this container.
-     * @param child The child control to add.
-     */
-    appendChild(child: IContainer): void;
-    /**
-     * Stops the animations of this control immediately.
-     */
-    stopAnimation(): void;
-    /**
-     * Sets the position and size of the container for efficient repositioning.
-     * @param x The X-position
-     * @param y The Y-position
-     * @param w The width
-     * @param h The height
-     */
-    setBounds(x: number, y: number, w: number, h: number): void;
-    /**
-     * Tells the control to move to the given X-position in the given time.
-     * @param duration The milliseconds that should be needed to reach the new X-position
-     * @param x The new X-position
-     */
-    transitionToX(duration: number, x: number): void;
-    /**
-     * Clears the container and removes all child items.
-     */
-    clear(): void;
-    /**
-     * This event occurs when the control was resized.
-     */
-    resize: IEventEmitter;
-    /**
-     * This event occurs when a mouse/finger press happened on the control.
-     */
-    mouseDown: IEventEmitterOfT<IMouseEventArgs>;
-    /**
-     * This event occurs when a mouse/finger moves on top of the control.
-     */
-    mouseMove: IEventEmitterOfT<IMouseEventArgs>;
-    /**
-     * This event occurs when a mouse/finger is released from the control.
-     */
-    mouseUp: IEventEmitterOfT<IMouseEventArgs>;
-}
-
-/**
- * This wrapper holds all cursor related elements.
- */
-declare class Cursors {
-    /**
-     * Gets the element that spans across the whole music sheet and holds the other cursor elements.
-     */
-    readonly cursorWrapper: IContainer;
-    /**
-     * Gets the element that is positioned above the bar that is currently played.
-     */
-    readonly barCursor: IContainer;
-    /**
-     * Gets the element that is positioned above the beat that is currently played.
-     */
-    readonly beatCursor: IContainer;
-    /**
-     * Gets the element that spans across the whole music sheet and will hold any selection related elements.
-     */
-    readonly selectionWrapper: IContainer;
-    /**
-     * Initializes a new instance of the {@link Cursors} class.
-     * @param cursorWrapper
-     * @param barCursor
-     * @param beatCursor
-     * @param selectionWrapper
-     */
-    constructor(cursorWrapper: IContainer, barCursor: IContainer, beatCursor: IContainer, selectionWrapper: IContainer);
-}
-
-/**
- * This eventargs define the details about the rendering and layouting process and are
- * provided whenever a part of of the music sheet is rendered.
- */
-declare class RenderFinishedEventArgs {
-    /**
-     * Gets or sets the unique id of this event args.
-     */
-    id: string;
-    /**
-     * Gets or sets the x position of the current rendering result.
-     */
+declare class Glyph {
     x: number;
-    /**
-     * Gets or sets the y position of the current rendering result.
-     */
     y: number;
-    /**
-     * Gets or sets the width of the current rendering result.
-     */
     width: number;
-    /**
-     * Gets or sets the height of the current rendering result.
-     */
     height: number;
+    renderer: BarRendererBase;
+    constructor(x: number, y: number);
+    get scale(): number;
+    doLayout(): void;
+    paint(cx: number, cy: number, canvas: ICanvas): void;
+}
+
+/**
+ * This glyph allows to group several other glyphs to be
+ * drawn at the same x position
+ */
+declare class GlyphGroup extends Glyph {
+    protected glyphs: Glyph[] | null;
+    get isEmpty(): boolean;
+    constructor(x: number, y: number);
+    doLayout(): void;
+    addGlyph(g: Glyph): void;
+    paint(cx: number, cy: number, canvas: ICanvas): void;
+}
+
+declare class BeatGlyphBase extends GlyphGroup {
+    container: BeatContainerGlyph;
+    computedWidth: number;
+    constructor();
+    doLayout(): void;
+    protected noteLoop(action: (note: Note) => void): void;
+}
+
+declare class BeamingHelperDrawInfo {
+    startBeat: Beat | null;
+    startX: number;
+    startY: number;
+    endBeat: Beat | null;
+    endX: number;
+    endY: number;
     /**
-     * Gets or sets the currently known total width of the final music sheet.
+     * calculates the Y-position given a X-pos using the current start end point
+     * @param x
      */
-    totalWidth: number;
+    calcY(x: number): number;
+}
+/**
+ * This public class helps drawing beams and bars for notes.
+ */
+declare class BeamingHelper {
+    private _staff;
+    private _beatLineXPositions;
+    private _renderer;
+    private _firstNonRestBeat;
+    private _lastNonRestBeat;
+    voice: Voice | null;
+    beats: Beat[];
+    shortestDuration: Duration;
     /**
-     * Gets or sets the currently known total height of the final music sheet.
+     * the number of fingering indicators that will be drawn
      */
-    totalHeight: number;
+    fingeringCount: number;
     /**
-     * Gets or sets the index of the first masterbar that was rendered in this result.
+     * an indicator whether any beat has a tuplet on it.
      */
-    firstMasterBarIndex: number;
+    hasTuplet: boolean;
+    private _firstBeatLowestNoteCompareValue;
+    private _firstBeatHighestNoteCompareValue;
+    private _lastBeatLowestNoteCompareValue;
+    private _lastBeatHighestNoteCompareValue;
+    lowestNoteInHelper: Note | null;
+    private _lowestNoteCompareValueInHelper;
+    highestNoteInHelper: Note | null;
+    private _highestNoteCompareValueInHelper;
+    invertBeamDirection: boolean;
+    preferredBeamDirection: BeamDirection | null;
+    isGrace: boolean;
+    minRestLine: number | null;
+    beatOfMinRestLine: Beat | null;
+    maxRestLine: number | null;
+    beatOfMaxRestLine: Beat | null;
+    get isRestBeamHelper(): boolean;
+    get hasLine(): boolean;
+    get hasFlag(): boolean;
+    constructor(staff: Staff, renderer: BarRendererBase);
+    getBeatLineX(beat: Beat): number;
+    hasBeatLineX(beat: Beat): boolean;
+    registerBeatLineX(staffId: string, beat: Beat, up: number, down: number): void;
+    private getOrCreateBeatPositions;
+    direction: BeamDirection;
+    finish(): void;
+    private calculateDirection;
+    static computeLineHeightsForRest(duration: Duration): number[];
     /**
-     * Gets or sets the index of the last masterbar that was rendered in this result.
+     * Registers a rest beat within the accidental helper so the rest
+     * symbol is considered properly during beaming.
+     * @param beat The rest beat.
+     * @param line The line on which the rest symbol is placed
      */
-    lastMasterBarIndex: number;
+    applyRest(beat: Beat, line: number): void;
+    private invert;
+    checkBeat(beat: Beat): boolean;
+    private checkNote;
+    private static canJoin;
+    private static canJoinDuration;
+    static isFullBarJoin(a: Beat, b: Beat, barIndex: number): boolean;
+    get beatOfLowestNote(): Beat;
+    get beatOfHighestNote(): Beat;
     /**
-     * Gets or sets the render engine specific result object which contains the rendered music sheet.
+     * Returns whether the the position of the given beat, was registered by the staff of the given ID
+     * @param staffId
+     * @param beat
+     * @returns
      */
-    renderResult: unknown;
+    isPositionFrom(staffId: string, beat: Beat): boolean;
+    drawingInfos: Map<BeamDirection, BeamingHelperDrawInfo>;
 }
 
 /**
@@ -4282,6 +3811,91 @@ declare class Bounds {
      * Gets or sets the height of the rectangle.
      */
     h: number;
+}
+
+declare class BoundsLookup {
+    /**
+     * @target web
+     */
+    toJson(): unknown;
+    /**
+     * @target web
+     */
+    static fromJson(json: unknown, score: Score): BoundsLookup;
+    /**
+     * @target web
+     */
+    private boundsToJson;
+    private _beatLookup;
+    private _masterBarLookup;
+    private _currentStaveGroup;
+    /**
+     * Gets a list of all individual stave groups contained in the rendered music notation.
+     */
+    staveGroups: StaveGroupBounds[];
+    /**
+     * Gets or sets a value indicating whether this lookup was finished already.
+     */
+    isFinished: boolean;
+    /**
+     * Finishes the lookup for optimized access.
+     */
+    finish(): void;
+    /**
+     * Adds a new stave group to the lookup.
+     * @param bounds The stave group bounds to add.
+     */
+    addStaveGroup(bounds: StaveGroupBounds): void;
+    /**
+     * Adds a new master bar to the lookup.
+     * @param bounds The master bar bounds to add.
+     */
+    addMasterBar(bounds: MasterBarBounds): void;
+    /**
+     * Adds a new beat to the lookup.
+     * @param bounds The beat bounds to add.
+     */
+    addBeat(bounds: BeatBounds): void;
+    /**
+     * Tries to find the master bar bounds by a given index.
+     * @param index The index of the master bar to find.
+     * @returns The master bar bounds if it was rendered, or null if no boundary information is available.
+     */
+    findMasterBarByIndex(index: number): MasterBarBounds | null;
+    /**
+     * Tries to find the master bar bounds by a given master bar.
+     * @param bar The master bar to find.
+     * @returns The master bar bounds if it was rendered, or null if no boundary information is available.
+     */
+    findMasterBar(bar: MasterBar): MasterBarBounds | null;
+    /**
+     * Tries to find the bounds of a given beat.
+     * @param beat The beat to find.
+     * @returns The beat bounds if it was rendered, or null if no boundary information is available.
+     */
+    findBeat(beat: Beat): BeatBounds | null;
+    /**
+     * Tries to find the bounds of a given beat.
+     * @param beat The beat to find.
+     * @returns The beat bounds if it was rendered, or null if no boundary information is available.
+     */
+    findBeats(beat: Beat): BeatBounds[] | null;
+    /**
+     * Tries to find a beat at the given absolute position.
+     * @param x The absolute X-position of the beat to find.
+     * @param y The absolute Y-position of the beat to find.
+     * @returns The beat found at the given position or null if no beat could be found.
+     */
+    getBeatAtPos(x: number, y: number): Beat | null;
+    /**
+     * Tries to find the note at the given position using the given beat for fast access.
+     * Use {@link findBeat} to find a beat for a given position first.
+     * @param beat The beat containing the note.
+     * @param x The X-position of the note.
+     * @param y The Y-position of the note.
+     * @returns The note at the given position within the beat.
+     */
+    getNoteAtPos(beat: Beat, x: number, y: number): Note | null;
 }
 
 /**
@@ -4478,89 +4092,177 @@ declare class BeatBounds {
     findNoteAtPos(x: number, y: number): Note | null;
 }
 
-declare class BoundsLookup {
+declare class BeatOnNoteGlyphBase extends BeatGlyphBase {
+    beamingHelper: BeamingHelper;
+    centerX: number;
+    updateBeamingHelper(): void;
+    buildBoundingsLookup(beatBounds: BeatBounds, cx: number, cy: number): void;
+    getNoteX(note: Note, requestedPosition: NoteXPosition): number;
+    getNoteY(note: Note, requestedPosition: NoteYPosition): number;
+}
+
+declare class Spring {
+    timePosition: number;
+    longestDuration: number;
+    smallestDuration: number;
+    force: number;
+    springConstant: number;
+    get springWidth(): number;
+    preBeatWidth: number;
+    graceBeatWidth: number;
+    postSpringWidth: number;
+    get preSpringWidth(): number;
+    allDurations: Set<number>;
+}
+
+/**
+ * This public class stores size information about a stave.
+ * It is used by the layout engine to collect the sizes of score parts
+ * to align the parts across multiple staves.
+ */
+declare class BarLayoutingInfo {
+    private static readonly MinDuration;
+    private static readonly MinDurationWidth;
+    private _timeSortedSprings;
+    private _xMin;
+    private _minTime;
+    private _onTimePositionsForce;
+    private _onTimePositions;
+    private _incompleteGraceRodsWidth;
     /**
-     * @target web
+     * an internal version number that increments whenever a change was made.
      */
-    toJson(): unknown;
-    /**
-     * @target web
-     */
-    static fromJson(json: unknown, score: Score): BoundsLookup;
-    /**
-     * @target web
-     */
-    private boundsToJson;
-    private _beatLookup;
-    private _masterBarLookup;
-    private _currentStaveGroup;
-    /**
-     * Gets a list of all individual stave groups contained in the rendered music notation.
-     */
-    staveGroups: StaveGroupBounds[];
-    /**
-     * Gets or sets a value indicating whether this lookup was finished already.
-     */
-    isFinished: boolean;
-    /**
-     * Finishes the lookup for optimized access.
-     */
+    version: number;
+    preBeatSizes: Map<number, number>;
+    onBeatSizes: Map<number, number>;
+    onBeatCenterX: Map<number, number>;
+    preBeatSize: number;
+    postBeatSize: number;
+    voiceSize: number;
+    minStretchForce: number;
+    totalSpringConstant: number;
+    updateVoiceSize(size: number): void;
+    setPreBeatSize(beat: Beat, size: number): void;
+    getPreBeatSize(beat: Beat): number;
+    setOnBeatSize(beat: Beat, size: number): void;
+    getOnBeatSize(beat: Beat): number;
+    getBeatCenterX(beat: Beat): number;
+    setBeatCenterX(beat: Beat, x: number): void;
+    private updateMinStretchForce;
+    incompleteGraceRods: Map<string, Spring[]>;
+    allGraceRods: Map<string, Spring[]>;
+    springs: Map<number, Spring>;
+    addSpring(start: number, duration: number, graceBeatWidth: number, preBeatWidth: number, postSpringSize: number): Spring;
+    addBeatSpring(beat: Beat, preBeatSize: number, postBeatSize: number): void;
     finish(): void;
+    private calculateSpringConstants;
+    height: number;
+    paint(_cx: number, _cy: number, _canvas: ICanvas): void;
+    private calculateSpringConstant;
+    spaceToForce(space: number): number;
+    calculateVoiceWidth(force: number): number;
+    private calculateWidth;
+    buildOnTimePositions(force: number): Map<number, number>;
+}
+
+/**
+ * This glyph acts as container for handling
+ * multiple voice rendering
+ */
+declare class VoiceContainerGlyph extends GlyphGroup {
+    static readonly KeySizeBeat: string;
+    beatGlyphs: BeatContainerGlyph[];
+    voice: Voice;
+    tupletGroups: TupletGroup[];
+    constructor(x: number, y: number, voice: Voice);
+    scaleToWidth(width: number): void;
+    private scaleToForce;
+    registerLayoutingInfo(info: BarLayoutingInfo): void;
+    applyLayoutingInfo(info: BarLayoutingInfo): void;
+    addGlyph(g: Glyph): void;
+    doLayout(): void;
+    paint(cx: number, cy: number, canvas: ICanvas): void;
+}
+
+declare class BeatContainerGlyph extends Glyph {
+    static readonly GraceBeatPadding: number;
+    voiceContainer: VoiceContainerGlyph;
+    beat: Beat;
+    preNotes: BeatGlyphBase;
+    onNotes: BeatOnNoteGlyphBase;
+    ties: Glyph[];
+    minWidth: number;
+    get onTimeX(): number;
+    constructor(beat: Beat, voiceContainer: VoiceContainerGlyph);
+    addTie(tie: Glyph): void;
+    registerLayoutingInfo(layoutings: BarLayoutingInfo): void;
+    applyLayoutingInfo(info: BarLayoutingInfo): void;
+    doLayout(): void;
+    protected updateWidth(): void;
+    scaleToWidth(beatWidth: number): void;
+    protected createTies(n: Note): void;
+    static getGroupId(beat: Beat): string;
+    paint(cx: number, cy: number, canvas: ICanvas): void;
+    buildBoundingsLookup(barBounds: BarBounds, cx: number, cy: number, isEmptyBar: boolean): void;
+}
+
+interface IEventEmitter {
+    on(value: () => void): void;
+    off(value: () => void): void;
+}
+/**
+ * @partial
+ */
+interface IEventEmitterOfT<T> {
+    on(value: (arg: T) => void): void;
+    off(value: (arg: T) => void): void;
+}
+
+/**
+ * This eventargs define the details about the rendering and layouting process and are
+ * provided whenever a part of of the music sheet is rendered.
+ */
+declare class RenderFinishedEventArgs {
     /**
-     * Adds a new stave group to the lookup.
-     * @param bounds The stave group bounds to add.
+     * Gets or sets the unique id of this event args.
      */
-    addStaveGroup(bounds: StaveGroupBounds): void;
+    id: string;
     /**
-     * Adds a new master bar to the lookup.
-     * @param bounds The master bar bounds to add.
+     * Gets or sets the x position of the current rendering result.
      */
-    addMasterBar(bounds: MasterBarBounds): void;
+    x: number;
     /**
-     * Adds a new beat to the lookup.
-     * @param bounds The beat bounds to add.
+     * Gets or sets the y position of the current rendering result.
      */
-    addBeat(bounds: BeatBounds): void;
+    y: number;
     /**
-     * Tries to find the master bar bounds by a given index.
-     * @param index The index of the master bar to find.
-     * @returns The master bar bounds if it was rendered, or null if no boundary information is available.
+     * Gets or sets the width of the current rendering result.
      */
-    findMasterBarByIndex(index: number): MasterBarBounds | null;
+    width: number;
     /**
-     * Tries to find the master bar bounds by a given master bar.
-     * @param bar The master bar to find.
-     * @returns The master bar bounds if it was rendered, or null if no boundary information is available.
+     * Gets or sets the height of the current rendering result.
      */
-    findMasterBar(bar: MasterBar): MasterBarBounds | null;
+    height: number;
     /**
-     * Tries to find the bounds of a given beat.
-     * @param beat The beat to find.
-     * @returns The beat bounds if it was rendered, or null if no boundary information is available.
+     * Gets or sets the currently known total width of the final music sheet.
      */
-    findBeat(beat: Beat): BeatBounds | null;
+    totalWidth: number;
     /**
-     * Tries to find the bounds of a given beat.
-     * @param beat The beat to find.
-     * @returns The beat bounds if it was rendered, or null if no boundary information is available.
+     * Gets or sets the currently known total height of the final music sheet.
      */
-    findBeats(beat: Beat): BeatBounds[] | null;
+    totalHeight: number;
     /**
-     * Tries to find a beat at the given absolute position.
-     * @param x The absolute X-position of the beat to find.
-     * @param y The absolute Y-position of the beat to find.
-     * @returns The beat found at the given position or null if no beat could be found.
+     * Gets or sets the index of the first masterbar that was rendered in this result.
      */
-    getBeatAtPos(x: number, y: number): Beat | null;
+    firstMasterBarIndex: number;
     /**
-     * Tries to find the note at the given position using the given beat for fast access.
-     * Use {@link findBeat} to find a beat for a given position first.
-     * @param beat The beat containing the note.
-     * @param x The X-position of the note.
-     * @param y The Y-position of the note.
-     * @returns The note at the given position within the beat.
+     * Gets or sets the index of the last masterbar that was rendered in this result.
      */
-    getNoteAtPos(beat: Beat, x: number, y: number): Note | null;
+    lastMasterBarIndex: number;
+    /**
+     * Gets or sets the render engine specific result object which contains the rendered music sheet.
+     */
+    renderResult: unknown;
 }
 
 /**
@@ -4630,6 +4332,1993 @@ interface IScoreRenderer {
     readonly error: IEventEmitterOfT<Error>;
 }
 
+declare class RowContainerGlyph extends GlyphGroup {
+    private static readonly Padding;
+    private _rows;
+    private _align;
+    constructor(x: number, y: number, align?: TextAlign);
+    doLayout(): void;
+    paint(cx: number, cy: number, canvas: ICanvas): void;
+}
+
+declare class ChordDiagramContainerGlyph extends RowContainerGlyph {
+    constructor(x: number, y: number);
+    addChord(chord: Chord): void;
+}
+
+/**
+ * Effect-Glyphs implementing this public interface get notified
+ * as they are expanded over multiple beats.
+ */
+declare class EffectGlyph extends Glyph {
+    /**
+     * Gets or sets the beat where the glyph belongs to.
+     */
+    beat: Beat | null;
+    /**
+     * Gets or sets the next glyph of the same type in case
+     * the effect glyph is expanded when using {@link EffectBarGlyphSizing.groupedOnBeat}.
+     */
+    nextGlyph: EffectGlyph | null;
+    /**
+     * Gets or sets the previous glyph of the same type in case
+     * the effect glyph is expanded when using {@link EffectBarGlyphSizing.groupedOnBeat}.
+     */
+    previousGlyph: EffectGlyph | null;
+    constructor(x?: number, y?: number);
+}
+
+declare class TextGlyph extends EffectGlyph {
+    private _lines;
+    font: Font;
+    textAlign: TextAlign;
+    constructor(x: number, y: number, text: string, font: Font, textAlign?: TextAlign);
+    doLayout(): void;
+    paint(cx: number, cy: number, canvas: ICanvas): void;
+}
+
+/**
+ * This container represents a single column of bar renderers independent from any staves.
+ * This container can be used to reorganize renderers into a new staves.
+ */
+declare class MasterBarsRenderers {
+    width: number;
+    isLinkedToPrevious: boolean;
+    canWrap: boolean;
+    masterBar: MasterBar;
+    renderers: BarRendererBase[];
+    layoutingInfo: BarLayoutingInfo;
+}
+
+declare class StaveTrackGroup {
+    track: Track;
+    staveGroup: StaveGroup;
+    staves: RenderStaff[];
+    stavesRelevantForBoundsLookup: RenderStaff[];
+    firstStaffInAccolade: RenderStaff | null;
+    lastStaffInAccolade: RenderStaff | null;
+    constructor(staveGroup: StaveGroup, track: Track);
+    addStaff(staff: RenderStaff): void;
+}
+
+/**
+ * A Staff represents a single line within a StaveGroup.
+ * It stores BarRenderer instances created from a given factory.
+ */
+declare class RenderStaff {
+    private _factory;
+    private _sharedLayoutData;
+    staveTrackGroup: StaveTrackGroup;
+    staveGroup: StaveGroup;
+    barRenderers: BarRendererBase[];
+    x: number;
+    y: number;
+    height: number;
+    index: number;
+    staffIndex: number;
+    /**
+     * This is the index of the track being rendered. This is not the index of the track within the model,
+     * but the n-th track being rendered. It is the index of the {@link ScoreRenderer.tracks} array defining
+     * which tracks should be rendered.
+     * For single-track rendering this will always be zero.
+     */
+    trackIndex: number;
+    modelStaff: Staff;
+    get staveId(): string;
+    /**
+     * This is the visual offset from top where the
+     * Staff contents actually start. Used for grouping
+     * using a accolade
+     */
+    staveTop: number;
+    topSpacing: number;
+    bottomSpacing: number;
+    /**
+     * This is the visual offset from top where the
+     * Staff contents actually ends. Used for grouping
+     * using a accolade
+     */
+    staveBottom: number;
+    isFirstInAccolade: boolean;
+    isLastInAccolade: boolean;
+    constructor(trackIndex: number, staff: Staff, factory: BarRendererFactory);
+    getSharedLayoutData<T>(key: string, def: T): T;
+    setSharedLayoutData<T>(key: string, def: T): void;
+    get isInAccolade(): boolean;
+    get isRelevantForBoundsLookup(): boolean;
+    registerStaffTop(offset: number): void;
+    registerStaffBottom(offset: number): void;
+    addBarRenderer(renderer: BarRendererBase): void;
+    addBar(bar: Bar, layoutingInfo: BarLayoutingInfo): void;
+    revertLastBar(): BarRendererBase;
+    scaleToWidth(width: number): void;
+    get topOverflow(): number;
+    get bottomOverflow(): number;
+    finalizeStaff(): void;
+    paint(cx: number, cy: number, canvas: ICanvas, startIndex: number, count: number): void;
+}
+
+/**
+ * A Staff consists of a list of different staves and groups
+ * them using an accolade.
+ */
+declare class StaveGroup {
+    private static readonly AccoladeLabelSpacing;
+    private _allStaves;
+    private _firstStaffInAccolade;
+    private _lastStaffInAccolade;
+    private _accoladeSpacingCalculated;
+    x: number;
+    y: number;
+    index: number;
+    accoladeSpacing: number;
+    /**
+     * Indicates whether this line is full or not. If the line is full the
+     * bars can be aligned to the maximum width. If the line is not full
+     * the bars will not get stretched.
+     */
+    isFull: boolean;
+    /**
+     * The width that the content bars actually need
+     */
+    width: number;
+    computedWidth: number;
+    totalBarDisplayScale: number;
+    isLast: boolean;
+    masterBarsRenderers: MasterBarsRenderers[];
+    staves: StaveTrackGroup[];
+    layout: ScoreLayout;
+    get firstBarIndex(): number;
+    get lastBarIndex(): number;
+    addMasterBarRenderers(tracks: Track[], renderers: MasterBarsRenderers): MasterBarsRenderers | null;
+    addBars(tracks: Track[], barIndex: number): MasterBarsRenderers | null;
+    revertLastBar(): MasterBarsRenderers | null;
+    private updateWidthFromLastBar;
+    private calculateAccoladeSpacing;
+    private getStaveTrackGroup;
+    addStaff(track: Track, staff: RenderStaff): void;
+    get height(): number;
+    scaleToWidth(width: number): void;
+    paint(cx: number, cy: number, canvas: ICanvas): void;
+    paintPartial(cx: number, cy: number, canvas: ICanvas, startIndex: number, count: number): void;
+    finalizeGroup(): void;
+    buildBoundingsLookup(cx: number, cy: number): void;
+    getBarX(index: number): number;
+}
+
+declare class TuningContainerGlyph extends RowContainerGlyph {
+    constructor(x: number, y: number);
+    addTuning(tuning: Tuning, trackLabel: string): void;
+}
+
+/**
+ * Lists the different modes in which the staves and systems are arranged.
+ */
+declare enum InternalSystemsLayoutMode {
+    /**
+     * Use the automatic alignment system provided by alphaTab (default)
+     */
+    Automatic = 0,
+    /**
+     * Use the relative scaling information stored in the score model.
+     */
+    FromModelWithScale = 1,
+    /**
+     * Use the absolute size information stored in the score model.
+     */
+    FromModelWithWidths = 2
+}
+/**
+ * This is the base class for creating new layouting engines for the score renderer.
+ */
+declare abstract class ScoreLayout {
+    private _barRendererLookup;
+    abstract get name(): string;
+    renderer: ScoreRenderer;
+    width: number;
+    height: number;
+    protected scoreInfoGlyphs: Map<NotationElement, TextGlyph>;
+    protected chordDiagrams: ChordDiagramContainerGlyph | null;
+    protected tuningGlyph: TuningContainerGlyph | null;
+    systemsLayoutMode: InternalSystemsLayoutMode;
+    protected constructor(renderer: ScoreRenderer);
+    abstract get firstBarX(): number;
+    abstract get supportsResize(): boolean;
+    resize(): void;
+    abstract doResize(): void;
+    layoutAndRender(): void;
+    private _lazyPartials;
+    protected registerPartial(args: RenderFinishedEventArgs, callback: (canvas: ICanvas) => void): void;
+    private internalRenderLazyPartial;
+    renderLazyPartial(resultId: string): void;
+    protected abstract doLayoutAndRender(): void;
+    private createScoreInfoGlyphs;
+    get scale(): number;
+    firstBarIndex: number;
+    lastBarIndex: number;
+    protected createEmptyStaveGroup(): StaveGroup;
+    registerBarRenderer(key: string, renderer: BarRendererBase): void;
+    unregisterBarRenderer(key: string, renderer: BarRendererBase): void;
+    getRendererForBar(key: string, bar: Bar): BarRendererBase | null;
+    layoutAndRenderAnnotation(y: number): number;
+}
+
+/**
+ * This is the main wrapper of the rendering engine which
+ * can render a single track of a score object into a notation sheet.
+ */
+declare class ScoreRenderer implements IScoreRenderer {
+    private _currentLayoutMode;
+    private _currentRenderEngine;
+    private _renderedTracks;
+    canvas: ICanvas | null;
+    score: Score | null;
+    tracks: Track[] | null;
+    /**
+     * @internal
+     */
+    layout: ScoreLayout | null;
+    settings: Settings;
+    boundsLookup: BoundsLookup | null;
+    width: number;
+    /**
+     * Initializes a new instance of the {@link ScoreRenderer} class.
+     * @param settings The settings to use for rendering.
+     */
+    constructor(settings: Settings);
+    destroy(): void;
+    private recreateCanvas;
+    private recreateLayout;
+    renderScore(score: Score | null, trackIndexes: number[] | null): void;
+    /**
+     * Initiates rendering fof the given tracks.
+     * @param tracks The tracks to render.
+     */
+    renderTracks(tracks: Track[]): void;
+    updateSettings(settings: Settings): void;
+    renderResult(resultId: string): void;
+    render(): void;
+    resizeRender(): void;
+    private layoutAndRender;
+    readonly preRender: IEventEmitterOfT<boolean>;
+    readonly renderFinished: IEventEmitterOfT<RenderFinishedEventArgs>;
+    readonly partialRenderFinished: IEventEmitterOfT<RenderFinishedEventArgs>;
+    readonly partialLayoutFinished: IEventEmitterOfT<RenderFinishedEventArgs>;
+    readonly postRenderFinished: IEventEmitter;
+    readonly error: IEventEmitterOfT<Error>;
+    private onRenderFinished;
+}
+
+declare class ReservedLayoutAreaSlot {
+    topY: number;
+    bottomY: number;
+    constructor(topY: number, bottomY: number);
+}
+declare class ReservedLayoutArea {
+    beat: Beat;
+    topY: number;
+    bottomY: number;
+    slots: ReservedLayoutAreaSlot[];
+    constructor(beat: Beat);
+    addSlot(topY: number, bottomY: number): void;
+}
+declare class BarCollisionHelper {
+    reservedLayoutAreasByDisplayTime: Map<number, ReservedLayoutArea>;
+    restDurationsByDisplayTime: Map<number, Map<number, number>>;
+    getBeatMinMaxY(): number[];
+    reserveBeatSlot(beat: Beat, topY: number, bottomY: number): void;
+    registerRest(beat: Beat): void;
+    applyRestCollisionOffset(beat: Beat, currentY: number, linesToPixel: number): number;
+}
+
+declare class BarHelpers {
+    private _renderer;
+    beamHelpers: BeamingHelper[][];
+    beamHelperLookup: Map<number, BeamingHelper>[];
+    collisionHelper: BarCollisionHelper;
+    constructor(renderer: BarRendererBase);
+    initialize(): void;
+    getBeamingHelperForBeat(beat: Beat): BeamingHelper;
+}
+
+/**
+ * Lists the different position modes for {@link BarRendererBase.getNoteY}
+ */
+declare enum NoteYPosition {
+    /**
+     * Gets the note y-position on top of the note stem or tab number.
+     */
+    TopWithStem = 0,
+    /**
+     * Gets the note y-position on top of the note head or tab number.
+     */
+    Top = 1,
+    /**
+     * Gets the note y-position on the center of the note head or tab number.
+     */
+    Center = 2,
+    /**
+     * Gets the note y-position on the bottom of the note head or tab number.
+     */
+    Bottom = 3,
+    /**
+     * Gets the note y-position on the bottom of the note stem or tab number.
+     */
+    BottomWithStem = 4
+}
+/**
+ * Lists the different position modes for {@link BarRendererBase.getNoteX}
+ */
+declare enum NoteXPosition {
+    /**
+     * Gets the note x-position on left of the note head or tab number.
+     */
+    Left = 0,
+    /**
+     * Gets the note x-position on the center of the note head or tab number.
+     */
+    Center = 1,
+    /**
+     * Gets the note x-position on the right of the note head or tab number.
+     */
+    Right = 2
+}
+/**
+ * This is the base public class for creating blocks which can render bars.
+ */
+declare class BarRendererBase {
+    static readonly LineSpacing: number;
+    static readonly StemWidth: number;
+    static readonly StaffLineThickness: number;
+    static readonly BeamThickness: number;
+    static readonly BeamSpacing: number;
+    private _preBeatGlyphs;
+    private _voiceContainers;
+    private _postBeatGlyphs;
+    private _ties;
+    get nextRenderer(): BarRendererBase | null;
+    get previousRenderer(): BarRendererBase | null;
+    scoreRenderer: ScoreRenderer;
+    staff: RenderStaff;
+    layoutingInfo: BarLayoutingInfo;
+    bar: Bar;
+    x: number;
+    y: number;
+    width: number;
+    computedWidth: number;
+    height: number;
+    index: number;
+    topOverflow: number;
+    bottomOverflow: number;
+    helpers: BarHelpers;
+    /**
+     * Gets or sets whether this renderer is linked to the next one
+     * by some glyphs like a vibrato effect
+     */
+    isLinkedToPrevious: boolean;
+    /**
+     * Gets or sets whether this renderer can wrap to the next line
+     * or it needs to stay connected to the previous one.
+     * (e.g. when having double bar repeats we must not separate the 2 bars)
+     */
+    canWrap: boolean;
+    constructor(renderer: ScoreRenderer, bar: Bar);
+    registerTies(ties: Glyph[]): void;
+    get middleYPosition(): number;
+    registerOverflowTop(topOverflow: number): boolean;
+    registerOverflowBottom(bottomOverflow: number): boolean;
+    scaleToWidth(width: number): void;
+    get resources(): RenderingResources;
+    get settings(): Settings;
+    get scale(): number;
+    /**
+     * Gets the scale with which the bar should be displayed in case the model
+     * scale should be respected.
+     */
+    get barDisplayScale(): number;
+    /**
+     * Gets the absolute width in which the bar should be displayed in case the model
+     * scale should be respected.
+     */
+    get barDisplayWidth(): number;
+    private _wasFirstOfLine;
+    get isFirstOfLine(): boolean;
+    get isLast(): boolean;
+    registerLayoutingInfo(): void;
+    private _appliedLayoutingInfo;
+    applyLayoutingInfo(): boolean;
+    isFinalized: boolean;
+    finalizeRenderer(): boolean;
+    /**
+     * Gets the top padding for the main content of the renderer.
+     * Can be used to specify where i.E. the score lines of the notation start.
+     * @returns
+     */
+    topPadding: number;
+    /**
+     * Gets the bottom padding for the main content of the renderer.
+     * Can be used to specify where i.E. the score lines of the notation end.
+     */
+    bottomPadding: number;
+    doLayout(): void;
+    protected hasVoiceContainer(voice: Voice): boolean;
+    protected updateSizes(): void;
+    protected addPreBeatGlyph(g: Glyph): void;
+    protected addBeatGlyph(g: BeatContainerGlyph): void;
+    protected getVoiceContainer(voice: Voice): VoiceContainerGlyph | undefined;
+    getBeatContainer(beat: Beat): BeatContainerGlyph | undefined;
+    getPreNotesGlyphForBeat(beat: Beat): BeatGlyphBase | undefined;
+    getOnNotesGlyphForBeat(beat: Beat): BeatOnNoteGlyphBase | undefined;
+    paint(cx: number, cy: number, canvas: ICanvas): void;
+    protected paintBackground(cx: number, cy: number, canvas: ICanvas): void;
+    buildBoundingsLookup(masterBarBounds: MasterBarBounds, cx: number, cy: number): void;
+    protected addPostBeatGlyph(g: Glyph): void;
+    protected createPreBeatGlyphs(): void;
+    protected createBeatGlyphs(): void;
+    protected createVoiceGlyphs(v: Voice): void;
+    protected createPostBeatGlyphs(): void;
+    get beatGlyphsStart(): number;
+    get postBeatGlyphsStart(): number;
+    getBeatX(beat: Beat, requestedPosition?: BeatXPosition): number;
+    getNoteX(note: Note, requestedPosition: NoteXPosition): number;
+    getNoteY(note: Note, requestedPosition: NoteYPosition): number;
+    reLayout(): void;
+    protected paintSimileMark(cx: number, cy: number, canvas: ICanvas): void;
+    completeBeamingHelper(helper: BeamingHelper): void;
+}
+
+/**
+ * This is the base public class for creating factories providing BarRenderers
+ */
+declare abstract class BarRendererFactory {
+    isInAccolade: boolean;
+    isRelevantForBoundsLookup: boolean;
+    hideOnMultiTrack: boolean;
+    hideOnPercussionTrack: boolean;
+    abstract get staffId(): string;
+    canCreate(track: Track, staff: Staff): boolean;
+    abstract create(renderer: ScoreRenderer, bar: Bar): BarRendererBase;
+}
+
+/**
+ * This small utility helps to detect whether a particular font is already loaded.
+ * @target web
+ */
+declare class FontLoadingChecker {
+    private _originalFamilies;
+    private _families;
+    private _isStarted;
+    isFontLoaded: boolean;
+    fontLoaded: IEventEmitterOfT<string>;
+    constructor(families: string[]);
+    checkForFontAvailability(): void;
+    private isFontAvailable;
+}
+
+/**
+ * Lists all web specific platforms alphaTab might run in
+ * like browser, nodejs.
+ */
+declare enum WebPlatform {
+    Browser = 0,
+    NodeJs = 1,
+    BrowserModule = 2
+}
+
+/**
+ * Defines all possible accidentals for notes.
+ */
+declare enum AccidentalType {
+    /**
+     * No accidental
+     */
+    None = 0,
+    /**
+     * Naturalize
+     */
+    Natural = 1,
+    /**
+     * Sharp
+     */
+    Sharp = 2,
+    /**
+     * Flat
+     */
+    Flat = 3,
+    /**
+     * Natural for smear bends
+     */
+    NaturalQuarterNoteUp = 4,
+    /**
+     * Sharp for smear bends
+     */
+    SharpQuarterNoteUp = 5,
+    /**
+     * Flat for smear bends
+     */
+    FlatQuarterNoteUp = 6,
+    /**
+     * Double Sharp, indicated by an 'x'
+     */
+    DoubleSharp = 7,
+    /**
+     * Double Flat, indicated by 'bb'
+     */
+    DoubleFlat = 8
+}
+
+/**
+ * Represents a writer where binary data can be written to.
+ */
+interface IWriteable {
+    /**
+     * Gets the current number of written bytes.
+     */
+    readonly bytesWritten: number;
+    /**
+     * Write a single byte to the stream.
+     * @param value The value to write.
+     */
+    writeByte(value: number): void;
+    /**
+     * Write data from the given buffer.
+     * @param buffer The buffer to get the data from.
+     * @param offset The offset where to start reading the data.
+     * @param count The number of bytes to write
+     */
+    write(buffer: Uint8Array, offset: number, count: number): void;
+}
+
+/**
+ * Lists all midi controllers.
+ */
+declare enum ControllerType {
+    /**
+     * Bank Select. MSB
+     */
+    BankSelectCoarse = 0,
+    /**
+     * Modulation wheel or lever MSB
+     */
+    ModulationCoarse = 1,
+    /**
+     * Data entry MSB
+     */
+    DataEntryCoarse = 6,
+    /**
+     * Channel Volume MSB
+     */
+    VolumeCoarse = 7,
+    /**
+     * Pan MSB
+     */
+    PanCoarse = 10,
+    /**
+     * Expression Controller MSB
+     */
+    ExpressionControllerCoarse = 11,
+    BankSelectFine = 32,
+    /**
+     * Modulation wheel or level LSB
+     */
+    ModulationFine = 33,
+    /**
+     * Data Entry LSB
+     */
+    DataEntryFine = 38,
+    /**
+     * Channel Volume LSB
+     */
+    VolumeFine = 39,
+    /**
+     * Pan LSB
+     */
+    PanFine = 42,
+    /**
+     * Expression controller LSB
+     */
+    ExpressionControllerFine = 43,
+    /**
+     * Damper pedal (sustain)
+     */
+    HoldPedal = 64,
+    /**
+     * Legato Footswitch
+     */
+    LegatoPedal = 68,
+    /**
+     * Non-Registered Parameter Number LSB
+     */
+    NonRegisteredParameterFine = 98,
+    /**
+     * Non-Registered Parameter Number MSB
+     */
+    NonRegisteredParameterCourse = 99,
+    /**
+     * Registered Parameter Number LSB
+     */
+    RegisteredParameterFine = 100,
+    /**
+     * Registered Parameter Number MSB
+     */
+    RegisteredParameterCourse = 101,
+    AllSoundOff = 120,
+    /**
+     * Reset all controllers
+     */
+    ResetControllers = 121,
+    /**
+     * All notes of.
+     */
+    AllNotesOff = 123
+}
+
+/**
+ * Lists all midi event types. Based on the type the instance is a specific subclass.
+ */
+declare enum MidiEventType {
+    TimeSignature = 88,// 0xFF _0x58_ in Midi 1.0
+    NoteOn = 128,// Aligned with Midi 1.0
+    NoteOff = 144,// Aligned with Midi 1.0
+    ControlChange = 176,// Aligned with Midi 1.0
+    ProgramChange = 192,// Aligned with Midi 1.0
+    TempoChange = 81,// 0xFF _0x51_ in Midi 1.0 
+    PitchBend = 224,// Aligned with Midi 1.0
+    PerNotePitchBend = 96,// Aligned with Midi 2.0
+    EndOfTrack = 47,// 0xFF _0x2F_ in Midi 1.0
+    AlphaTabRest = 241,// SystemExclusive + 1 
+    AlphaTabMetronome = 242,// SystemExclusive + 2
+    /**
+     * @deprecated Not used anymore internally. move to the other concrete types.
+     */
+    SystemExclusive = 240,// Aligned with Midi 1.0
+    /**
+     * @deprecated Not used anymore internally. move to the other concrete types.
+     */
+    SystemExclusive2 = 247,// Aligned with Midi 1.0
+    /**
+     * @deprecated Not used anymore internally. move to the other concrete types.
+     */
+    Meta = 255
+}
+/**
+ * Represents a midi event.
+ */
+declare abstract class MidiEvent {
+    /**
+     * Gets or sets the track to which the midi event belongs.
+     */
+    track: number;
+    /**
+     * Gets or sets the absolute tick of this midi event.
+     */
+    tick: number;
+    /**
+     * Gets or sets the midi command (type) of this event.
+     */
+    type: MidiEventType;
+    /**
+     * Initializes a new instance of the {@link MidiEvent} class.
+     * @param track The track this event belongs to.
+     * @param tick The absolute midi ticks of this event.
+     * @param command The type of this event.
+     */
+    constructor(track: number, tick: number, command: MidiEventType);
+    /**
+     * @deprecated Change to `type`
+     */
+    get command(): MidiEventType;
+    /**
+     * @deprecated Use individual properties to access data.
+     */
+    get message(): number;
+    /**
+     * @deprecated Use individual properties to access data.
+     */
+    get data1(): number;
+    /**
+     * @deprecated Use individual properties to access data.
+     */
+    get data2(): number;
+    /**
+     * Writes the midi event as binary into the given stream.
+     * @param s The stream to write to.
+     */
+    abstract writeTo(s: IWriteable): void;
+}
+/**
+ * Represents a time signature change event.
+ */
+declare class TimeSignatureEvent extends MidiEvent {
+    /**
+     * The time signature numerator.
+     */
+    numerator: number;
+    /**
+     * The denominator index is a negative power of two: 2 represents a quarter-note, 3 represents an eighth-note, etc.
+     * Denominator = 2^(index)
+     */
+    denominatorIndex: number;
+    /**
+     * The number of MIDI clocks in a metronome click
+     */
+    midiClocksPerMetronomeClick: number;
+    /**
+     * The number of notated 32nd-notes in what MIDI thinks of as a quarter-note (24 MIDI Clocks).
+     */
+    thirtySecondNodesInQuarter: number;
+    constructor(track: number, tick: number, numerator: number, denominatorIndex: number, midiClocksPerMetronomeClick: number, thirtySecondNodesInQuarter: number);
+    writeTo(s: IWriteable): void;
+}
+/**
+ * The base class for alphaTab specific midi events (like metronomes and rests).
+ */
+declare abstract class AlphaTabSysExEvent extends MidiEvent {
+    static readonly AlphaTabManufacturerId = 125;
+    static readonly MetronomeEventId = 0;
+    static readonly RestEventId = 1;
+    constructor(track: number, tick: number, type: MidiEventType);
+    writeTo(s: IWriteable): void;
+    protected abstract writeEventData(s: IWriteable): void;
+}
+/**
+ * Represents a metronome event. This event is emitted by the synthesizer only during playback and
+ * is typically not part of the midi file itself.
+ */
+declare class AlphaTabMetronomeEvent extends AlphaTabSysExEvent {
+    /**
+     * The metronome counter as per current time signature.
+     */
+    metronomeNumerator: number;
+    /**
+     * The duration of the metronome tick in MIDI ticks.
+     */
+    metronomeDurationInTicks: number;
+    /**
+     * The duration of the metronome tick in milliseconds.
+     */
+    metronomeDurationInMilliseconds: number;
+    /**
+     * Gets a value indicating whether the current event is a metronome event.
+     */
+    readonly isMetronome: boolean;
+    constructor(track: number, tick: number, counter: number, durationInTicks: number, durationInMillis: number);
+    protected writeEventData(s: IWriteable): void;
+}
+/**
+ * Represents a REST beat being 'played'. This event supports alphaTab in placing the cursor.
+ */
+declare class AlphaTabRestEvent extends AlphaTabSysExEvent {
+    channel: number;
+    constructor(track: number, tick: number, channel: number);
+    protected writeEventData(s: IWriteable): void;
+}
+/**
+ * The base class for note related events.
+ */
+declare abstract class NoteEvent extends MidiEvent {
+    /**
+     * The channel on which the note is played.
+     */
+    channel: number;
+    /**
+     * The key of the note being played (aka. the note height).
+     */
+    noteKey: number;
+    /**
+     * The velocity in which the 'key' of the note is pressed (aka. the loudness/intensity of the note).
+     */
+    noteVelocity: number;
+    constructor(track: number, tick: number, type: MidiEventType, channel: number, noteKey: number, noteVelocity: number);
+    get data1(): number;
+    get data2(): number;
+}
+/**
+ * Represents a note being played
+ */
+declare class NoteOnEvent extends NoteEvent {
+    constructor(track: number, tick: number, channel: number, noteKey: number, noteVelocity: number);
+    writeTo(s: IWriteable): void;
+}
+/**
+ * Represents a note stop being played.
+ */
+declare class NoteOffEvent extends NoteEvent {
+    constructor(track: number, tick: number, channel: number, noteKey: number, noteVelocity: number);
+    writeTo(s: IWriteable): void;
+}
+/**
+ * Represents the change of a value on a midi controller.
+ */
+declare class ControlChangeEvent extends MidiEvent {
+    /**
+     * The channel for which the controller is changing.
+     */
+    channel: number;
+    /**
+     * The type of the controller which is changing.
+     */
+    controller: ControllerType;
+    /**
+     * The new value of the controller. The meaning is depending on the controller type.
+     */
+    value: number;
+    constructor(track: number, tick: number, channel: number, controller: ControllerType, value: number);
+    writeTo(s: IWriteable): void;
+    get data1(): number;
+    get data2(): number;
+}
+/**
+ * Represents the change of the midi program on a channel.
+ */
+declare class ProgramChangeEvent extends MidiEvent {
+    /**
+     * The midi channel for which the program changes.
+     */
+    channel: number;
+    /**
+     * The numeric value of the program indicating the instrument bank to choose.
+     */
+    program: number;
+    constructor(track: number, tick: number, channel: number, program: number);
+    writeTo(s: IWriteable): void;
+    get data1(): number;
+}
+/**
+ * Represents a change of the tempo in the song.
+ */
+declare class TempoChangeEvent extends MidiEvent {
+    /**
+     * The tempo in microseconds per quarter note (aka USQ). A time format typically for midi.
+     */
+    microSecondsPerQuarterNote: number;
+    constructor(tick: number, microSecondsPerQuarterNote: number);
+    writeTo(s: IWriteable): void;
+}
+/**
+ * Represents a change of the pitch bend (aka. pitch wheel) on a specific channel.
+ */
+declare class PitchBendEvent extends MidiEvent {
+    /**
+     * The channel for which the pitch bend changes.
+     */
+    channel: number;
+    /**
+     * The value to which the pitch changes. This value is according to the MIDI specification.
+     */
+    value: number;
+    constructor(track: number, tick: number, channel: number, value: number);
+    writeTo(s: IWriteable): void;
+    get data1(): number;
+    get data2(): number;
+}
+/**
+ * Represents a single note pitch bend change.
+ */
+declare class NoteBendEvent extends MidiEvent {
+    /**
+     * The channel on which the note is played for which the pitch changes.
+     */
+    channel: number;
+    /**
+     * The key of the note for which the pitch changes.
+     */
+    noteKey: number;
+    /**
+     * The value to which the pitch changes. This value is according to the MIDI specification.
+     */
+    value: number;
+    constructor(track: number, tick: number, channel: number, noteKey: number, value: number);
+    writeTo(s: IWriteable): void;
+}
+/**
+ * Represents the end of the track indicating that no more events for this track follow.
+ */
+declare class EndOfTrackEvent extends MidiEvent {
+    constructor(track: number, tick: number);
+    writeTo(s: IWriteable): void;
+}
+
+/**
+ * Lists the different midi file formats which are supported for export.
+ */
+declare enum MidiFileFormat {
+    /**
+     * A single track multi channel file (SMF Type 0)
+     */
+    SingleTrackMultiChannel = 0,
+    /**
+     * A multi track file (SMF Type 1)
+     */
+    MultiTrack = 1
+}
+declare class MidiTrack {
+    /**
+     * Gets a list of midi events sorted by time.
+     */
+    readonly events: MidiEvent[];
+    /**
+     * Adds the given midi event a the correct time position into the file.
+     */
+    addEvent(e: MidiEvent): void;
+    /**
+     * Writes the midi track as binary into the given stream.
+     * @returns The stream to write to.
+     */
+    writeTo(s: IWriteable): void;
+}
+/**
+ * Represents a midi file with a single track that can be played via {@link AlphaSynth}
+ */
+declare class MidiFile {
+    /**
+     * Gets or sets the midi file format to use.
+     */
+    format: MidiFileFormat;
+    /**
+     * Gets or sets the division per quarter notes.
+     */
+    division: number;
+    /**
+     * Gets a list of midi events sorted by time.
+     */
+    get events(): MidiEvent[];
+    /**
+     * Gets a list of midi tracks.
+     */
+    readonly tracks: MidiTrack[];
+    private ensureTracks;
+    /**
+     * Adds the given midi event a the correct time position into the file.
+     */
+    addEvent(e: MidiEvent): void;
+    /**
+     * Writes the midi file into a binary format.
+     * @returns The binary midi file.
+     */
+    toBinary(): Uint8Array;
+    /**
+     * Writes the midi file as binary into the given stream.
+     * @returns The stream to write to.
+     */
+    writeTo(s: IWriteable): void;
+    static writeVariableInt(s: IWriteable, value: number): void;
+}
+
+/**
+ * This class can convert a full {@link Score} instance to a simple JavaScript object and back for further
+ * JSON serialization.
+ */
+declare class JsonConverter {
+    /**
+     * @target web
+     */
+    private static jsonReplacer;
+    /**
+     * Converts the given score into a JSON encoded string.
+     * @param score The score to serialize.
+     * @returns A JSON encoded string.
+     * @target web
+     */
+    static scoreToJson(score: Score): string;
+    /**
+     * Converts the given JSON string back to a {@link Score} object.
+     * @param json The JSON string
+     * @param settings The settings to use during conversion.
+     * @returns The converted score object.
+     * @target web
+     */
+    static jsonToScore(json: string, settings?: Settings): Score;
+    /**
+     * Converts the score into a JavaScript object without circular dependencies.
+     * @param score The score object to serialize
+     * @returns A serialized score object without ciruclar dependencies that can be used for further serializations.
+     */
+    static scoreToJsObject(score: Score): unknown;
+    /**
+     * Converts the given JavaScript object into a score object.
+     * @param jsObject The javascript object created via {@link Score}
+     * @param settings The settings to use during conversion.
+     * @returns The converted score object.
+     */
+    static jsObjectToScore(jsObject: unknown, settings?: Settings): Score;
+    /**
+     * Converts the given settings into a JSON encoded string.
+     * @param settings The settings to serialize.
+     * @returns A JSON encoded string.
+     * @target web
+     */
+    static settingsToJson(settings: Settings): string;
+    /**
+     * Converts the given JSON string back to a {@link Score} object.
+     * @param json The JSON string
+     * @returns The converted settings object.
+     * @target web
+     */
+    static jsonToSettings(json: string): Settings;
+    /**
+     * Converts the settings object into a JavaScript object for transmission between components or saving purposes.
+     * @param settings The settings object to serialize
+     * @returns A serialized settings object without ciruclar dependencies that can be used for further serializations.
+     */
+    static settingsToJsObject(settings: Settings): Map<string, unknown> | null;
+    /**
+     * Converts the given JavaScript object into a settings object.
+     * @param jsObject The javascript object created via {@link Settings}
+     * @returns The converted Settings object.
+     */
+    static jsObjectToSettings(jsObject: unknown): Settings;
+    /**
+     * Converts the given JavaScript object into a MidiFile object.
+     * @param jsObject The javascript object to deserialize.
+     * @returns The converted MidiFile.
+     */
+    static jsObjectToMidiFile(jsObject: unknown): MidiFile;
+    private static jsObjectToMidiTrack;
+    /**
+     * Converts the given JavaScript object into a MidiEvent object.
+     * @param jsObject The javascript object to deserialize.
+     * @returns The converted MidiEvent.
+     */
+    static jsObjectToMidiEvent(midiEvent: unknown): MidiEvent;
+    /**
+     * Converts the given MidiFile object into a serialized JavaScript object.
+     * @param midi The midi file to convert.
+     * @returns A serialized MidiFile object without ciruclar dependencies that can be used for further serializations.
+     */
+    static midiFileToJsObject(midi: MidiFile): Map<string, unknown>;
+    private static midiTrackToJsObject;
+    /**
+     * Converts the given MidiEvent object into a serialized JavaScript object.
+     * @param midi The midi file to convert.
+     * @returns A serialized MidiEvent object without ciruclar dependencies that can be used for further serializations.
+     */
+    static midiEventToJsObject(midiEvent: MidiEvent): Map<string, unknown>;
+}
+
+type index_d$6_AccentuationType = AccentuationType;
+declare const index_d$6_AccentuationType: typeof AccentuationType;
+type index_d$6_AccidentalType = AccidentalType;
+declare const index_d$6_AccidentalType: typeof AccidentalType;
+type index_d$6_Automation = Automation;
+declare const index_d$6_Automation: typeof Automation;
+type index_d$6_AutomationType = AutomationType;
+declare const index_d$6_AutomationType: typeof AutomationType;
+type index_d$6_Bar = Bar;
+declare const index_d$6_Bar: typeof Bar;
+type index_d$6_Beat = Beat;
+declare const index_d$6_Beat: typeof Beat;
+type index_d$6_BendPoint = BendPoint;
+declare const index_d$6_BendPoint: typeof BendPoint;
+type index_d$6_BendStyle = BendStyle;
+declare const index_d$6_BendStyle: typeof BendStyle;
+type index_d$6_BendType = BendType;
+declare const index_d$6_BendType: typeof BendType;
+type index_d$6_BrushType = BrushType;
+declare const index_d$6_BrushType: typeof BrushType;
+type index_d$6_Chord = Chord;
+declare const index_d$6_Chord: typeof Chord;
+type index_d$6_Clef = Clef;
+declare const index_d$6_Clef: typeof Clef;
+type index_d$6_Color = Color;
+declare const index_d$6_Color: typeof Color;
+type index_d$6_CrescendoType = CrescendoType;
+declare const index_d$6_CrescendoType: typeof CrescendoType;
+type index_d$6_Duration = Duration;
+declare const index_d$6_Duration: typeof Duration;
+type index_d$6_DynamicValue = DynamicValue;
+declare const index_d$6_DynamicValue: typeof DynamicValue;
+type index_d$6_Fermata = Fermata;
+declare const index_d$6_Fermata: typeof Fermata;
+type index_d$6_FermataType = FermataType;
+declare const index_d$6_FermataType: typeof FermataType;
+type index_d$6_Fingers = Fingers;
+declare const index_d$6_Fingers: typeof Fingers;
+type index_d$6_Font = Font;
+declare const index_d$6_Font: typeof Font;
+type index_d$6_FontStyle = FontStyle;
+declare const index_d$6_FontStyle: typeof FontStyle;
+type index_d$6_GraceType = GraceType;
+declare const index_d$6_GraceType: typeof GraceType;
+type index_d$6_HarmonicType = HarmonicType;
+declare const index_d$6_HarmonicType: typeof HarmonicType;
+type index_d$6_InstrumentArticulation = InstrumentArticulation;
+declare const index_d$6_InstrumentArticulation: typeof InstrumentArticulation;
+type index_d$6_JsonConverter = JsonConverter;
+declare const index_d$6_JsonConverter: typeof JsonConverter;
+type index_d$6_KeySignature = KeySignature;
+declare const index_d$6_KeySignature: typeof KeySignature;
+type index_d$6_KeySignatureType = KeySignatureType;
+declare const index_d$6_KeySignatureType: typeof KeySignatureType;
+type index_d$6_Lyrics = Lyrics;
+declare const index_d$6_Lyrics: typeof Lyrics;
+type index_d$6_MasterBar = MasterBar;
+declare const index_d$6_MasterBar: typeof MasterBar;
+type index_d$6_MusicFontSymbol = MusicFontSymbol;
+declare const index_d$6_MusicFontSymbol: typeof MusicFontSymbol;
+type index_d$6_Note = Note;
+declare const index_d$6_Note: typeof Note;
+type index_d$6_NoteAccidentalMode = NoteAccidentalMode;
+declare const index_d$6_NoteAccidentalMode: typeof NoteAccidentalMode;
+type index_d$6_Ottavia = Ottavia;
+declare const index_d$6_Ottavia: typeof Ottavia;
+type index_d$6_PickStroke = PickStroke;
+declare const index_d$6_PickStroke: typeof PickStroke;
+type index_d$6_PlaybackInformation = PlaybackInformation;
+declare const index_d$6_PlaybackInformation: typeof PlaybackInformation;
+type index_d$6_RenderStylesheet = RenderStylesheet;
+declare const index_d$6_RenderStylesheet: typeof RenderStylesheet;
+type index_d$6_RepeatGroup = RepeatGroup;
+declare const index_d$6_RepeatGroup: typeof RepeatGroup;
+type index_d$6_Score = Score;
+declare const index_d$6_Score: typeof Score;
+type index_d$6_Section = Section;
+declare const index_d$6_Section: typeof Section;
+type index_d$6_SimileMark = SimileMark;
+declare const index_d$6_SimileMark: typeof SimileMark;
+type index_d$6_SlideInType = SlideInType;
+declare const index_d$6_SlideInType: typeof SlideInType;
+type index_d$6_SlideOutType = SlideOutType;
+declare const index_d$6_SlideOutType: typeof SlideOutType;
+type index_d$6_Staff = Staff;
+declare const index_d$6_Staff: typeof Staff;
+type index_d$6_Track = Track;
+declare const index_d$6_Track: typeof Track;
+type index_d$6_TripletFeel = TripletFeel;
+declare const index_d$6_TripletFeel: typeof TripletFeel;
+type index_d$6_Tuning = Tuning;
+declare const index_d$6_Tuning: typeof Tuning;
+type index_d$6_TupletGroup = TupletGroup;
+declare const index_d$6_TupletGroup: typeof TupletGroup;
+type index_d$6_VibratoType = VibratoType;
+declare const index_d$6_VibratoType: typeof VibratoType;
+type index_d$6_Voice = Voice;
+declare const index_d$6_Voice: typeof Voice;
+type index_d$6_WhammyType = WhammyType;
+declare const index_d$6_WhammyType: typeof WhammyType;
+declare namespace index_d$6 {
+  export { index_d$6_AccentuationType as AccentuationType, index_d$6_AccidentalType as AccidentalType, index_d$6_Automation as Automation, index_d$6_AutomationType as AutomationType, index_d$6_Bar as Bar, index_d$6_Beat as Beat, index_d$6_BendPoint as BendPoint, index_d$6_BendStyle as BendStyle, index_d$6_BendType as BendType, index_d$6_BrushType as BrushType, index_d$6_Chord as Chord, index_d$6_Clef as Clef, index_d$6_Color as Color, index_d$6_CrescendoType as CrescendoType, index_d$6_Duration as Duration, index_d$6_DynamicValue as DynamicValue, index_d$6_Fermata as Fermata, index_d$6_FermataType as FermataType, index_d$6_Fingers as Fingers, index_d$6_Font as Font, index_d$6_FontStyle as FontStyle, index_d$6_GraceType as GraceType, index_d$6_HarmonicType as HarmonicType, index_d$6_InstrumentArticulation as InstrumentArticulation, index_d$6_JsonConverter as JsonConverter, index_d$6_KeySignature as KeySignature, index_d$6_KeySignatureType as KeySignatureType, index_d$6_Lyrics as Lyrics, index_d$6_MasterBar as MasterBar, index_d$6_MusicFontSymbol as MusicFontSymbol, index_d$6_Note as Note, index_d$6_NoteAccidentalMode as NoteAccidentalMode, index_d$6_Ottavia as Ottavia, index_d$6_PickStroke as PickStroke, index_d$6_PlaybackInformation as PlaybackInformation, index_d$6_RenderStylesheet as RenderStylesheet, index_d$6_RepeatGroup as RepeatGroup, index_d$6_Score as Score, index_d$6_Section as Section, index_d$6_SimileMark as SimileMark, index_d$6_SlideInType as SlideInType, index_d$6_SlideOutType as SlideOutType, index_d$6_Staff as Staff, index_d$6_Track as Track, index_d$6_TripletFeel as TripletFeel, index_d$6_Tuning as Tuning, index_d$6_TupletGroup as TupletGroup, index_d$6_VibratoType as VibratoType, index_d$6_Voice as Voice, index_d$6_WhammyType as WhammyType };
+}
+
+declare class LayoutEngineFactory {
+    readonly vertical: boolean;
+    readonly createLayout: (renderer: ScoreRenderer) => ScoreLayout;
+    constructor(vertical: boolean, createLayout: (renderer: ScoreRenderer) => ScoreLayout);
+}
+declare class RenderEngineFactory {
+    readonly supportsWorkers: boolean;
+    readonly createCanvas: () => ICanvas;
+    constructor(supportsWorkers: boolean, canvas: () => ICanvas);
+}
+/**
+ * This public class represents the global alphaTab environment where
+ * alphaTab looks for information like available layout engines
+ * staves etc.
+ * This public class represents the global alphaTab environment where
+ * alphaTab looks for information like available layout engines
+ * staves etc.
+ * @partial
+ */
+declare class Environment {
+    /**
+     * The font size of the music font in pixel.
+     */
+    static readonly MusicFontSize = 34;
+    /**
+     * The scaling factor to use when rending raster graphics for sharper rendering on high-dpi displays.
+     */
+    static HighDpiFactor: number;
+    /**
+     * @target web
+     */
+    static createStyleElement(elementDocument: HTMLDocument, fontDirectory: string | null): void;
+    /**
+     * @target web
+     */
+    private static _globalThis;
+    /**
+     * @target web
+     */
+    static get globalThis(): any;
+    /**
+     * @target web
+     */
+    static webPlatform: WebPlatform;
+    /**
+     * @target web
+     */
+    static isWebPackBundled: boolean;
+    /**
+     * @target web
+     */
+    static isViteBundled: boolean;
+    /**
+     * @target web
+     */
+    static scriptFile: string | null;
+    /**
+     * @target web
+     */
+    static fontDirectory: string | null;
+    /**
+     * @target web
+     */
+    static bravuraFontChecker: FontLoadingChecker;
+    /**
+     * @target web
+     */
+    static get isRunningInWorker(): boolean;
+    /**
+     * @target web
+     */
+    static get isRunningInAudioWorklet(): boolean;
+    /**
+     * @target web
+     * @internal
+     */
+    static createWebWorker: (settings: Settings) => Worker;
+    /**
+     * @target web
+     * @internal
+     */
+    static createAudioWorklet: (context: AudioContext, settings: Settings) => Promise<void>;
+    /**
+     * @target web
+     * @partial
+     */
+    static throttle(action: () => void, delay: number): () => void;
+    /**
+     * @target web
+     */
+    private static detectScriptFile;
+    /**
+     * @target web
+     */
+    static ensureFullUrl(relativeUrl: string | null): string;
+    private static appendScriptName;
+    /**
+     * @target web
+     */
+    private static detectFontDirectory;
+    /**
+     * @target web
+     */
+    private static registerJQueryPlugin;
+    static renderEngines: Map<string, RenderEngineFactory>;
+    static layoutEngines: Map<LayoutMode, LayoutEngineFactory>;
+    static staveProfiles: Map<StaveProfile, BarRendererFactory[]>;
+    static getRenderEngineFactory(engine: string): RenderEngineFactory;
+    static getLayoutEngineFactory(layoutMode: LayoutMode): LayoutEngineFactory;
+    /**
+     * Gets all default ScoreImporters
+     * @returns
+     */
+    static buildImporters(): ScoreImporter[];
+    private static createDefaultRenderEngines;
+    /**
+     * Enables the usage of alphaSkia as rendering backend.
+     * @param musicFontData The raw binary data of the music font.
+     * @param alphaSkia The alphaSkia module.
+     */
+    static enableAlphaSkia(musicFontData: ArrayBuffer, alphaSkia: unknown): void;
+    /**
+     * Registers a new custom font for the usage in the alphaSkia rendering backend using
+     * provided font information.
+     * @param fontData The raw binary data of the font.
+     * @param fontInfo If provided the font info provided overrules
+     * @returns The font info under which the font was registered.
+     */
+    static registerAlphaSkiaCustomFont(fontData: Uint8Array, fontInfo?: Font | undefined): Font;
+    /**
+     * @target web
+     * @partial
+     */
+    private static createPlatformSpecificRenderEngines;
+    private static createDefaultStaveProfiles;
+    private static createDefaultLayoutEngines;
+    /**
+     * @target web
+     */
+    static initializeMain(createWebWorker: (settings: Settings) => Worker, createAudioWorklet: (context: AudioContext, settings: Settings) => Promise<void>): void;
+    /**
+     * @target web
+     */
+    static get alphaTabWorker(): any;
+    /**
+     * @target web
+     */
+    static initializeWorker(): void;
+    /**
+     * @target web
+     */
+    static initializeAudioWorklet(): void;
+    /**
+     * @target web
+     */
+    private static detectWebPack;
+    /**
+     * @target web
+     */
+    private static detectVite;
+    /**
+     * @target web
+     */
+    private static detectWebPlatform;
+}
+
+/**
+ * Represents a beat and when it is actually played according to the generated audio.
+ */
+declare class BeatTickLookupItem {
+    /**
+     * Gets the beat represented by this item.
+     */
+    readonly beat: Beat;
+    /**
+     * Gets the playback start of the beat according to the generated audio.
+     */
+    readonly playbackStart: number;
+    constructor(beat: Beat, playbackStart: number);
+}
+/**
+ * Represents the time period, for which one or multiple {@link Beat}s are played
+ */
+declare class BeatTickLookup {
+    private _highlightedBeats;
+    /**
+     * Gets or sets the start time in midi ticks at which the given beat is played.
+     */
+    start: number;
+    /**
+     * Gets or sets the end time in midi ticks at which the given beat is played.
+     */
+    end: number;
+    /**
+     * Gets or sets a list of all beats that should be highlighted when
+     * the beat of this lookup starts playing. This might not mean
+     * the beats start at this position.
+     */
+    highlightedBeats: BeatTickLookupItem[];
+    /**
+     * Gets the next BeatTickLookup which comes after this one and is in the same
+     * MasterBarTickLookup.
+     */
+    nextBeat: BeatTickLookup | null;
+    /**
+     * Gets the preivous BeatTickLookup which comes before this one and is in the same
+     * MasterBarTickLookup.
+     */
+    previousBeat: BeatTickLookup | null;
+    /**
+     * Gets the tick duration of this lookup.
+     */
+    get duration(): number;
+    constructor(start: number, end: number);
+    /**
+     * Marks the given beat as highlighed as part of this lookup.
+     * @param beat The beat to add.
+     */
+    highlightBeat(beat: Beat, playbackStart: number): void;
+    /**
+     * Looks for the first visible beat which starts at this lookup so it can be used for cursor placement.
+     * @param visibleTracks The visible tracks.
+     * @returns The first beat which is visible according to the given tracks or null.
+     */
+    getVisibleBeatAtStart(visibleTracks: Set<number>): Beat | null;
+}
+
+/**
+ * Represents the time period, for which all bars of a {@link MasterBar} are played.
+ */
+declare class MasterBarTickLookup {
+    /**
+     * Gets or sets the start time in midi ticks at which the MasterBar is played.
+     */
+    start: number;
+    /**
+     * Gets or sets the end time in midi ticks at which the MasterBar is played.
+     */
+    end: number;
+    /**
+     * Gets or sets the current tempo when the MasterBar is played.
+     */
+    tempo: number;
+    /**
+     * Gets or sets the MasterBar which is played.
+     */
+    masterBar: MasterBar;
+    firstBeat: BeatTickLookup | null;
+    lastBeat: BeatTickLookup | null;
+    /**
+     * Inserts `newNextBeat` after `currentBeat` in the linked list of items and updates.
+     * the `firstBeat` and `lastBeat` respectively too.
+     * @param currentBeat The item in which to insert the new item afterwards
+     * @param newBeat The new item to insert
+     */
+    private insertAfter;
+    /**
+       * Inserts `newNextBeat` before `currentBeat` in the linked list of items and updates.
+       * the `firstBeat` and `lastBeat` respectively too.
+       * @param currentBeat The item in which to insert the new item afterwards
+       * @param newBeat The new item to insert
+       */
+    private insertBefore;
+    /**
+     * Gets or sets the {@link MasterBarTickLookup} of the next masterbar in the {@link Score}
+     */
+    nextMasterBar: MasterBarTickLookup | null;
+    /**
+     * Gets or sets the {@link MasterBarTickLookup} of the previous masterbar in the {@link Score}
+     */
+    previousMasterBar: MasterBarTickLookup | null;
+    /**
+     * Adds a new beat to this masterbar following the slicing logic required by the MidiTickLookup.
+     * @param beat The beat to add to this masterbat
+     * @param beatPlaybackStart The original start of this beat. This time is relevant for highlighting.
+     * @param sliceStart The slice start to which this beat should be added. This time is relevant for creating new slices.
+     * @param sliceDuration The slice duration to which this beat should be added. This time is relevant for creating new slices.
+     * @returns The first item of the chain which was affected.
+     */
+    addBeat(beat: Beat, beatPlaybackStart: number, sliceStart: number, sliceDuration: number): void;
+}
+
+/**
+ * Represents the results of searching the currently played beat.
+ * @see MidiTickLookup.FindBeat
+ */
+declare class MidiTickLookupFindBeatResult {
+    /**
+     * Gets or sets the beat that is currently played and used for the start
+     * position of the cursor animation.
+     */
+    beat: Beat;
+    /**
+     * Gets or sets the parent MasterBarTickLookup to which this beat lookup belongs to.
+     */
+    masterBar: MasterBarTickLookup;
+    /**
+     * Gets or sets the related beat tick lookup.
+     */
+    beatLookup: BeatTickLookup;
+    /**
+     * Gets or sets the beat that will be played next.
+     */
+    nextBeat: MidiTickLookupFindBeatResult | null;
+    /**
+     * Gets or sets the duration in midi ticks how long this lookup is valid.
+     */
+    tickDuration: number;
+    /**
+     * Gets or sets the duration in milliseconds how long this lookup is valid.
+     */
+    duration: number;
+    get start(): number;
+    get end(): number;
+    constructor(masterBar: MasterBarTickLookup);
+}
+/**
+ * This class holds all information about when {@link MasterBar}s and {@link Beat}s are played.
+ *
+ * On top level it is organized into {@link MasterBarTickLookup} objects indicating the
+ * master bar start and end times. This information is used to highlight the currently played bars
+ * and it gives access to the played beats in this masterbar and their times.
+ *
+ * The {@link BeatTickLookup} are then the slices into which the masterbar is separated by the voices and beats
+ * of all tracks. An example how things are organized:
+ *
+ * Time (eighths):  | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 | 11 | 12 | 13 | 14 | 15 | 16 |
+ *
+ * Track 1:         |        B1         |        B2         |    B3   |    B4   |    B5   |    B6   |
+ * Track 2:         |                  B7                   |         B7        | B9 | B10| B11| B12|
+ * Track 3:         |                                      B13                                      |
+ *
+ * Lookup:          |        L1         |        L2         |    L3    |   L4   | L5 | L6 | L7 | L8 |
+ * Active Beats:
+ * - L1             B1,B7,B13
+ * - L2                                 B2,B7,B13
+ * - L3                                                      B3,B7,B13
+ * - L4                                                                 B4,B7,B13
+ * - L5                                                                          B5,B9,B13
+ * - L6                                                                               B5,B10,B13
+ * - L7                                                                                    B6,B11,B13
+ * - L8                                                                                         B6,B12,B13
+ *
+ * Then during playback we build out of this list {@link MidiTickLookupFindBeatResult} objects which are sepcific
+ * to the visible tracks displayed. This is required because if only Track 2 is displayed we cannot use the the
+ * Lookup L1 alone to determine the start and end of the beat cursor. In this case we will derive a
+ * MidiTickLookupFindBeatResult which holds for Time 01 the lookup L1 as start and L3 as end. This will be used
+ * both for the cursor and beat highlighting.
+ */
+declare class MidiTickLookup {
+    private _currentMasterBar;
+    /**
+     * Gets a dictionary of all master bars played. The index is the index equals to {@link MasterBar.index}.
+     * This lookup only contains the first time a MasterBar is played. For a whole sequence of the song refer to {@link MasterBars}.
+     * @internal
+     */
+    readonly masterBarLookup: Map<number, MasterBarTickLookup>;
+    /**
+     * Gets a list of all {@link MasterBarTickLookup} sorted by time.
+     * @internal
+     */
+    readonly masterBars: MasterBarTickLookup[];
+    /**
+     * Finds the currently played beat given a list of tracks and the current time.
+     * @param trackLookup The tracks indices in which to search the played beat for.
+     * @param tick The current time in midi ticks.
+     * @returns The information about the current beat or null if no beat could be found.
+     */
+    findBeat(trackLookup: Set<number>, tick: number, currentBeatHint?: MidiTickLookupFindBeatResult | null): MidiTickLookupFindBeatResult | null;
+    private findBeatFast;
+    private fillNextBeat;
+    private findBeatSlow;
+    /**
+     * Finds the beat at a given tick position within the known master bar.
+     * @param masterBar
+     * @param currentStartLookup
+     * @param tick
+     * @param visibleTracks
+     * @param fillNext
+     * @returns
+     */
+    private findBeatInMasterBar;
+    private createResult;
+    private findMasterBar;
+    /**
+     * Gets the {@link MasterBarTickLookup} for a given masterbar at which the masterbar is played the first time.
+     * @param bar The masterbar to find the time period for.
+     * @returns A {@link MasterBarTickLookup} containing the details about the first time the {@link MasterBar} is played.
+     */
+    getMasterBar(bar: MasterBar): MasterBarTickLookup;
+    /**
+     * Gets the start time in midi ticks for a given masterbar at which the masterbar is played the first time.
+     * @param bar The masterbar to find the time period for.
+     * @returns The time in midi ticks at which the masterbar is played the first time or 0 if the masterbar is not contained
+     */
+    getMasterBarStart(bar: MasterBar): number;
+    /**
+     * Gets the start time in midi ticks for a given beat at which the masterbar is played the first time.
+     * @param beat The beat to find the time period for.
+     * @returns The time in midi ticks at which the beat is played the first time or 0 if the beat is not contained
+     */
+    getBeatStart(beat: Beat): number;
+    /**
+     * Adds a new {@link MasterBarTickLookup} to the lookup table.
+     * @param masterBar The item to add.
+     */
+    addMasterBar(masterBar: MasterBarTickLookup): void;
+    addBeat(beat: Beat, start: number, duration: number): void;
+}
+
+/**
+ * Represents a range of the song that should be played.
+ */
+declare class PlaybackRange {
+    /**
+     * The position in midi ticks from where the song should start.
+     */
+    startTick: number;
+    /**
+     * The position in midi ticks to where the song should be played.
+     */
+    endTick: number;
+}
+
+/**
+ * Lists the different states of the player
+ */
+declare enum PlayerState {
+    /**
+     * Player is paused
+     */
+    Paused = 0,
+    /**
+     * Player is playing
+     */
+    Playing = 1
+}
+
+/**
+ * Represents the info when the player state changes.
+ */
+declare class PlayerStateChangedEventArgs {
+    /**
+     * The new state of the player.
+     */
+    readonly state: PlayerState;
+    /**
+     * Gets a value indicating whether the playback was stopped or only paused.
+     * @returns true if the playback was stopped, false if the playback was started or paused
+     */
+    readonly stopped: boolean;
+    /**
+     * Initializes a new instance of the {@link PlayerStateChangedEventArgs} class.
+     * @param state The state.
+     */
+    constructor(state: PlayerState, stopped: boolean);
+}
+
+/**
+ * Represents the info when the playback range changed.
+ */
+declare class PlaybackRangeChangedEventArgs {
+    /**
+     * The new playback range.
+     */
+    readonly playbackRange: PlaybackRange | null;
+    /**
+     * Initializes a new instance of the {@link PlaybackRangeChangedEventArgs} class.
+     * @param range The range.
+     */
+    constructor(playbackRange: PlaybackRange | null);
+}
+
+/**
+ * Represents the info when the time in the synthesizer changes.
+ */
+declare class PositionChangedEventArgs {
+    /**
+     * Gets a value indicating whether the position changed because of time seeking.
+     */
+    isSeek: boolean;
+    /**
+     * Gets the current time in milliseconds.
+     */
+    readonly currentTime: number;
+    /**
+     * Gets the length of the played song in milliseconds.
+     */
+    readonly endTime: number;
+    /**
+     * Gets the current time in midi ticks.
+     */
+    readonly currentTick: number;
+    /**
+     * Gets the length of the played song in midi ticks.
+     */
+    readonly endTick: number;
+    /**
+     * Initializes a new instance of the {@link PositionChangedEventArgs} class.
+     * @param currentTime The current time.
+     * @param endTime The end time.
+     * @param currentTick The current tick.
+     * @param endTick The end tick.
+     * @param isSeek Whether the time was seeked.
+     */
+    constructor(currentTime: number, endTime: number, currentTick: number, endTick: number, isSeek: boolean);
+}
+
+/**
+ * Represents the info when the synthesizer played certain midi events.
+ */
+declare class MidiEventsPlayedEventArgs {
+    /**
+     * Gets the events which were played.
+     */
+    readonly events: MidiEvent[];
+    /**
+     * Initializes a new instance of the {@link MidiEventsPlayedEventArgs} class.
+     * @param events The events which were played.
+     */
+    constructor(events: MidiEvent[]);
+}
+
+/**
+ * The public API interface for interacting with the synthesizer.
+ */
+interface IAlphaSynth {
+    /**
+     * Gets or sets whether the synthesizer is ready for interaction. (output and worker are initialized)
+     */
+    readonly isReady: boolean;
+    /**
+     * Gets or sets whether the synthesizer is ready for playback. (output, worker are initialized, soundfont and midi are loaded)
+     */
+    readonly isReadyForPlayback: boolean;
+    /**
+     * Gets the current player state.
+     */
+    readonly state: PlayerState;
+    /**
+     * Gets or sets the loging level.
+     */
+    logLevel: LogLevel;
+    /**
+     * Gets or sets the current master volume as percentage. (range: 0.0-3.0, default 1.0)
+     */
+    masterVolume: number;
+    /**
+     * Gets or sets the metronome volume. (range: 0.0-3.0, default 0.0)
+     */
+    metronomeVolume: number;
+    /**
+     * Gets or sets the current playback speed as percentage. (range: 0.125-8.0, default: 1.0)
+     */
+    playbackSpeed: number;
+    /**
+     * Gets or sets the position within the song in midi ticks.
+     */
+    tickPosition: number;
+    /**
+     * Gets or sets the position within the song in milliseconds.
+     */
+    timePosition: number;
+    /**
+     * Gets or sets the range of the song that should be played. Set this to null
+     * to play the whole song.
+     */
+    playbackRange: PlaybackRange | null;
+    /**
+     * Gets or sets whether the playback should automatically restart after it finished.
+     */
+    isLooping: boolean;
+    /**
+     * Gets or sets volume of the metronome during count-in. (range: 0.0-3.0, default 0.0 - no count in)
+     */
+    countInVolume: number;
+    /**
+     * Gets or sets the midi events which will trigger the `midiEventsPlayed` event.
+     */
+    midiEventsPlayedFilter: MidiEventType[];
+    /**
+     * Destroys the synthesizer and all related components
+     */
+    destroy(): void;
+    /**
+     * Starts the playback if possible
+     * @returns true if the playback was started, otherwise false. Reasons for not starting can be that the player is not ready or already playing.
+     */
+    play(): boolean;
+    /**
+     * Pauses the playback if was running
+     */
+    pause(): void;
+    /**
+     * Starts the playback if possible, pauses the playback if was running
+     */
+    playPause(): void;
+    /**
+     * Stopps the playback
+     */
+    stop(): void;
+    /**
+     * Stops any ongoing playback and plays the given midi file instead.
+     * @param midi The midi file to play
+     */
+    playOneTimeMidiFile(midi: MidiFile): void;
+    /**
+     * Loads a soundfont from the given data
+     * @param data a byte array to load the data from
+     * @param append Whether to fully replace or append the data from the given soundfont.
+     */
+    loadSoundFont(data: Uint8Array, append: boolean): void;
+    /**
+     * Resets all loaded soundfonts as if they were not loaded.
+     */
+    resetSoundFonts(): void;
+    /**
+     * Loads the given midi file structure.
+     * @param midi
+     */
+    loadMidiFile(midi: MidiFile): void;
+    /**
+     * Applies the given transposition pitches to be used during playback.
+     * @param transpositionPitches a map defining the transposition pitches for midi channel.
+     */
+    applyTranspositionPitches(transpositionPitches: Map<number, number>): void;
+    /**
+     * Sets the mute state of a channel.
+     * @param channel The channel number
+     * @param mute true if the channel should be muted, otherwise false.
+     */
+    setChannelMute(channel: number, mute: boolean): void;
+    /**
+     * Resets the mute/solo state of all channels
+     */
+    resetChannelStates(): void;
+    /**
+     * Gets the solo state of a channel.
+     * @param channel The channel number
+     * @param solo true if the channel should be played solo, otherwise false.
+     */
+    setChannelSolo(channel: number, solo: boolean): void;
+    /**
+     * Gets or sets the current and initial volume of the given channel.
+     * @param channel The channel number.
+     * @param volume The volume of of the channel (0.0-1.0)
+     */
+    setChannelVolume(channel: number, volume: number): void;
+    /**
+     * This event is fired when the player is ready to be interacted with.
+     */
+    readonly ready: IEventEmitter;
+    /**
+     * This event is fired when all required data for playback is loaded and ready.
+     */
+    readonly readyForPlayback: IEventEmitter;
+    /**
+     * This event is fired when the playback of the whole song finished.
+     */
+    readonly finished: IEventEmitter;
+    /**
+     * This event is fired when the SoundFont needed for playback was loaded.
+     */
+    readonly soundFontLoaded: IEventEmitter;
+    /**
+     * This event is fired when the loading of the SoundFont failed.
+     */
+    readonly soundFontLoadFailed: IEventEmitterOfT<Error>;
+    /**
+     * This event is fired when the Midi file needed for playback was loaded.
+     */
+    readonly midiLoaded: IEventEmitterOfT<PositionChangedEventArgs>;
+    /**
+     * This event is fired when the loading of the Midi file failed.
+     */
+    readonly midiLoadFailed: IEventEmitterOfT<Error>;
+    /**
+     * This event is fired when the playback state changed.
+     */
+    readonly stateChanged: IEventEmitterOfT<PlayerStateChangedEventArgs>;
+    /**
+     * This event is fired when the current playback position of/ the song changed.
+     */
+    readonly positionChanged: IEventEmitterOfT<PositionChangedEventArgs>;
+    /**
+     * The event is fired when certain midi events were sent to the audio output device for playback.
+     */
+    readonly midiEventsPlayed: IEventEmitterOfT<MidiEventsPlayedEventArgs>;
+    /**
+     * The event is fired when the playback range within the player was updated.
+     */
+    readonly playbackRangeChanged: IEventEmitterOfT<PlaybackRangeChangedEventArgs>;
+}
+
+/**
+ * This interface represents the information about a mouse event that occured on the UI.
+ */
+interface IMouseEventArgs {
+    /**
+     * Gets a value indicating whether the left mouse button was pressed.
+     */
+    readonly isLeftMouseButton: boolean;
+    /**
+     * Gets the X-position of the cursor at the time of the event relative to the given UI container.
+     * @param relativeTo The UI element to which the relative position should be calculated.
+     * @returns The relative X-position of the cursor to the given UI container at the time the event occured.
+     */
+    getX(relativeTo: IContainer): number;
+    /**
+     * Gets the Y-position of the cursor at the time of the event relative to the given UI container.
+     * @param relativeTo The UI element to which the relative position should be calculated.
+     * @returns The relative Y-position of the cursor to the given UI container at the time the event occured.
+     */
+    getY(relativeTo: IContainer): number;
+    /**
+     * If called, the original mouse action is prevented and the event is flagged as handled.
+     */
+    preventDefault(): void;
+}
+
+/**
+ * This interface represents a container control in the UI layer.
+ */
+interface IContainer {
+    /**
+     * Gets or sets the width of the control.
+     */
+    width: number;
+    /**
+     * Gets or sets the height of the control.
+     */
+    height: number;
+    /**
+     * Gets a value indicating whether the control is visible.
+     */
+    readonly isVisible: boolean;
+    /**
+     * Gets or sets the horizontal scroll offset of this control if it is scrollable.
+     */
+    scrollLeft: number;
+    /**
+     * Gets or sets the vertical scroll offset of this control if it is scrollable.
+     */
+    scrollTop: number;
+    /**
+     * Adds the given child control to this container.
+     * @param child The child control to add.
+     */
+    appendChild(child: IContainer): void;
+    /**
+     * Stops the animations of this control immediately.
+     */
+    stopAnimation(): void;
+    /**
+     * Sets the position and size of the container for efficient repositioning.
+     * @param x The X-position
+     * @param y The Y-position
+     * @param w The width
+     * @param h The height
+     */
+    setBounds(x: number, y: number, w: number, h: number): void;
+    /**
+     * Tells the control to move to the given X-position in the given time.
+     * @param duration The milliseconds that should be needed to reach the new X-position
+     * @param x The new X-position
+     */
+    transitionToX(duration: number, x: number): void;
+    /**
+     * Clears the container and removes all child items.
+     */
+    clear(): void;
+    /**
+     * This event occurs when the control was resized.
+     */
+    resize: IEventEmitter;
+    /**
+     * This event occurs when a mouse/finger press happened on the control.
+     */
+    mouseDown: IEventEmitterOfT<IMouseEventArgs>;
+    /**
+     * This event occurs when a mouse/finger moves on top of the control.
+     */
+    mouseMove: IEventEmitterOfT<IMouseEventArgs>;
+    /**
+     * This event occurs when a mouse/finger is released from the control.
+     */
+    mouseUp: IEventEmitterOfT<IMouseEventArgs>;
+}
+
+/**
+ * This wrapper holds all cursor related elements.
+ */
+declare class Cursors {
+    /**
+     * Gets the element that spans across the whole music sheet and holds the other cursor elements.
+     */
+    readonly cursorWrapper: IContainer;
+    /**
+     * Gets the element that is positioned above the bar that is currently played.
+     */
+    readonly barCursor: IContainer;
+    /**
+     * Gets the element that is positioned above the beat that is currently played.
+     */
+    readonly beatCursor: IContainer;
+    /**
+     * Gets the element that spans across the whole music sheet and will hold any selection related elements.
+     */
+    readonly selectionWrapper: IContainer;
+    /**
+     * Initializes a new instance of the {@link Cursors} class.
+     * @param cursorWrapper
+     * @param barCursor
+     * @param beatCursor
+     * @param selectionWrapper
+     */
+    constructor(cursorWrapper: IContainer, barCursor: IContainer, beatCursor: IContainer, selectionWrapper: IContainer);
+}
+
 /**
  * This interface represents the UI abstraction between alphaTab and the corresponding UI framework being used.
  * @param <TSettings> The type of that holds the settings passed from the UI layer.
@@ -4683,7 +6372,7 @@ interface IUiFacade<TSettings> {
      * Tells the UI layer to append the given render results to the UI. At this point
      * the partial result is not actually rendered yet, only the layouting process
      * completed.
-     * @param renderResults The rendered partial that should be added to the UI.
+     * @param renderResults The rendered partial that should be added to the UI. null indicates the rendering finished.
      */
     beginAppendRenderResults(renderResults: RenderFinishedEventArgs | null): void;
     /**
@@ -4801,6 +6490,7 @@ declare class ActiveBeatsChangedEventArgs {
 declare class AlphaTabApiBase<TSettings> {
     private _startTime;
     private _trackIndexes;
+    private _trackIndexLookup;
     private _isDestroyed;
     /**
      * Gets the UI facade to use for interacting with the user interface.
@@ -5068,7 +6758,7 @@ declare class AlphaTabApi extends AlphaTabApiBase<any | Settings> {
     constructor(element: HTMLElement, options: any | Settings);
     tex(tex: string, tracks?: number[]): void;
     print(width?: string, additionalSettings?: unknown): void;
-    downloadMidi(): void;
+    downloadMidi(format?: MidiFileFormat): void;
     changeTrackMute(tracks: Track[], mute: boolean): void;
     changeTrackSolo(tracks: Track[], solo: boolean): void;
     changeTrackVolume(tracks: Track[], volume: number): void;
@@ -5080,66 +6770,6 @@ declare class AlphaTabApi extends AlphaTabApiBase<any | Settings> {
 declare class VersionInfo {
     static readonly version: string;
     static readonly date: string;
-}
-
-/**
- * Represents a stream of binary data that can be read from.
- */
-interface IReadable {
-    /**
-     * Gets or sets the current read position relative in the stream.
-     */
-    position: number;
-    /**
-     * Gets the total number of bytes contained in the stream.
-     */
-    readonly length: number;
-    /**
-     * Resets the stream for reading the data from the beginning.
-     */
-    reset(): void;
-    /**
-     * Skip the given number of bytes.
-     * @param offset The number of bytes to skip.
-     */
-    skip(offset: number): void;
-    /**
-     * Read a single byte from the data stream.
-     * @returns The value of the next byte or -1 if there is no more data.
-     */
-    readByte(): number;
-    /**
-     * Reads the given number of bytes from the stream into the given buffer.
-     * @param buffer The buffer to fill.
-     * @param offset The offset in the buffer where to start writing.
-     * @param count The number of bytes to read.
-     * @returns
-     */
-    read(buffer: Uint8Array, offset: number, count: number): number;
-    /**
-     * Reads the remaining data.
-     * @returns
-     */
-    readAll(): Uint8Array;
-}
-
-/**
- * This is the base public class for creating new song importers which
- * enable reading scores from any binary datasource
- */
-declare abstract class ScoreImporter {
-    protected data: IReadable;
-    protected settings: Settings;
-    /**
-     * Initializes the importer with the given data and settings.
-     */
-    init(data: IReadable, settings: Settings): void;
-    abstract get name(): string;
-    /**
-     * Reads the {@link Score} contained in the data.
-     * @returns The score that was contained in the data.
-     */
-    abstract readScore(): Score;
 }
 
 /**
@@ -5181,11 +6811,7 @@ declare const index_d$5_ScoreLoader: typeof ScoreLoader;
 type index_d$5_UnsupportedFormatError = UnsupportedFormatError;
 declare const index_d$5_UnsupportedFormatError: typeof UnsupportedFormatError;
 declare namespace index_d$5 {
-  export {
-    index_d$5_ScoreImporter as ScoreImporter,
-    index_d$5_ScoreLoader as ScoreLoader,
-    index_d$5_UnsupportedFormatError as UnsupportedFormatError,
-  };
+  export { index_d$5_ScoreImporter as ScoreImporter, index_d$5_ScoreLoader as ScoreLoader, index_d$5_UnsupportedFormatError as UnsupportedFormatError };
 }
 
 /**
@@ -5223,175 +6849,12 @@ declare class Gp7Exporter extends ScoreExporter {
     writeScore(score: Score): void;
 }
 
-type index_d$4_ScoreExporter = ScoreExporter;
-declare const index_d$4_ScoreExporter: typeof ScoreExporter;
 type index_d$4_Gp7Exporter = Gp7Exporter;
 declare const index_d$4_Gp7Exporter: typeof Gp7Exporter;
+type index_d$4_ScoreExporter = ScoreExporter;
+declare const index_d$4_ScoreExporter: typeof ScoreExporter;
 declare namespace index_d$4 {
-  export {
-    index_d$4_ScoreExporter as ScoreExporter,
-    index_d$4_Gp7Exporter as Gp7Exporter,
-  };
-}
-
-/**
- * Lists all midi controllers.
- */
-declare enum ControllerType {
-    /**
-     * Bank Select. MSB
-     */
-    BankSelectCoarse = 0,
-    /**
-     * Modulation wheel or lever MSB
-     */
-    ModulationCoarse = 1,
-    /**
-     * Data entry MSB
-     */
-    DataEntryCoarse = 6,
-    /**
-     * Channel Volume MSB
-     */
-    VolumeCoarse = 7,
-    /**
-     * Pan MSB
-     */
-    PanCoarse = 10,
-    /**
-     * Expression Controller MSB
-     */
-    ExpressionControllerCoarse = 11,
-    /**
-     * Modulation wheel or level LSB
-     */
-    ModulationFine = 33,
-    /**
-     * Data Entry LSB
-     */
-    DataEntryFine = 38,
-    /**
-     * Channel Volume LSB
-     */
-    VolumeFine = 39,
-    /**
-     * Pan LSB
-     */
-    PanFine = 42,
-    /**
-     * Expression controller LSB
-     */
-    ExpressionControllerFine = 43,
-    /**
-     * Damper pedal (sustain)
-     */
-    HoldPedal = 64,
-    /**
-     * Legato Footswitch
-     */
-    LegatoPedal = 68,
-    /**
-     * Non-Registered Parameter Number LSB
-     */
-    NonRegisteredParameterFine = 98,
-    /**
-     * Non-Registered Parameter Number MSB
-     */
-    NonRegisteredParameterCourse = 99,
-    /**
-     * Registered Parameter Number LSB
-     */
-    RegisteredParameterFine = 100,
-    /**
-     * Registered Parameter Number MSB
-     */
-    RegisteredParameterCourse = 101,
-    /**
-     * Reset all controllers
-     */
-    ResetControllers = 121,
-    /**
-     * All notes of.
-     */
-    AllNotesOff = 123
-}
-
-declare enum MetaEventType {
-    SequenceNumber = 0,
-    TextEvent = 1,
-    CopyrightNotice = 2,
-    SequenceOrTrackName = 3,
-    InstrumentName = 4,
-    LyricText = 5,
-    MarkerText = 6,
-    CuePoint = 7,
-    PatchName = 8,
-    PortName = 9,
-    MidiChannel = 32,
-    MidiPort = 33,
-    EndOfTrack = 47,
-    Tempo = 81,
-    SmpteOffset = 84,
-    TimeSignature = 88,
-    KeySignature = 89,
-    SequencerSpecific = 127
-}
-declare class MetaEvent extends MidiEvent {
-    get channel(): number;
-    get command(): MidiEventType;
-    get metaStatus(): MetaEventType;
-    protected constructor(track: number, delta: number, status: number, data1: number, data2: number);
-}
-
-declare class MetaDataEvent extends MetaEvent {
-    data: Uint8Array;
-    constructor(track: number, delta: number, status: number, metaId: number, data: Uint8Array);
-    writeTo(s: IWriteable): void;
-}
-
-declare class MetaNumberEvent extends MetaEvent {
-    value: number;
-    constructor(track: number, delta: number, status: number, metaId: number, value: number);
-    writeTo(s: IWriteable): void;
-}
-
-declare class Midi20PerNotePitchBendEvent extends MidiEvent {
-    noteKey: number;
-    pitch: number;
-    constructor(track: number, tick: number, status: number, noteKey: number, pitch: number);
-    /**
-     * Writes the midi event as binary into the given stream.
-     * @param s The stream to write to.
-     */
-    writeTo(s: IWriteable): void;
-}
-
-declare enum SystemCommonType {
-    SystemExclusive = 240,
-    MtcQuarterFrame = 241,
-    SongPosition = 242,
-    SongSelect = 243,
-    TuneRequest = 246,
-    SystemExclusive2 = 247
-}
-declare class SystemCommonEvent extends MidiEvent {
-    get channel(): number;
-    get command(): MidiEventType;
-    protected constructor(track: number, delta: number, status: number, data1: number, data2: number);
-}
-
-declare class SystemExclusiveEvent extends SystemCommonEvent {
-    static readonly AlphaTabManufacturerId = 125;
-    data: Uint8Array;
-    get isMetronome(): boolean;
-    get metronomeNumerator(): number;
-    get metronomeDurationInTicks(): number;
-    get metronomeDurationInMilliseconds(): number;
-    get isRest(): boolean;
-    get manufacturerId(): number;
-    constructor(track: number, delta: number, status: number, id: number, data: Uint8Array);
-    writeTo(s: IWriteable): void;
-    static encodeMetronome(counter: number, durationInTicks: number, durationInMillis: number): Uint8Array;
+  export { index_d$4_Gp7Exporter as Gp7Exporter, index_d$4_ScoreExporter as ScoreExporter };
 }
 
 /**
@@ -5418,10 +6881,10 @@ interface IMidiFileHandler {
      * @param start The midi ticks when the note should start playing.
      * @param length The duration the note in midi ticks.
      * @param key The key of the note to play
-     * @param dynamicValue The dynamic which should be applied to the note.
+     * @param velocity The velocity which should be applied to the note (derived from the note dynamics).
      * @param channel The midi channel on which the note should be played.
      */
-    addNote(track: number, start: number, length: number, key: number, dynamicValue: DynamicValue, channel: number): void;
+    addNote(track: number, start: number, length: number, key: number, velocity: number, channel: number): void;
     /**
      * Adds a control change to the generated midi file.
      * @param track The midi track on which the controller should change.
@@ -5430,7 +6893,7 @@ interface IMidiFileHandler {
      * @param controller The midi controller that should change.
      * @param value The value to which the midi controller should change
      */
-    addControlChange(track: number, tick: number, channel: number, controller: number, value: number): void;
+    addControlChange(track: number, tick: number, channel: number, controller: ControllerType, value: number): void;
     /**
      * Add a program change to the generated midi file
      * @param track The midi track on which the program should change.
@@ -5482,13 +6945,20 @@ declare class MidiFileGenerator {
     private _settings;
     private _handler;
     private _currentTempo;
-    private _currentBarRepeatLookup;
     private _programsPerChannel;
     /**
      * Gets a lookup object which can be used to quickly find beats and bars
      * at a given midi tick position.
      */
     readonly tickLookup: MidiTickLookup;
+    /**
+     * Gets or sets whether transposition pitches should be applied to the individual midi events or not.
+     */
+    applyTranspositionPitches: boolean;
+    /**
+     * Gets the transposition pitches for the individual midi channels.
+     */
+    readonly transpositionPitches: Map<number, number>;
     /**
      * Initializes a new instance of the {@link MidiFileGenerator} class.
      * @param score The score for which the midi file should be generated.
@@ -5502,6 +6972,7 @@ declare class MidiFileGenerator {
     generate(): void;
     private generateTrack;
     private addProgramChange;
+    static buildTranspositionPitches(score: Score, settings: Settings): Map<number, number>;
     private generateChannel;
     private static toChannelShort;
     private generateMasterBar;
@@ -5514,7 +6985,7 @@ declare class MidiFileGenerator {
     private generateNote;
     private getNoteDuration;
     private applyStaticDuration;
-    private static getDynamicValue;
+    private static getNoteVelocity;
     private generateFadeIn;
     private generateVibrato;
     vibratoResolution: number;
@@ -5561,17 +7032,18 @@ declare class MidiFileGenerator {
  */
 declare class AlphaSynthMidiFileHandler implements IMidiFileHandler {
     private _midiFile;
+    private _smf1Mode;
     /**
      * Initializes a new instance of the {@link AlphaSynthMidiFileHandler} class.
      * @param midiFile The midi file.
+     * @param smf1Mode Whether to generate a SMF1 compatible midi file. This might break multi note bends.
      */
-    constructor(midiFile: MidiFile);
+    constructor(midiFile: MidiFile, smf1Mode?: boolean);
     addTimeSignature(tick: number, timeSignatureNumerator: number, timeSignatureDenominator: number): void;
     addRest(track: number, tick: number, channel: number): void;
-    addNote(track: number, start: number, length: number, key: number, dynamicValue: DynamicValue, channel: number): void;
-    private makeCommand;
+    addNote(track: number, start: number, length: number, key: number, velocity: number, channel: number): void;
     private static fixValue;
-    addControlChange(track: number, tick: number, channel: number, controller: number, value: number): void;
+    addControlChange(track: number, tick: number, channel: number, controller: ControllerType, value: number): void;
     addProgramChange(track: number, tick: number, channel: number, program: number): void;
     addTempo(tick: number, tempo: number): void;
     addBend(track: number, tick: number, channel: number, value: number): void;
@@ -5579,1079 +7051,166 @@ declare class AlphaSynthMidiFileHandler implements IMidiFileHandler {
     finishTrack(track: number, tick: number): void;
 }
 
+type index_d$3_AlphaSynthMidiFileHandler = AlphaSynthMidiFileHandler;
+declare const index_d$3_AlphaSynthMidiFileHandler: typeof AlphaSynthMidiFileHandler;
+type index_d$3_AlphaTabMetronomeEvent = AlphaTabMetronomeEvent;
+declare const index_d$3_AlphaTabMetronomeEvent: typeof AlphaTabMetronomeEvent;
+type index_d$3_AlphaTabRestEvent = AlphaTabRestEvent;
+declare const index_d$3_AlphaTabRestEvent: typeof AlphaTabRestEvent;
 type index_d$3_BeatTickLookup = BeatTickLookup;
 declare const index_d$3_BeatTickLookup: typeof BeatTickLookup;
-type index_d$3_MasterBarTickLookup = MasterBarTickLookup;
-declare const index_d$3_MasterBarTickLookup: typeof MasterBarTickLookup;
-type index_d$3_MidiTickLookup = MidiTickLookup;
-declare const index_d$3_MidiTickLookup: typeof MidiTickLookup;
-type index_d$3_MidiTickLookupFindBeatResult = MidiTickLookupFindBeatResult;
-declare const index_d$3_MidiTickLookupFindBeatResult: typeof MidiTickLookupFindBeatResult;
-type index_d$3_MidiFile = MidiFile;
-declare const index_d$3_MidiFile: typeof MidiFile;
+type index_d$3_ControlChangeEvent = ControlChangeEvent;
+declare const index_d$3_ControlChangeEvent: typeof ControlChangeEvent;
 type index_d$3_ControllerType = ControllerType;
 declare const index_d$3_ControllerType: typeof ControllerType;
-type index_d$3_MetaDataEvent = MetaDataEvent;
-declare const index_d$3_MetaDataEvent: typeof MetaDataEvent;
-type index_d$3_MetaEvent = MetaEvent;
-declare const index_d$3_MetaEvent: typeof MetaEvent;
-type index_d$3_MetaEventType = MetaEventType;
-declare const index_d$3_MetaEventType: typeof MetaEventType;
-type index_d$3_MetaNumberEvent = MetaNumberEvent;
-declare const index_d$3_MetaNumberEvent: typeof MetaNumberEvent;
+type index_d$3_EndOfTrackEvent = EndOfTrackEvent;
+declare const index_d$3_EndOfTrackEvent: typeof EndOfTrackEvent;
+type index_d$3_MasterBarTickLookup = MasterBarTickLookup;
+declare const index_d$3_MasterBarTickLookup: typeof MasterBarTickLookup;
 type index_d$3_MidiEvent = MidiEvent;
 declare const index_d$3_MidiEvent: typeof MidiEvent;
 type index_d$3_MidiEventType = MidiEventType;
 declare const index_d$3_MidiEventType: typeof MidiEventType;
-type index_d$3_Midi20PerNotePitchBendEvent = Midi20PerNotePitchBendEvent;
-declare const index_d$3_Midi20PerNotePitchBendEvent: typeof Midi20PerNotePitchBendEvent;
-type index_d$3_SystemCommonEvent = SystemCommonEvent;
-declare const index_d$3_SystemCommonEvent: typeof SystemCommonEvent;
-type index_d$3_SystemCommonType = SystemCommonType;
-declare const index_d$3_SystemCommonType: typeof SystemCommonType;
-type index_d$3_SystemExclusiveEvent = SystemExclusiveEvent;
-declare const index_d$3_SystemExclusiveEvent: typeof SystemExclusiveEvent;
+type index_d$3_MidiFile = MidiFile;
+declare const index_d$3_MidiFile: typeof MidiFile;
+type index_d$3_MidiFileFormat = MidiFileFormat;
+declare const index_d$3_MidiFileFormat: typeof MidiFileFormat;
 type index_d$3_MidiFileGenerator = MidiFileGenerator;
 declare const index_d$3_MidiFileGenerator: typeof MidiFileGenerator;
-type index_d$3_AlphaSynthMidiFileHandler = AlphaSynthMidiFileHandler;
-declare const index_d$3_AlphaSynthMidiFileHandler: typeof AlphaSynthMidiFileHandler;
+type index_d$3_MidiTickLookup = MidiTickLookup;
+declare const index_d$3_MidiTickLookup: typeof MidiTickLookup;
+type index_d$3_MidiTickLookupFindBeatResult = MidiTickLookupFindBeatResult;
+declare const index_d$3_MidiTickLookupFindBeatResult: typeof MidiTickLookupFindBeatResult;
+type index_d$3_NoteBendEvent = NoteBendEvent;
+declare const index_d$3_NoteBendEvent: typeof NoteBendEvent;
+type index_d$3_NoteEvent = NoteEvent;
+declare const index_d$3_NoteEvent: typeof NoteEvent;
+type index_d$3_NoteOffEvent = NoteOffEvent;
+declare const index_d$3_NoteOffEvent: typeof NoteOffEvent;
+type index_d$3_NoteOnEvent = NoteOnEvent;
+declare const index_d$3_NoteOnEvent: typeof NoteOnEvent;
+type index_d$3_PitchBendEvent = PitchBendEvent;
+declare const index_d$3_PitchBendEvent: typeof PitchBendEvent;
+type index_d$3_ProgramChangeEvent = ProgramChangeEvent;
+declare const index_d$3_ProgramChangeEvent: typeof ProgramChangeEvent;
+type index_d$3_TempoChangeEvent = TempoChangeEvent;
+declare const index_d$3_TempoChangeEvent: typeof TempoChangeEvent;
+type index_d$3_TimeSignatureEvent = TimeSignatureEvent;
+declare const index_d$3_TimeSignatureEvent: typeof TimeSignatureEvent;
 declare namespace index_d$3 {
-  export {
-    index_d$3_BeatTickLookup as BeatTickLookup,
-    index_d$3_MasterBarTickLookup as MasterBarTickLookup,
-    index_d$3_MidiTickLookup as MidiTickLookup,
-    index_d$3_MidiTickLookupFindBeatResult as MidiTickLookupFindBeatResult,
-    index_d$3_MidiFile as MidiFile,
-    index_d$3_ControllerType as ControllerType,
-    index_d$3_MetaDataEvent as MetaDataEvent,
-    index_d$3_MetaEvent as MetaEvent,
-    index_d$3_MetaEventType as MetaEventType,
-    index_d$3_MetaNumberEvent as MetaNumberEvent,
-    index_d$3_MidiEvent as MidiEvent,
-    index_d$3_MidiEventType as MidiEventType,
-    index_d$3_Midi20PerNotePitchBendEvent as Midi20PerNotePitchBendEvent,
-    index_d$3_SystemCommonEvent as SystemCommonEvent,
-    index_d$3_SystemCommonType as SystemCommonType,
-    index_d$3_SystemExclusiveEvent as SystemExclusiveEvent,
-    index_d$3_MidiFileGenerator as MidiFileGenerator,
-    index_d$3_AlphaSynthMidiFileHandler as AlphaSynthMidiFileHandler,
-  };
+  export { index_d$3_AlphaSynthMidiFileHandler as AlphaSynthMidiFileHandler, index_d$3_AlphaTabMetronomeEvent as AlphaTabMetronomeEvent, index_d$3_AlphaTabRestEvent as AlphaTabRestEvent, index_d$3_BeatTickLookup as BeatTickLookup, index_d$3_ControlChangeEvent as ControlChangeEvent, index_d$3_ControllerType as ControllerType, index_d$3_EndOfTrackEvent as EndOfTrackEvent, index_d$3_MasterBarTickLookup as MasterBarTickLookup, index_d$3_MidiEvent as MidiEvent, index_d$3_MidiEventType as MidiEventType, index_d$3_MidiFile as MidiFile, index_d$3_MidiFileFormat as MidiFileFormat, index_d$3_MidiFileGenerator as MidiFileGenerator, index_d$3_MidiTickLookup as MidiTickLookup, index_d$3_MidiTickLookupFindBeatResult as MidiTickLookupFindBeatResult, index_d$3_NoteBendEvent as NoteBendEvent, index_d$3_NoteEvent as NoteEvent, index_d$3_NoteOffEvent as NoteOffEvent, index_d$3_NoteOnEvent as NoteOnEvent, index_d$3_PitchBendEvent as PitchBendEvent, index_d$3_ProgramChangeEvent as ProgramChangeEvent, index_d$3_TempoChangeEvent as TempoChangeEvent, index_d$3_TimeSignatureEvent as TimeSignatureEvent };
 }
 
-/**
- * Defines all possible accidentals for notes.
- */
-declare enum AccidentalType {
-    /**
-     * No accidental
-     */
-    None = 0,
-    /**
-     * Naturalize
-     */
-    Natural = 1,
-    /**
-     * Sharp
-     */
-    Sharp = 2,
-    /**
-     * Flat
-     */
-    Flat = 3,
-    /**
-     * Natural for smear bends
-     */
-    NaturalQuarterNoteUp = 4,
-    /**
-     * Sharp for smear bends
-     */
-    SharpQuarterNoteUp = 5,
-    /**
-     * Flat for smear bends
-     */
-    FlatQuarterNoteUp = 6,
-    /**
-     * Double Sharp, indicated by an 'x'
-     */
-    DoubleSharp = 7,
-    /**
-     * Double Flat, indicated by 'bb'
-     */
-    DoubleFlat = 8
-}
-
-/**
- * This class can convert a full {@link Score} instance to a simple JavaScript object and back for further
- * JSON serialization.
- */
-declare class JsonConverter {
-    /**
-     * @target web
-     */
-    private static jsonReplacer;
-    /**
-     * Converts the given score into a JSON encoded string.
-     * @param score The score to serialize.
-     * @returns A JSON encoded string.
-     * @target web
-     */
-    static scoreToJson(score: Score): string;
-    /**
-     * Converts the given JSON string back to a {@link Score} object.
-     * @param json The JSON string
-     * @param settings The settings to use during conversion.
-     * @returns The converted score object.
-     * @target web
-     */
-    static jsonToScore(json: string, settings?: Settings): Score;
-    /**
-     * Converts the score into a JavaScript object without circular dependencies.
-     * @param score The score object to serialize
-     * @returns A serialized score object without ciruclar dependencies that can be used for further serializations.
-     */
-    static scoreToJsObject(score: Score): unknown;
-    /**
-     * Converts the given JavaScript object into a score object.
-     * @param jsObject The javascript object created via {@link Score}
-     * @param settings The settings to use during conversion.
-     * @returns The converted score object.
-     */
-    static jsObjectToScore(jsObject: unknown, settings?: Settings): Score;
-    /**
-     * Converts the given settings into a JSON encoded string.
-     * @param settings The settings to serialize.
-     * @returns A JSON encoded string.
-     * @target web
-     */
-    static settingsToJson(settings: Settings): string;
-    /**
-     * Converts the given JSON string back to a {@link Score} object.
-     * @param json The JSON string
-     * @returns The converted settings object.
-     * @target web
-     */
-    static jsonToSettings(json: string): Settings;
-    /**
-     * Converts the settings object into a JavaScript object for transmission between components or saving purposes.
-     * @param settings The settings object to serialize
-     * @returns A serialized settings object without ciruclar dependencies that can be used for further serializations.
-     */
-    static settingsToJsObject(settings: Settings): Map<string, unknown> | null;
-    /**
-    * Converts the given JavaScript object into a settings object.
-    * @param jsObject The javascript object created via {@link Settings}
-    * @returns The converted Settings object.
-    */
-    static jsObjectToSettings(jsObject: unknown): Settings;
-    /**
-     * @target web
-     */
-    static jsObjectToMidiFile(midi: any): MidiFile;
-    /**
-     * @target web
-     */
-    static jsObjectToMidiEvent(midiEvent: any): MidiEvent;
-    /**
-     * @target web
-     */
-    static midiFileToJsObject(midi: MidiFile): unknown;
-    /**
-     * @target web
-     */
-    static midiEventToJsObject(midiEvent: MidiEvent): unknown;
-}
-
-type index_d$2_AccentuationType = AccentuationType;
-declare const index_d$2_AccentuationType: typeof AccentuationType;
-type index_d$2_AccidentalType = AccidentalType;
-declare const index_d$2_AccidentalType: typeof AccidentalType;
-type index_d$2_AutomationType = AutomationType;
-declare const index_d$2_AutomationType: typeof AutomationType;
-type index_d$2_Automation = Automation;
-declare const index_d$2_Automation: typeof Automation;
-type index_d$2_Bar = Bar;
-declare const index_d$2_Bar: typeof Bar;
-type index_d$2_Beat = Beat;
-declare const index_d$2_Beat: typeof Beat;
-type index_d$2_BendPoint = BendPoint;
-declare const index_d$2_BendPoint: typeof BendPoint;
-type index_d$2_BendStyle = BendStyle;
-declare const index_d$2_BendStyle: typeof BendStyle;
-type index_d$2_BendType = BendType;
-declare const index_d$2_BendType: typeof BendType;
-type index_d$2_BrushType = BrushType;
-declare const index_d$2_BrushType: typeof BrushType;
-type index_d$2_Chord = Chord;
-declare const index_d$2_Chord: typeof Chord;
-type index_d$2_Clef = Clef;
-declare const index_d$2_Clef: typeof Clef;
-type index_d$2_Color = Color;
-declare const index_d$2_Color: typeof Color;
-type index_d$2_CrescendoType = CrescendoType;
-declare const index_d$2_CrescendoType: typeof CrescendoType;
-type index_d$2_Duration = Duration;
-declare const index_d$2_Duration: typeof Duration;
-type index_d$2_DynamicValue = DynamicValue;
-declare const index_d$2_DynamicValue: typeof DynamicValue;
-type index_d$2_FermataType = FermataType;
-declare const index_d$2_FermataType: typeof FermataType;
-type index_d$2_Fermata = Fermata;
-declare const index_d$2_Fermata: typeof Fermata;
-type index_d$2_Fingers = Fingers;
-declare const index_d$2_Fingers: typeof Fingers;
-type index_d$2_FontStyle = FontStyle;
-declare const index_d$2_FontStyle: typeof FontStyle;
-type index_d$2_Font = Font;
-declare const index_d$2_Font: typeof Font;
-type index_d$2_GraceType = GraceType;
-declare const index_d$2_GraceType: typeof GraceType;
-type index_d$2_HarmonicType = HarmonicType;
-declare const index_d$2_HarmonicType: typeof HarmonicType;
-type index_d$2_InstrumentArticulation = InstrumentArticulation;
-declare const index_d$2_InstrumentArticulation: typeof InstrumentArticulation;
-type index_d$2_JsonConverter = JsonConverter;
-declare const index_d$2_JsonConverter: typeof JsonConverter;
-type index_d$2_KeySignature = KeySignature;
-declare const index_d$2_KeySignature: typeof KeySignature;
-type index_d$2_KeySignatureType = KeySignatureType;
-declare const index_d$2_KeySignatureType: typeof KeySignatureType;
-type index_d$2_Lyrics = Lyrics;
-declare const index_d$2_Lyrics: typeof Lyrics;
-type index_d$2_MasterBar = MasterBar;
-declare const index_d$2_MasterBar: typeof MasterBar;
-type index_d$2_MusicFontSymbol = MusicFontSymbol;
-declare const index_d$2_MusicFontSymbol: typeof MusicFontSymbol;
-type index_d$2_Note = Note;
-declare const index_d$2_Note: typeof Note;
-type index_d$2_NoteAccidentalMode = NoteAccidentalMode;
-declare const index_d$2_NoteAccidentalMode: typeof NoteAccidentalMode;
-type index_d$2_Ottavia = Ottavia;
-declare const index_d$2_Ottavia: typeof Ottavia;
-type index_d$2_PickStroke = PickStroke;
-declare const index_d$2_PickStroke: typeof PickStroke;
-type index_d$2_PlaybackInformation = PlaybackInformation;
-declare const index_d$2_PlaybackInformation: typeof PlaybackInformation;
-type index_d$2_RenderStylesheet = RenderStylesheet;
-declare const index_d$2_RenderStylesheet: typeof RenderStylesheet;
-type index_d$2_RepeatGroup = RepeatGroup;
-declare const index_d$2_RepeatGroup: typeof RepeatGroup;
-type index_d$2_Score = Score;
-declare const index_d$2_Score: typeof Score;
-type index_d$2_Section = Section;
-declare const index_d$2_Section: typeof Section;
-type index_d$2_SimileMark = SimileMark;
-declare const index_d$2_SimileMark: typeof SimileMark;
-type index_d$2_SlideInType = SlideInType;
-declare const index_d$2_SlideInType: typeof SlideInType;
-type index_d$2_SlideOutType = SlideOutType;
-declare const index_d$2_SlideOutType: typeof SlideOutType;
-type index_d$2_Staff = Staff;
-declare const index_d$2_Staff: typeof Staff;
-type index_d$2_Track = Track;
-declare const index_d$2_Track: typeof Track;
-type index_d$2_TripletFeel = TripletFeel;
-declare const index_d$2_TripletFeel: typeof TripletFeel;
-type index_d$2_Tuning = Tuning;
-declare const index_d$2_Tuning: typeof Tuning;
-type index_d$2_TupletGroup = TupletGroup;
-declare const index_d$2_TupletGroup: typeof TupletGroup;
-type index_d$2_VibratoType = VibratoType;
-declare const index_d$2_VibratoType: typeof VibratoType;
-type index_d$2_Voice = Voice;
-declare const index_d$2_Voice: typeof Voice;
-type index_d$2_WhammyType = WhammyType;
-declare const index_d$2_WhammyType: typeof WhammyType;
+type index_d$2_BarBounds = BarBounds;
+declare const index_d$2_BarBounds: typeof BarBounds;
+type index_d$2_BeatBounds = BeatBounds;
+declare const index_d$2_BeatBounds: typeof BeatBounds;
+type index_d$2_Bounds = Bounds;
+declare const index_d$2_Bounds: typeof Bounds;
+type index_d$2_BoundsLookup = BoundsLookup;
+declare const index_d$2_BoundsLookup: typeof BoundsLookup;
+type index_d$2_IScoreRenderer = IScoreRenderer;
+type index_d$2_MasterBarBounds = MasterBarBounds;
+declare const index_d$2_MasterBarBounds: typeof MasterBarBounds;
+type index_d$2_NoteBounds = NoteBounds;
+declare const index_d$2_NoteBounds: typeof NoteBounds;
+type index_d$2_RenderFinishedEventArgs = RenderFinishedEventArgs;
+declare const index_d$2_RenderFinishedEventArgs: typeof RenderFinishedEventArgs;
+type index_d$2_ScoreRenderer = ScoreRenderer;
+declare const index_d$2_ScoreRenderer: typeof ScoreRenderer;
+type index_d$2_StaveGroupBounds = StaveGroupBounds;
+declare const index_d$2_StaveGroupBounds: typeof StaveGroupBounds;
 declare namespace index_d$2 {
-  export {
-    index_d$2_AccentuationType as AccentuationType,
-    index_d$2_AccidentalType as AccidentalType,
-    index_d$2_AutomationType as AutomationType,
-    index_d$2_Automation as Automation,
-    index_d$2_Bar as Bar,
-    index_d$2_Beat as Beat,
-    index_d$2_BendPoint as BendPoint,
-    index_d$2_BendStyle as BendStyle,
-    index_d$2_BendType as BendType,
-    index_d$2_BrushType as BrushType,
-    index_d$2_Chord as Chord,
-    index_d$2_Clef as Clef,
-    index_d$2_Color as Color,
-    index_d$2_CrescendoType as CrescendoType,
-    index_d$2_Duration as Duration,
-    index_d$2_DynamicValue as DynamicValue,
-    index_d$2_FermataType as FermataType,
-    index_d$2_Fermata as Fermata,
-    index_d$2_Fingers as Fingers,
-    index_d$2_FontStyle as FontStyle,
-    index_d$2_Font as Font,
-    index_d$2_GraceType as GraceType,
-    index_d$2_HarmonicType as HarmonicType,
-    index_d$2_InstrumentArticulation as InstrumentArticulation,
-    index_d$2_JsonConverter as JsonConverter,
-    index_d$2_KeySignature as KeySignature,
-    index_d$2_KeySignatureType as KeySignatureType,
-    index_d$2_Lyrics as Lyrics,
-    index_d$2_MasterBar as MasterBar,
-    index_d$2_MusicFontSymbol as MusicFontSymbol,
-    index_d$2_Note as Note,
-    index_d$2_NoteAccidentalMode as NoteAccidentalMode,
-    index_d$2_Ottavia as Ottavia,
-    index_d$2_PickStroke as PickStroke,
-    index_d$2_PlaybackInformation as PlaybackInformation,
-    index_d$2_RenderStylesheet as RenderStylesheet,
-    index_d$2_RepeatGroup as RepeatGroup,
-    index_d$2_Score as Score,
-    index_d$2_Section as Section,
-    index_d$2_SimileMark as SimileMark,
-    index_d$2_SlideInType as SlideInType,
-    index_d$2_SlideOutType as SlideOutType,
-    index_d$2_Staff as Staff,
-    index_d$2_Track as Track,
-    index_d$2_TripletFeel as TripletFeel,
-    index_d$2_Tuning as Tuning,
-    index_d$2_TupletGroup as TupletGroup,
-    index_d$2_VibratoType as VibratoType,
-    index_d$2_Voice as Voice,
-    index_d$2_WhammyType as WhammyType,
-  };
+  export { index_d$2_BarBounds as BarBounds, index_d$2_BeatBounds as BeatBounds, index_d$2_Bounds as Bounds, index_d$2_BoundsLookup as BoundsLookup, type index_d$2_IScoreRenderer as IScoreRenderer, index_d$2_MasterBarBounds as MasterBarBounds, index_d$2_NoteBounds as NoteBounds, index_d$2_RenderFinishedEventArgs as RenderFinishedEventArgs, index_d$2_ScoreRenderer as ScoreRenderer, index_d$2_StaveGroupBounds as StaveGroupBounds };
 }
 
 /**
- * Lists the different position modes for {@link BarRendererBase.getBeatX}
+ * A canvas implementation storing SVG data
  */
-declare enum BeatXPosition {
-    /**
-     * Gets the pre-notes position which is located before the accidentals
-     */
-    PreNotes = 0,
-    /**
-     * Gets the on-notes position which is located after the accidentals but before the note heads.
-     */
-    OnNotes = 1,
-    /**
-     * Gets the middle-notes position which is located after in the middle the note heads.
-     */
-    MiddleNotes = 2,
-    /**
-     * Gets position of the stem for this beat
-     */
-    Stem = 3,
-    /**
-     * Get the post-notes position which is located at after the note heads.
-     */
-    PostNotes = 4,
-    /**
-     * Get the end-beat position which is located at the end of the beat. This position is almost
-     * equal to the pre-notes position of the next beat.
-     */
-    EndBeat = 5
-}
-
-/**
- * A glyph is a single symbol which can be added to a GlyphBarRenderer for automated
- * layouting and drawing of stacked symbols.
- */
-declare class Glyph {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    renderer: BarRendererBase;
-    constructor(x: number, y: number);
-    get scale(): number;
-    doLayout(): void;
-    paint(cx: number, cy: number, canvas: ICanvas): void;
-}
-
-/**
- * This glyph allows to group several other glyphs to be
- * drawn at the same x position
- */
-declare class GlyphGroup extends Glyph {
-    protected glyphs: Glyph[] | null;
-    get isEmpty(): boolean;
-    constructor(x: number, y: number);
-    doLayout(): void;
-    addGlyph(g: Glyph): void;
-    paint(cx: number, cy: number, canvas: ICanvas): void;
-}
-
-declare class BeatGlyphBase extends GlyphGroup {
-    container: BeatContainerGlyph;
-    computedWidth: number;
-    constructor();
-    doLayout(): void;
-    protected noteLoop(action: (note: Note) => void): void;
-}
-
-declare class BeamingHelperDrawInfo {
-    startBeat: Beat | null;
-    startX: number;
-    startY: number;
-    endBeat: Beat | null;
-    endX: number;
-    endY: number;
-    /**
-     * calculates the Y-position given a X-pos using the current start end point
-     * @param x
-     */
-    calcY(x: number): number;
-}
-/**
- * This public class helps drawing beams and bars for notes.
- */
-declare class BeamingHelper {
-    private _staff;
-    private _beatLineXPositions;
-    private _renderer;
-    private _firstNonRestBeat;
-    private _lastNonRestBeat;
-    voice: Voice | null;
-    beats: Beat[];
-    shortestDuration: Duration;
-    /**
-     * the number of fingering indicators that will be drawn
-     */
-    fingeringCount: number;
-    /**
-     * an indicator whether any beat has a tuplet on it.
-     */
-    hasTuplet: boolean;
-    private _firstBeatLowestNoteCompareValue;
-    private _firstBeatHighestNoteCompareValue;
-    private _lastBeatLowestNoteCompareValue;
-    private _lastBeatHighestNoteCompareValue;
-    lowestNoteInHelper: Note | null;
-    private _lowestNoteCompareValueInHelper;
-    highestNoteInHelper: Note | null;
-    private _highestNoteCompareValueInHelper;
-    invertBeamDirection: boolean;
-    preferredBeamDirection: BeamDirection | null;
-    isGrace: boolean;
-    minRestLine: number | null;
-    beatOfMinRestLine: Beat | null;
-    maxRestLine: number | null;
-    beatOfMaxRestLine: Beat | null;
-    get isRestBeamHelper(): boolean;
-    get hasLine(): boolean;
-    get hasFlag(): boolean;
-    constructor(staff: Staff, renderer: BarRendererBase);
-    getBeatLineX(beat: Beat): number;
-    hasBeatLineX(beat: Beat): boolean;
-    registerBeatLineX(staffId: string, beat: Beat, up: number, down: number): void;
-    private getOrCreateBeatPositions;
-    direction: BeamDirection;
-    finish(): void;
-    private calculateDirection;
-    static computeLineHeightsForRest(duration: Duration): number[];
-    /**
-     * Registers a rest beat within the accidental helper so the rest
-     * symbol is considered properly during beaming.
-     * @param beat The rest beat.
-     * @param line The line on which the rest symbol is placed
-     */
-    applyRest(beat: Beat, line: number): void;
-    private invert;
-    checkBeat(beat: Beat): boolean;
-    private checkNote;
-    private static canJoin;
-    private static canJoinDuration;
-    static isFullBarJoin(a: Beat, b: Beat, barIndex: number): boolean;
-    get beatOfLowestNote(): Beat;
-    get beatOfHighestNote(): Beat;
-    /**
-     * Returns whether the the position of the given beat, was registered by the staff of the given ID
-     * @param staffId
-     * @param beat
-     * @returns
-     */
-    isPositionFrom(staffId: string, beat: Beat): boolean;
-    drawingInfos: Map<BeamDirection, BeamingHelperDrawInfo>;
-}
-
-declare class BeatOnNoteGlyphBase extends BeatGlyphBase {
-    beamingHelper: BeamingHelper;
-    centerX: number;
-    updateBeamingHelper(): void;
-    buildBoundingsLookup(beatBounds: BeatBounds, cx: number, cy: number): void;
-    getNoteX(note: Note, requestedPosition: NoteXPosition): number;
-    getNoteY(note: Note, requestedPosition: NoteYPosition): number;
-}
-
-declare class Spring {
-    timePosition: number;
-    longestDuration: number;
-    smallestDuration: number;
-    force: number;
-    springConstant: number;
-    get springWidth(): number;
-    preBeatWidth: number;
-    graceBeatWidth: number;
-    postSpringWidth: number;
-    get preSpringWidth(): number;
-    allDurations: Set<number>;
-}
-
-/**
- * This public class stores size information about a stave.
- * It is used by the layout engine to collect the sizes of score parts
- * to align the parts across multiple staves.
- */
-declare class BarLayoutingInfo {
-    private static readonly MinDuration;
-    private static readonly MinDurationWidth;
-    private _timeSortedSprings;
-    private _xMin;
-    private _minTime;
-    private _onTimePositionsForce;
-    private _onTimePositions;
-    private _incompleteGraceRodsWidth;
-    /**
-     * an internal version number that increments whenever a change was made.
-     */
-    version: number;
-    preBeatSizes: Map<number, number>;
-    onBeatSizes: Map<number, number>;
-    onBeatCenterX: Map<number, number>;
-    preBeatSize: number;
-    postBeatSize: number;
-    voiceSize: number;
-    minStretchForce: number;
-    totalSpringConstant: number;
-    updateVoiceSize(size: number): void;
-    setPreBeatSize(beat: Beat, size: number): void;
-    getPreBeatSize(beat: Beat): number;
-    setOnBeatSize(beat: Beat, size: number): void;
-    getOnBeatSize(beat: Beat): number;
-    getBeatCenterX(beat: Beat): number;
-    setBeatCenterX(beat: Beat, x: number): void;
-    private updateMinStretchForce;
-    incompleteGraceRods: Map<string, Spring[]>;
-    allGraceRods: Map<string, Spring[]>;
-    springs: Map<number, Spring>;
-    addSpring(start: number, duration: number, graceBeatWidth: number, preBeatWidth: number, postSpringSize: number): Spring;
-    addBeatSpring(beat: Beat, preBeatSize: number, postBeatSize: number): void;
-    finish(): void;
-    private calculateSpringConstants;
-    height: number;
-    paint(_cx: number, _cy: number, _canvas: ICanvas): void;
-    private calculateSpringConstant;
-    spaceToForce(space: number): number;
-    calculateVoiceWidth(force: number): number;
-    private calculateWidth;
-    buildOnTimePositions(force: number): Map<number, number>;
-}
-
-/**
- * This glyph acts as container for handling
- * multiple voice rendering
- */
-declare class VoiceContainerGlyph extends GlyphGroup {
-    static readonly KeySizeBeat: string;
-    beatGlyphs: BeatContainerGlyph[];
-    voice: Voice;
-    tupletGroups: TupletGroup[];
-    constructor(x: number, y: number, voice: Voice);
-    scaleToWidth(width: number): void;
-    private scaleToForce;
-    registerLayoutingInfo(info: BarLayoutingInfo): void;
-    applyLayoutingInfo(info: BarLayoutingInfo): void;
-    addGlyph(g: Glyph): void;
-    doLayout(): void;
-    paint(cx: number, cy: number, canvas: ICanvas): void;
-}
-
-declare class BeatContainerGlyph extends Glyph {
-    static readonly GraceBeatPadding: number;
-    voiceContainer: VoiceContainerGlyph;
-    beat: Beat;
-    preNotes: BeatGlyphBase;
-    onNotes: BeatOnNoteGlyphBase;
-    ties: Glyph[];
-    minWidth: number;
-    get onTimeX(): number;
-    constructor(beat: Beat, voiceContainer: VoiceContainerGlyph);
-    addTie(tie: Glyph): void;
-    registerLayoutingInfo(layoutings: BarLayoutingInfo): void;
-    applyLayoutingInfo(info: BarLayoutingInfo): void;
-    doLayout(): void;
-    protected updateWidth(): void;
-    scaleToWidth(beatWidth: number): void;
-    protected createTies(n: Note): void;
-    static getGroupId(beat: Beat): string;
-    paint(cx: number, cy: number, canvas: ICanvas): void;
-    buildBoundingsLookup(barBounds: BarBounds, cx: number, cy: number, isEmptyBar: boolean): void;
-}
-
-/**
- * This is the base public class for creating factories providing BarRenderers
- */
-declare abstract class BarRendererFactory {
-    isInAccolade: boolean;
-    isRelevantForBoundsLookup: boolean;
-    hideOnMultiTrack: boolean;
-    hideOnPercussionTrack: boolean;
-    abstract get staffId(): string;
-    canCreate(track: Track, staff: Staff): boolean;
-    abstract create(renderer: ScoreRenderer, bar: Bar): BarRendererBase;
-}
-
-/**
- * This container represents a single column of bar renderers independent from any staves.
- * This container can be used to reorganize renderers into a new staves.
- */
-declare class MasterBarsRenderers {
-    width: number;
-    isLinkedToPrevious: boolean;
-    canWrap: boolean;
-    masterBar: MasterBar;
-    renderers: BarRendererBase[];
-    layoutingInfo: BarLayoutingInfo;
-}
-
-declare class StaveTrackGroup {
-    track: Track;
-    staveGroup: StaveGroup;
-    staves: RenderStaff[];
-    stavesRelevantForBoundsLookup: RenderStaff[];
-    firstStaffInAccolade: RenderStaff | null;
-    lastStaffInAccolade: RenderStaff | null;
-    constructor(staveGroup: StaveGroup, track: Track);
-    addStaff(staff: RenderStaff): void;
-}
-
-/**
- * A Staff consists of a list of different staves and groups
- * them using an accolade.
- */
-declare class StaveGroup {
-    private static readonly AccoladeLabelSpacing;
-    private _allStaves;
-    private _firstStaffInAccolade;
-    private _lastStaffInAccolade;
-    private _accoladeSpacingCalculated;
-    x: number;
-    y: number;
-    index: number;
-    accoladeSpacing: number;
-    /**
-     * Indicates whether this line is full or not. If the line is full the
-     * bars can be aligned to the maximum width. If the line is not full
-     * the bars will not get stretched.
-     */
-    isFull: boolean;
-    /**
-     * The width that the content bars actually need
-     */
-    width: number;
-    isLast: boolean;
-    masterBarsRenderers: MasterBarsRenderers[];
-    staves: StaveTrackGroup[];
-    layout: ScoreLayout;
-    get firstBarIndex(): number;
-    get lastBarIndex(): number;
-    addMasterBarRenderers(tracks: Track[], renderers: MasterBarsRenderers): MasterBarsRenderers | null;
-    addBars(tracks: Track[], barIndex: number): MasterBarsRenderers | null;
-    revertLastBar(): MasterBarsRenderers | null;
-    updateWidth(): number;
-    private calculateAccoladeSpacing;
-    private getStaveTrackGroup;
-    addStaff(track: Track, staff: RenderStaff): void;
-    get height(): number;
-    scaleToWidth(width: number): void;
-    paint(cx: number, cy: number, canvas: ICanvas): void;
-    paintPartial(cx: number, cy: number, canvas: ICanvas, startIndex: number, count: number): void;
-    finalizeGroup(): void;
-    buildBoundingsLookup(cx: number, cy: number): void;
-    getBarX(index: number): number;
-}
-
-/**
- * A Staff represents a single line within a StaveGroup.
- * It stores BarRenderer instances created from a given factory.
- */
-declare class RenderStaff {
-    private _factory;
-    private _sharedLayoutData;
-    staveTrackGroup: StaveTrackGroup;
-    staveGroup: StaveGroup;
-    barRenderers: BarRendererBase[];
-    x: number;
-    y: number;
-    height: number;
-    index: number;
-    staffIndex: number;
-    /**
-     * This is the index of the track being rendered. This is not the index of the track within the model,
-     * but the n-th track being rendered. It is the index of the {@link ScoreRenderer.tracks} array defining
-     * which tracks should be rendered.
-     * For single-track rendering this will always be zero.
-     */
-    trackIndex: number;
-    modelStaff: Staff;
-    get staveId(): string;
-    /**
-     * This is the visual offset from top where the
-     * Staff contents actually start. Used for grouping
-     * using a accolade
-     */
-    staveTop: number;
-    topSpacing: number;
-    bottomSpacing: number;
-    /**
-     * This is the visual offset from top where the
-     * Staff contents actually ends. Used for grouping
-     * using a accolade
-     */
-    staveBottom: number;
-    isFirstInAccolade: boolean;
-    isLastInAccolade: boolean;
-    constructor(trackIndex: number, staff: Staff, factory: BarRendererFactory);
-    getSharedLayoutData<T>(key: string, def: T): T;
-    setSharedLayoutData<T>(key: string, def: T): void;
-    get isInAccolade(): boolean;
-    get isRelevantForBoundsLookup(): boolean;
-    registerStaffTop(offset: number): void;
-    registerStaffBottom(offset: number): void;
-    addBarRenderer(renderer: BarRendererBase): void;
-    addBar(bar: Bar, layoutingInfo: BarLayoutingInfo): void;
-    revertLastBar(): BarRendererBase;
-    scaleToWidth(width: number): void;
-    get topOverflow(): number;
-    get bottomOverflow(): number;
-    finalizeStaff(): void;
-    paint(cx: number, cy: number, canvas: ICanvas, startIndex: number, count: number): void;
-}
-
-declare class ReservedLayoutAreaSlot {
-    topY: number;
-    bottomY: number;
-    constructor(topY: number, bottomY: number);
-}
-declare class ReservedLayoutArea {
-    beat: Beat;
-    topY: number;
-    bottomY: number;
-    slots: ReservedLayoutAreaSlot[];
-    constructor(beat: Beat);
-    addSlot(topY: number, bottomY: number): void;
-}
-declare class BarCollisionHelper {
-    reservedLayoutAreasByDisplayTime: Map<number, ReservedLayoutArea>;
-    restDurationsByDisplayTime: Map<number, Map<number, number>>;
-    getBeatMinMaxY(): number[];
-    reserveBeatSlot(beat: Beat, topY: number, bottomY: number): void;
-    registerRest(beat: Beat): void;
-    applyRestCollisionOffset(beat: Beat, currentY: number, linesToPixel: number): number;
-}
-
-declare class BarHelpers {
-    private _renderer;
-    beamHelpers: BeamingHelper[][];
-    beamHelperLookup: Map<number, BeamingHelper>[];
-    collisionHelper: BarCollisionHelper;
-    constructor(renderer: BarRendererBase);
-    initialize(): void;
-    getBeamingHelperForBeat(beat: Beat): BeamingHelper;
-}
-
-/**
- * Lists the different position modes for {@link BarRendererBase.getNoteY}
- */
-declare enum NoteYPosition {
-    /**
-     * Gets the note y-position on top of the note stem or tab number.
-     */
-    TopWithStem = 0,
-    /**
-     * Gets the note y-position on top of the note head or tab number.
-     */
-    Top = 1,
-    /**
-     * Gets the note y-position on the center of the note head or tab number.
-     */
-    Center = 2,
-    /**
-     * Gets the note y-position on the bottom of the note head or tab number.
-     */
-    Bottom = 3,
-    /**
-     * Gets the note y-position on the bottom of the note stem or tab number.
-     */
-    BottomWithStem = 4
-}
-/**
- * Lists the different position modes for {@link BarRendererBase.getNoteX}
- */
-declare enum NoteXPosition {
-    /**
-     * Gets the note x-position on left of the note head or tab number.
-     */
-    Left = 0,
-    /**
-     * Gets the note x-position on the center of the note head or tab number.
-     */
-    Center = 1,
-    /**
-     * Gets the note x-position on the right of the note head or tab number.
-     */
-    Right = 2
-}
-/**
- * This is the base public class for creating blocks which can render bars.
- */
-declare class BarRendererBase {
-    static readonly LineSpacing: number;
-    static readonly StemWidth: number;
-    static readonly StaffLineThickness: number;
-    static readonly BeamThickness: number;
-    static readonly BeamSpacing: number;
-    private _preBeatGlyphs;
-    private _voiceContainers;
-    private _postBeatGlyphs;
-    private _ties;
-    get nextRenderer(): BarRendererBase | null;
-    get previousRenderer(): BarRendererBase | null;
-    scoreRenderer: ScoreRenderer;
-    staff: RenderStaff;
-    layoutingInfo: BarLayoutingInfo;
-    bar: Bar;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    index: number;
-    topOverflow: number;
-    bottomOverflow: number;
-    helpers: BarHelpers;
-    /**
-     * Gets or sets whether this renderer is linked to the next one
-     * by some glyphs like a vibrato effect
-     */
-    isLinkedToPrevious: boolean;
-    /**
-     * Gets or sets whether this renderer can wrap to the next line
-     * or it needs to stay connected to the previous one.
-     * (e.g. when having double bar repeats we must not separate the 2 bars)
-     */
-    canWrap: boolean;
-    constructor(renderer: ScoreRenderer, bar: Bar);
-    registerTies(ties: Glyph[]): void;
-    get middleYPosition(): number;
-    registerOverflowTop(topOverflow: number): boolean;
-    registerOverflowBottom(bottomOverflow: number): boolean;
-    scaleToWidth(width: number): void;
-    get resources(): RenderingResources;
-    get settings(): Settings;
-    get scale(): number;
-    private _wasFirstOfLine;
-    get isFirstOfLine(): boolean;
-    get isLast(): boolean;
-    registerLayoutingInfo(): void;
-    private _appliedLayoutingInfo;
-    applyLayoutingInfo(): boolean;
-    isFinalized: boolean;
-    finalizeRenderer(): boolean;
-    /**
-     * Gets the top padding for the main content of the renderer.
-     * Can be used to specify where i.E. the score lines of the notation start.
-     * @returns
-     */
-    topPadding: number;
-    /**
-     * Gets the bottom padding for the main content of the renderer.
-     * Can be used to specify where i.E. the score lines of the notation end.
-     */
-    bottomPadding: number;
-    doLayout(): void;
-    protected hasVoiceContainer(voice: Voice): boolean;
-    protected updateSizes(): void;
-    protected addPreBeatGlyph(g: Glyph): void;
-    protected addBeatGlyph(g: BeatContainerGlyph): void;
-    protected getVoiceContainer(voice: Voice): VoiceContainerGlyph | undefined;
-    getBeatContainer(beat: Beat): BeatContainerGlyph | undefined;
-    getPreNotesGlyphForBeat(beat: Beat): BeatGlyphBase | undefined;
-    getOnNotesGlyphForBeat(beat: Beat): BeatOnNoteGlyphBase | undefined;
-    paint(cx: number, cy: number, canvas: ICanvas): void;
-    protected paintBackground(cx: number, cy: number, canvas: ICanvas): void;
-    buildBoundingsLookup(masterBarBounds: MasterBarBounds, cx: number, cy: number): void;
-    protected addPostBeatGlyph(g: Glyph): void;
-    protected createPreBeatGlyphs(): void;
-    protected createBeatGlyphs(): void;
-    protected createVoiceGlyphs(v: Voice): void;
-    protected createPostBeatGlyphs(): void;
-    get beatGlyphsStart(): number;
-    get postBeatGlyphsStart(): number;
-    getBeatX(beat: Beat, requestedPosition?: BeatXPosition): number;
-    getNoteX(note: Note, requestedPosition: NoteXPosition): number;
-    getNoteY(note: Note, requestedPosition: NoteYPosition): number;
-    reLayout(): void;
-    protected paintSimileMark(cx: number, cy: number, canvas: ICanvas): void;
-    completeBeamingHelper(helper: BeamingHelper): void;
-}
-
-declare class RowContainerGlyph extends GlyphGroup {
-    private static readonly Padding;
-    private _rows;
-    private _align;
-    constructor(x: number, y: number, align?: TextAlign);
-    doLayout(): void;
-    paint(cx: number, cy: number, canvas: ICanvas): void;
-}
-
-declare class ChordDiagramContainerGlyph extends RowContainerGlyph {
-    constructor(x: number, y: number);
-    addChord(chord: Chord): void;
-}
-
-/**
- * Effect-Glyphs implementing this public interface get notified
- * as they are expanded over multiple beats.
- */
-declare class EffectGlyph extends Glyph {
-    /**
-     * Gets or sets the beat where the glyph belongs to.
-     */
-    beat: Beat | null;
-    /**
-     * Gets or sets the next glyph of the same type in case
-     * the effect glyph is expanded when using {@link EffectBarGlyphSizing.groupedOnBeat}.
-     */
-    nextGlyph: EffectGlyph | null;
-    /**
-     * Gets or sets the previous glyph of the same type in case
-     * the effect glyph is expanded when using {@link EffectBarGlyphSizing.groupedOnBeat}.
-     */
-    previousGlyph: EffectGlyph | null;
-    constructor(x?: number, y?: number);
-}
-
-declare class TextGlyph extends EffectGlyph {
-    private _lines;
+declare abstract class SvgCanvas implements ICanvas {
+    protected buffer: string;
+    private _currentPath;
+    private _currentPathIsEmpty;
+    color: Color;
+    lineWidth: number;
     font: Font;
     textAlign: TextAlign;
-    constructor(x: number, y: number, text: string, font: Font, textAlign?: TextAlign);
-    doLayout(): void;
-    paint(cx: number, cy: number, canvas: ICanvas): void;
-}
-
-declare class TuningContainerGlyph extends RowContainerGlyph {
-    constructor(x: number, y: number);
-    addTuning(tuning: Tuning, trackLabel: string): void;
-}
-
-/**
- * This is the base class for creating new layouting engines for the score renderer.
- */
-declare abstract class ScoreLayout {
-    private _barRendererLookup;
-    abstract get name(): string;
-    renderer: ScoreRenderer;
-    width: number;
-    height: number;
-    protected scoreInfoGlyphs: Map<NotationElement, TextGlyph>;
-    protected chordDiagrams: ChordDiagramContainerGlyph | null;
-    protected tuningGlyph: TuningContainerGlyph | null;
-    protected constructor(renderer: ScoreRenderer);
-    abstract get firstBarX(): number;
-    abstract get supportsResize(): boolean;
-    resize(): void;
-    abstract doResize(): void;
-    layoutAndRender(): void;
-    private _lazyPartials;
-    protected registerPartial(args: RenderFinishedEventArgs, callback: (canvas: ICanvas) => void): void;
-    private internalRenderLazyPartial;
-    renderLazyPartial(resultId: string): void;
-    protected abstract doLayoutAndRender(): void;
-    private createScoreInfoGlyphs;
-    get scale(): number;
-    firstBarIndex: number;
-    lastBarIndex: number;
-    protected createEmptyStaveGroup(): StaveGroup;
-    registerBarRenderer(key: string, renderer: BarRendererBase): void;
-    unregisterBarRenderer(key: string, renderer: BarRendererBase): void;
-    getRendererForBar(key: string, bar: Bar): BarRendererBase | null;
-    layoutAndRenderAnnotation(y: number): number;
-}
-
-/**
- * This is the main wrapper of the rendering engine which
- * can render a single track of a score object into a notation sheet.
- */
-declare class ScoreRenderer implements IScoreRenderer {
-    private _currentLayoutMode;
-    private _currentRenderEngine;
-    private _renderedTracks;
-    canvas: ICanvas | null;
-    score: Score | null;
-    tracks: Track[] | null;
-    /**
-     * @internal
-     */
-    layout: ScoreLayout | null;
+    textBaseline: TextBaseline;
     settings: Settings;
-    boundsLookup: BoundsLookup | null;
-    width: number;
-    /**
-     * Initializes a new instance of the {@link ScoreRenderer} class.
-     * @param settings The settings to use for rendering.
-     */
-    constructor(settings: Settings);
     destroy(): void;
-    private recreateCanvas;
-    private recreateLayout;
-    renderScore(score: Score | null, trackIndexes: number[] | null): void;
-    /**
-     * Initiates rendering fof the given tracks.
-     * @param tracks The tracks to render.
-     */
-    renderTracks(tracks: Track[]): void;
-    updateSettings(settings: Settings): void;
-    renderResult(resultId: string): void;
-    render(): void;
-    resizeRender(): void;
-    private layoutAndRender;
-    readonly preRender: IEventEmitterOfT<boolean>;
-    readonly renderFinished: IEventEmitterOfT<RenderFinishedEventArgs>;
-    readonly partialRenderFinished: IEventEmitterOfT<RenderFinishedEventArgs>;
-    readonly partialLayoutFinished: IEventEmitterOfT<RenderFinishedEventArgs>;
-    readonly postRenderFinished: IEventEmitter;
-    readonly error: IEventEmitterOfT<Error>;
-    private onRenderFinished;
+    beginRender(width: number, height: number): void;
+    beginGroup(identifier: string): void;
+    endGroup(): void;
+    endRender(): unknown;
+    fillRect(x: number, y: number, w: number, h: number): void;
+    strokeRect(x: number, y: number, w: number, h: number): void;
+    beginPath(): void;
+    closePath(): void;
+    moveTo(x: number, y: number): void;
+    lineTo(x: number, y: number): void;
+    quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void;
+    bezierCurveTo(cp1X: number, cp1Y: number, cp2X: number, cp2Y: number, x: number, y: number): void;
+    fillCircle(x: number, y: number, radius: number): void;
+    strokeCircle(x: number, y: number, radius: number): void;
+    fill(): void;
+    stroke(): void;
+    fillText(text: string, x: number, y: number): void;
+    private static escapeText;
+    protected getSvgTextAlignment(textAlign: TextAlign): string;
+    protected getSvgBaseLine(): string;
+    measureText(text: string): number;
+    abstract fillMusicFontSymbol(x: number, y: number, scale: number, symbol: MusicFontSymbol, centerAtPosition?: boolean): void;
+    abstract fillMusicFontSymbols(x: number, y: number, scale: number, symbols: MusicFontSymbol[], centerAtPosition?: boolean): void;
+    onRenderFinished(): unknown;
+    beginRotate(centerX: number, centerY: number, angle: number): void;
+    endRotate(): void;
 }
 
-type index_d$1_RenderFinishedEventArgs = RenderFinishedEventArgs;
-declare const index_d$1_RenderFinishedEventArgs: typeof RenderFinishedEventArgs;
-type index_d$1_IScoreRenderer = IScoreRenderer;
-type index_d$1_ScoreRenderer = ScoreRenderer;
-declare const index_d$1_ScoreRenderer: typeof ScoreRenderer;
-type index_d$1_BarBounds = BarBounds;
-declare const index_d$1_BarBounds: typeof BarBounds;
-type index_d$1_BeatBounds = BeatBounds;
-declare const index_d$1_BeatBounds: typeof BeatBounds;
-type index_d$1_Bounds = Bounds;
-declare const index_d$1_Bounds: typeof Bounds;
-type index_d$1_BoundsLookup = BoundsLookup;
-declare const index_d$1_BoundsLookup: typeof BoundsLookup;
-type index_d$1_MasterBarBounds = MasterBarBounds;
-declare const index_d$1_MasterBarBounds: typeof MasterBarBounds;
-type index_d$1_NoteBounds = NoteBounds;
-declare const index_d$1_NoteBounds: typeof NoteBounds;
-type index_d$1_StaveGroupBounds = StaveGroupBounds;
-declare const index_d$1_StaveGroupBounds: typeof StaveGroupBounds;
+/**
+ * This SVG canvas renders the music symbols by adding a CSS class 'at' to all elements.
+ */
+declare class CssFontSvgCanvas extends SvgCanvas {
+    constructor();
+    fillMusicFontSymbol(x: number, y: number, scale: number, symbol: MusicFontSymbol, centerAtPosition?: boolean): void;
+    fillMusicFontSymbols(x: number, y: number, scale: number, symbols: MusicFontSymbol[], centerAtPosition?: boolean): void;
+    private fillMusicFontSymbolText;
+}
+
+/**
+ * This public class stores text widths for several fonts and allows width calculation
+ * @partial
+ */
+declare class FontSizes {
+    static Georgia: Uint8Array;
+    static Arial: Uint8Array;
+    static FontSizeLookupTables: Map<string, Uint8Array>;
+    static readonly ControlChars: number;
+    /**
+     * @target web
+     * @partial
+     */
+    static generateFontLookup(family: string): void;
+    static measureString(s: string, families: string[], size: number, style: FontStyle, weight: FontWeight): number;
+}
+
+type index_d$1_CssFontSvgCanvas = CssFontSvgCanvas;
+declare const index_d$1_CssFontSvgCanvas: typeof CssFontSvgCanvas;
+type index_d$1_Cursors = Cursors;
+declare const index_d$1_Cursors: typeof Cursors;
+type index_d$1_FontSizes = FontSizes;
+declare const index_d$1_FontSizes: typeof FontSizes;
+type index_d$1_ICanvas = ICanvas;
+type index_d$1_IContainer = IContainer;
+type index_d$1_IMouseEventArgs = IMouseEventArgs;
+type index_d$1_IUiFacade<TSettings> = IUiFacade<TSettings>;
+type index_d$1_SvgCanvas = SvgCanvas;
+declare const index_d$1_SvgCanvas: typeof SvgCanvas;
+type index_d$1_TextAlign = TextAlign;
+declare const index_d$1_TextAlign: typeof TextAlign;
+type index_d$1_TextBaseline = TextBaseline;
+declare const index_d$1_TextBaseline: typeof TextBaseline;
 declare namespace index_d$1 {
-  export {
-    index_d$1_RenderFinishedEventArgs as RenderFinishedEventArgs,
-    index_d$1_IScoreRenderer as IScoreRenderer,
-    index_d$1_ScoreRenderer as ScoreRenderer,
-    index_d$1_BarBounds as BarBounds,
-    index_d$1_BeatBounds as BeatBounds,
-    index_d$1_Bounds as Bounds,
-    index_d$1_BoundsLookup as BoundsLookup,
-    index_d$1_MasterBarBounds as MasterBarBounds,
-    index_d$1_NoteBounds as NoteBounds,
-    index_d$1_StaveGroupBounds as StaveGroupBounds,
-  };
+  export { index_d$1_CssFontSvgCanvas as CssFontSvgCanvas, index_d$1_Cursors as Cursors, index_d$1_FontSizes as FontSizes, type index_d$1_ICanvas as ICanvas, type index_d$1_IContainer as IContainer, type index_d$1_IMouseEventArgs as IMouseEventArgs, type index_d$1_IUiFacade as IUiFacade, index_d$1_SvgCanvas as SvgCanvas, index_d$1_TextAlign as TextAlign, index_d$1_TextBaseline as TextBaseline };
 }
 
 /**
@@ -6770,6 +7329,7 @@ declare class AlphaSynth implements IAlphaSynth {
      * @param midi The midi file to load
      */
     loadMidiFile(midi: MidiFile): void;
+    applyTranspositionPitches(transpositionPitches: Map<number, number>): void;
     setChannelMute(channel: number, mute: boolean): void;
     resetChannelStates(): void;
     setChannelSolo(channel: number, solo: boolean): void;
@@ -6873,7 +7433,7 @@ declare class AlphaSynthWebWorkerApi implements IAlphaSynth {
     set isLooping(value: boolean);
     get playbackRange(): PlaybackRange | null;
     set playbackRange(value: PlaybackRange | null);
-    constructor(player: ISynthOutput, alphaSynthScriptFile: string, logLevel: LogLevel, bufferTimeInMilliseconds: number);
+    constructor(player: ISynthOutput, settings: Settings);
     destroy(): void;
     play(): boolean;
     pause(): void;
@@ -6884,6 +7444,7 @@ declare class AlphaSynthWebWorkerApi implements IAlphaSynth {
     loadSoundFontFromUrl(url: string, append: boolean, progress: (e: ProgressEventArgs) => void): void;
     resetSoundFonts(): void;
     loadMidiFile(midi: MidiFile): void;
+    applyTranspositionPitches(transpositionPitches: Map<number, number>): void;
     setChannelMute(channel: number, mute: boolean): void;
     resetChannelStates(): void;
     setChannelSolo(channel: number, solo: boolean): void;
@@ -6965,6 +7526,8 @@ declare class AlphaSynthScriptProcessorOutput extends AlphaSynthWebAudioOutputBa
 declare class AlphaSynthAudioWorkletOutput extends AlphaSynthWebAudioOutputBase {
     private _worklet;
     private _bufferTimeInMilliseconds;
+    private readonly _settings;
+    constructor(settings: Settings);
     open(bufferTimeInMilliseconds: number): void;
     play(): void;
     private handleMessage;
@@ -6973,52 +7536,36 @@ declare class AlphaSynthAudioWorkletOutput extends AlphaSynthWebAudioOutputBase 
     resetSamples(): void;
 }
 
+type index_d_ActiveBeatsChangedEventArgs = ActiveBeatsChangedEventArgs;
+declare const index_d_ActiveBeatsChangedEventArgs: typeof ActiveBeatsChangedEventArgs;
 type index_d_AlphaSynth = AlphaSynth;
 declare const index_d_AlphaSynth: typeof AlphaSynth;
+type index_d_AlphaSynthAudioWorkletOutput = AlphaSynthAudioWorkletOutput;
+declare const index_d_AlphaSynthAudioWorkletOutput: typeof AlphaSynthAudioWorkletOutput;
+type index_d_AlphaSynthScriptProcessorOutput = AlphaSynthScriptProcessorOutput;
+declare const index_d_AlphaSynthScriptProcessorOutput: typeof AlphaSynthScriptProcessorOutput;
+type index_d_AlphaSynthWebAudioOutputBase = AlphaSynthWebAudioOutputBase;
+declare const index_d_AlphaSynthWebAudioOutputBase: typeof AlphaSynthWebAudioOutputBase;
+type index_d_AlphaSynthWebWorkerApi = AlphaSynthWebWorkerApi;
+declare const index_d_AlphaSynthWebWorkerApi: typeof AlphaSynthWebWorkerApi;
 type index_d_CircularSampleBuffer = CircularSampleBuffer;
 declare const index_d_CircularSampleBuffer: typeof CircularSampleBuffer;
+type index_d_IAlphaSynth = IAlphaSynth;
+type index_d_ISynthOutput = ISynthOutput;
+type index_d_MidiEventsPlayedEventArgs = MidiEventsPlayedEventArgs;
+declare const index_d_MidiEventsPlayedEventArgs: typeof MidiEventsPlayedEventArgs;
 type index_d_PlaybackRange = PlaybackRange;
 declare const index_d_PlaybackRange: typeof PlaybackRange;
-type index_d_ISynthOutput = ISynthOutput;
-type index_d_IAlphaSynth = IAlphaSynth;
+type index_d_PlaybackRangeChangedEventArgs = PlaybackRangeChangedEventArgs;
+declare const index_d_PlaybackRangeChangedEventArgs: typeof PlaybackRangeChangedEventArgs;
 type index_d_PlayerState = PlayerState;
 declare const index_d_PlayerState: typeof PlayerState;
 type index_d_PlayerStateChangedEventArgs = PlayerStateChangedEventArgs;
 declare const index_d_PlayerStateChangedEventArgs: typeof PlayerStateChangedEventArgs;
-type index_d_PlaybackRangeChangedEventArgs = PlaybackRangeChangedEventArgs;
-declare const index_d_PlaybackRangeChangedEventArgs: typeof PlaybackRangeChangedEventArgs;
 type index_d_PositionChangedEventArgs = PositionChangedEventArgs;
 declare const index_d_PositionChangedEventArgs: typeof PositionChangedEventArgs;
-type index_d_MidiEventsPlayedEventArgs = MidiEventsPlayedEventArgs;
-declare const index_d_MidiEventsPlayedEventArgs: typeof MidiEventsPlayedEventArgs;
-type index_d_ActiveBeatsChangedEventArgs = ActiveBeatsChangedEventArgs;
-declare const index_d_ActiveBeatsChangedEventArgs: typeof ActiveBeatsChangedEventArgs;
-type index_d_AlphaSynthWebWorkerApi = AlphaSynthWebWorkerApi;
-declare const index_d_AlphaSynthWebWorkerApi: typeof AlphaSynthWebWorkerApi;
-type index_d_AlphaSynthWebAudioOutputBase = AlphaSynthWebAudioOutputBase;
-declare const index_d_AlphaSynthWebAudioOutputBase: typeof AlphaSynthWebAudioOutputBase;
-type index_d_AlphaSynthScriptProcessorOutput = AlphaSynthScriptProcessorOutput;
-declare const index_d_AlphaSynthScriptProcessorOutput: typeof AlphaSynthScriptProcessorOutput;
-type index_d_AlphaSynthAudioWorkletOutput = AlphaSynthAudioWorkletOutput;
-declare const index_d_AlphaSynthAudioWorkletOutput: typeof AlphaSynthAudioWorkletOutput;
 declare namespace index_d {
-  export {
-    index_d_AlphaSynth as AlphaSynth,
-    index_d_CircularSampleBuffer as CircularSampleBuffer,
-    index_d_PlaybackRange as PlaybackRange,
-    index_d_ISynthOutput as ISynthOutput,
-    index_d_IAlphaSynth as IAlphaSynth,
-    index_d_PlayerState as PlayerState,
-    index_d_PlayerStateChangedEventArgs as PlayerStateChangedEventArgs,
-    index_d_PlaybackRangeChangedEventArgs as PlaybackRangeChangedEventArgs,
-    index_d_PositionChangedEventArgs as PositionChangedEventArgs,
-    index_d_MidiEventsPlayedEventArgs as MidiEventsPlayedEventArgs,
-    index_d_ActiveBeatsChangedEventArgs as ActiveBeatsChangedEventArgs,
-    index_d_AlphaSynthWebWorkerApi as AlphaSynthWebWorkerApi,
-    index_d_AlphaSynthWebAudioOutputBase as AlphaSynthWebAudioOutputBase,
-    index_d_AlphaSynthScriptProcessorOutput as AlphaSynthScriptProcessorOutput,
-    index_d_AlphaSynthAudioWorkletOutput as AlphaSynthAudioWorkletOutput,
-  };
+  export { index_d_ActiveBeatsChangedEventArgs as ActiveBeatsChangedEventArgs, index_d_AlphaSynth as AlphaSynth, index_d_AlphaSynthAudioWorkletOutput as AlphaSynthAudioWorkletOutput, index_d_AlphaSynthScriptProcessorOutput as AlphaSynthScriptProcessorOutput, index_d_AlphaSynthWebAudioOutputBase as AlphaSynthWebAudioOutputBase, index_d_AlphaSynthWebWorkerApi as AlphaSynthWebWorkerApi, index_d_CircularSampleBuffer as CircularSampleBuffer, type index_d_IAlphaSynth as IAlphaSynth, type index_d_ISynthOutput as ISynthOutput, index_d_MidiEventsPlayedEventArgs as MidiEventsPlayedEventArgs, index_d_PlaybackRange as PlaybackRange, index_d_PlaybackRangeChangedEventArgs as PlaybackRangeChangedEventArgs, index_d_PlayerState as PlayerState, index_d_PlayerStateChangedEventArgs as PlayerStateChangedEventArgs, index_d_PositionChangedEventArgs as PositionChangedEventArgs };
 }
 
-export { AlphaTabApi, AlphaTabError, AlphaTabErrorType, CoreSettings, DisplaySettings, FileLoadError, FingeringMode, FormatError, ImporterSettings, LayoutMode, LogLevel, Logger, NotationMode, NotationSettings, PlayerSettings, ProgressEventArgs, RenderingResources, ResizeEventArgs, ScrollMode, Settings, StaveProfile, TabRhythmMode, VibratoPlaybackSettings, index_d$4 as exporter, index_d$5 as importer, VersionInfo as meta, index_d$3 as midi, index_d$2 as model, index_d$1 as rendering, index_d as synth };
+export { AlphaTabApi, AlphaTabError, AlphaTabErrorType, CoreSettings, DisplaySettings, Environment, FileLoadError, FingeringMode, FormatError, ImporterSettings, LayoutMode, LogLevel, Logger, NotationMode, NotationSettings, PlayerOutputMode, PlayerSettings, ProgressEventArgs, RenderingResources, ResizeEventArgs, ScrollMode, Settings, StaveProfile, SystemsLayoutMode, TabRhythmMode, VibratoPlaybackSettings, WebPlatform, index_d$4 as exporter, index_d$5 as importer, VersionInfo as meta, index_d$3 as midi, index_d$6 as model, index_d$1 as platform, index_d$2 as rendering, index_d as synth };
