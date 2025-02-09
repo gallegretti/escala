@@ -24,6 +24,8 @@ import EditorActionDispatcher from '../editor/editor-action-dispatcher';
 import EditorScoreState from '../editor/editor-score-state';
 import exportGuitarPro from './editor-export/export-guitar-pro';
 import exportMidi from './editor-export/export-midi';
+import { DialogAudioMixer } from '@dialogs/dialog-audio-mixer/dialog-audio-mixer';
+import useDialog from '@hooks/use-dialog';
 
 function useForceUpdate() {
   const [_, setValue] = useState(0); // integer state
@@ -56,7 +58,7 @@ const AppContent = styled('div')({
 
 const AppEditorControls = styled('div')({
   position: 'absolute',
-  left: '120px',
+  left: '140px',
   right: 0,
   zIndex: 999,
 })
@@ -202,6 +204,12 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
 
   const score = (): Score | null => api?.score ?? null;
 
+  const setTrackVolume = (track: Track, volume: number) => {
+    if (api) {
+      api.changeTrackVolume([track], volume);
+    }
+  }
+
   const setVolume = (volume: number) => {
     if (api) {
       api.masterVolume = volume;
@@ -243,8 +251,22 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
     editorActions.clearUndoAndRedoHistory();
   };
 
+  const {
+    openDialog: openAudioMixerDialog,
+    closeDialog: closeAudioMixerDialog,
+    isDialogOpen: isAudioMixerDialogOpen
+  } = useDialog();
+
   return (
     <AppContainer>
+      {api?.score && (
+        <DialogAudioMixer
+          isOpen={isAudioMixerDialogOpen}
+          onClose={closeAudioMixerDialog}
+          score={api.score}
+          onVolumeChange={setTrackVolume}
+        />
+      )}
       <AppContent>
         <EditorLeftMenu
           tracks={api?.score?.tracks ?? null}
@@ -290,6 +312,7 @@ export default function Editor({ hasDialog }: { hasDialog: boolean }) {
         onCountInChange={setCountIn}
         onMetronomeChange={setMetronome}
         onLoopingChange={setIsLooping}
+        onOpenVolumeMixer={openAudioMixerDialog}
         isCountIn={api?.countInVolume !== 0}
         isMetronome={api?.metronomeVolume !== 0}
         isPlaying={api?.playerState === 1}

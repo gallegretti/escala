@@ -190,6 +190,7 @@ const resources: Resource = {
         'move_cursor_previous_bar': 'Mover cursor para a barra anterior',
         'move_cursor_previous_bar_shortcut': 'Ctrl + Seta para esquerda',
       },
+      'Audio Mixer': 'Mixer de Áudio',
       'How long the note should be played': 'Por quanto tempo a nota deve ser tocada',
       'How strong the note should be played': 'Quão forte a nota deve ser tocada',
       'Getting started': 'Básico',

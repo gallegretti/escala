@@ -16,7 +16,7 @@ const AlphaTabContainer = styled('div')`
   overflow-y: auto;
   position: absolute;
   top: 96px;
-  left: 120px;
+  left: 140px;
   right: 0;
   bottom: 0;
   padding-right: 20px;

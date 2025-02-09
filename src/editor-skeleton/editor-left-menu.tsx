@@ -11,7 +11,7 @@ const SideMenuDiv = styled('div')(({ theme }) => ({
   top: 0,
   left: 0,
   bottom: 0,
-  width: '120px',
+  width: '140px',
   display: 'flex',
   alignContent: 'stretch',
   zIndex: '1001',
