@@ -7,4 +7,9 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
   plugins: [tsconfigPaths(), react()],
   base: './',
+  build: {
+    commonjsOptions: {
+      exclude: ['/node_modules/@coderline/**.js'],
+    },
+  },
 });
