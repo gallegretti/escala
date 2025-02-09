@@ -34,7 +34,7 @@
     "@types/react-dom": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.28.0",
     "@typescript-eslint/parser": "^5.28.0",
-    "@vitejs/plugin-react": "^2.2.0",
+    "@vitejs/plugin-react": "^4.3.4",
     "cypress": "^10.11.0",
     "eslint": "^8.18.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -46,7 +46,7 @@
     "jest-mock-extended": "^2.0.6",
     "ts-jest": "^28.0.7",
     "typescript": "^4.8.2",
-    "vite": "^3.2.0",
+    "vite": "^6.1.0",
     "vite-tsconfig-paths": "^3.5.2"
   }
 }
